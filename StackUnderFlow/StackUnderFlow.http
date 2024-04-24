@@ -1,0 +1,6 @@
+@StackUnderFlow_HostAddress = http://localhost:5008
+
+GET {{StackUnderFlow_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
