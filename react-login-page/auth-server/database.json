@@ -3,6 +3,18 @@
     {
       "email": "test@yopmail.com",
       "password": "$2b$10$0PTcq32Wd8B8OXy45zO8F.6krz7Ol45k4Uzuhvt3pP38RFHREsTwu"
+    },
+    {
+      "email": "test@esgi.fr",
+      "password": "$2b$10$R8zsba4AywX1w2imHRpPfe8ShKOi8Wttu76wCk2Yq5d0r4iEITcpi"
+    },
+    {
+      "email": "test@gmail.com",
+      "password": "$2b$10$fx7TEVIm.8CkCUvwCeG/uOT/AKHJ1dfHa2zgwMgyh3UH1mjEWM5I."
+    },
+    {
+      "email": "damien@gmail.com",
+      "password": "$2b$10$ap09hSR2xVWaai3n7jQgUeDRAa0RgLz354xJBDlrswY6dvuIUK4Wy"
     }
   ]
 }
