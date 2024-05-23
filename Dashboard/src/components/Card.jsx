@@ -26,8 +26,8 @@ const courses = [
 const Card = () => {
 	return (
 		<div className="card--container">
-			{courses.map((item) => (
-				<div className="card">
+			{courses.map((item, index) => (
+				<div key={index} className="card">
 					<div className="card--cover">{item.icon}</div>
 					<div className="card--title">
 						<h2>{item.title}</h2>
