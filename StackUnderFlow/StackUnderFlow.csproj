@@ -21,6 +21,7 @@
 
     <ItemGroup>
       <Folder Include="Application\DTO\" />
+      <Folder Include="Infrastructure\Migrations\" />
       <Folder Include="Infrastructure\Repository\" />
     </ItemGroup>
 

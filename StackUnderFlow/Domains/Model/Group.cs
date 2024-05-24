@@ -1,11 +1,16 @@
-﻿namespace StackUnderFlow.Domains.Model;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace StackUnderFlow.Domains.Model;
 
 public class Group
 {
-    public int GroupID { get; set; }
+    [Key]
+    public int GroupId { get; set; }
     public string GroupName { get; set; }
     public string Description { get; set; }
     public int CreatorUserID { get; set; }
 
+    [ForeignKey("CreatorUserID")]
     public User Creator { get; set; }
 }

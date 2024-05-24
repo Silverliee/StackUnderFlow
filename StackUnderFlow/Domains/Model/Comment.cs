@@ -1,12 +1,18 @@
-﻿namespace StackUnderFlow.Domains.Model;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace StackUnderFlow.Domains.Model;
 
 public class Comment
 {
-    public int RelationID { get; set; }
-    public int UserID { get; set; }
-    public int FileID { get; set; }
+    [Key]
+    public int CommentId { get; set; }
+    public int UserId { get; set; }
+    public int ScriptId { get; set; }
     public string Description { get; set; }
 
+    [ForeignKey("UserId")]
     public User User { get; set; }
-    public Script File { get; set; }
+    [ForeignKey("ScriptId")]
+    public Script Script { get; set; }
 }
