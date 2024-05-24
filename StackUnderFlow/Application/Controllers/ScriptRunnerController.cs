@@ -5,7 +5,7 @@ namespace StackUnderFlow.Application.Controllers;
 
 [ApiController]
 [Route("[controller]")] 
-public class FileController : ControllerBase
+public class ScriptRunnerController : ControllerBase
 {
     [HttpPost]
     public async Task<IActionResult> UploadFile(

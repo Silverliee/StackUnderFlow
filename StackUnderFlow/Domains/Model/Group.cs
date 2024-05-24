@@ -10,6 +10,7 @@ public class Group
     public string GroupName { get; set; }
     public string Description { get; set; }
     public int CreatorUserID { get; set; }
+    public List<int> Members { get; set; }
 
     [ForeignKey("CreatorUserID")]
     public User Creator { get; set; }
