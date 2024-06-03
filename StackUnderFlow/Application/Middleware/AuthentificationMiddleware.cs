@@ -12,12 +12,14 @@ public class AuthentificationMiddleware
     public AuthentificationMiddleware(IConfiguration configuration)
     {
         _configuration = configuration;
+        
     }
     
-    private string GenerateJwtToken(string username)
+    public string GenerateJwtToken(string username)
     {
         var tokenHandler = new JwtSecurityTokenHandler();
-        var key = Encoding.ASCII.GetBytes(_configuration["Jwt:Key"]);
+        var key = _configuration["Jwt:Key"];
+        var _securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key));
         var tokenDescriptor = new SecurityTokenDescriptor
         {
             Subject = new ClaimsIdentity(new Claim[]
@@ -25,7 +27,7 @@ public class AuthentificationMiddleware
                 new Claim(ClaimTypes.Name, username)
             }),
             Expires = DateTime.UtcNow.AddHours(1),
-            SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
+            SigningCredentials = new SigningCredentials(_securityKey, SecurityAlgorithms.HmacSha256),
             Issuer = _configuration["Jwt:Issuer"],
             Audience = _configuration["Jwt:Audience"]
         };

@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
-using StackUnderFlow.Application.DataTransferObject;
+using StackUnderFlow.Application.DataTransferObject.Request;
+using StackUnderFlow.Application.DataTransferObject.Response;
 using StackUnderFlow.Domains.Services;
 
 namespace StackUnderFlow.Application.Controllers;
@@ -13,6 +14,13 @@ public class UserController(ILoginService loginService) : ControllerBase
     public async Task<IActionResult> Register(RegisterUserDto user)
     {
         var result = await loginService.Register(user);
+        return Ok(result);
+    }
+    
+    [HttpPost("login")]
+    public async Task<IActionResult> Login(LoginUserDto login)
+    {
+        var result = await loginService.Login(login);
         return Ok(result);
     }
     
