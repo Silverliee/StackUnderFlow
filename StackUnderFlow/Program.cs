@@ -2,9 +2,13 @@ using System.Diagnostics;
 using System.Reflection;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-
+using StackUnderFlow.Domains.Repository;
+using StackUnderFlow.Domains.Services;
+using StackUnderFlow.Infrastructure.Settings;
+using StackUnderFlow.Application.Middleware;
 public partial class Program
 {
     private static FileVersionInfo GetAssemblyFileVersion()
@@ -22,12 +26,45 @@ public partial class Program
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
-
+        
         // Add services to the container.
 
         builder.Services.AddControllers();
+        String connectionString = builder.Configuration.GetConnectionString("database");
+        builder.Services.AddDbContext<MySqlDbContext>(options =>
+        {
+            options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
+        });
+        
+        builder.Services.AddCors(options =>
+        {
+            options.AddPolicy("AllowAll",
+                policyBuilder =>
+                {
+                    policyBuilder.AllowAnyOrigin()
+                        .AllowAnyMethod()
+                        .AllowAnyHeader();
+                });
+        });
+
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
+        builder.Services.AddScoped<ILoginService, LoginService>();
+        builder.Services.AddScoped<INotificationService, NotificationService>();
+        builder.Services.AddScoped<IProfileService,ProfileService>();
+        builder.Services.AddScoped<IReactionService, ReactionService>();
+        builder.Services.AddScoped<IRunnerService,RunnerService>();
+        builder.Services.AddScoped<IScriptService, ScriptService>();
+        builder.Services.AddScoped<ICommentRepository,CommentRepository>();
+        builder.Services.AddScoped<IGroupRepository,GroupRepository>();
+        builder.Services.AddScoped<ILikeRepository,LikeRepository>();
+        builder.Services.AddScoped<IPipelineRepository,PipelineRepository>();
+        builder.Services.AddScoped<IScriptRepository,ScriptRepository>();
+        builder.Services.AddScoped<ISharingRepository,SharingRepository>();
+        builder.Services.AddScoped<IStatusRepository,StatusRepository>();
+        builder.Services.AddScoped<IUserRepository,UserRepository>();
+        builder.Services.AddSingleton<AuthentificationMiddleware>();
+
         builder.Services.AddSwaggerGen(options =>
         {
             options.SwaggerDoc(
@@ -83,7 +120,7 @@ public partial class Program
         app.UseAuthorization();
 
         app.MapControllers();
-
+        app.UseCors("AllowAll");
         app.Run();
     }
 }

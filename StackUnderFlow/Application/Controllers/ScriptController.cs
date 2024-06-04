@@ -6,5 +6,9 @@ namespace StackUnderFlow.Application.Controllers;
 [Route("[controller]")] 
 public class ScriptController : ControllerBase
 {
-    
+    [HttpGet]
+    public IActionResult GetScriptById(int id)
+    {
+        return Ok("Hello World");
+    }
 }

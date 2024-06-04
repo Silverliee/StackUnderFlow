@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 const Register = () => {
 	const [input, setInput] = useState({
 		username: "",
+		email: "",
 		password: "",
 		password2: "",
 	});
@@ -15,10 +16,11 @@ const Register = () => {
 	const auth = useAuth();
 	const handleSubmitEvent = (e) => {
 		e.preventDefault();
-		if (input.username !== "" && input.password !== "") {
+		if (input.username !== "" && input.password !== "" && input.email !== "") {
 			if (input.password === input.password2) {
 				auth.register({
 					username: input.username,
+					email: input.email,
 					password: input.password,
 				});
 				return;
@@ -49,23 +51,31 @@ const Register = () => {
 			</div>
 			<form onSubmit={handleSubmitEvent}>
 				<div className="form_control">
-					<label htmlFor="user-email">Email:</label>
+					<label htmlFor="user-email">Username: </label>
+					<input
+						type="username"
+						id="user-username"
+						name="username"
+						placeholder="Jericho777"
+						aria-describedby="user-username"
+						aria-invalid="false"
+						onChange={handleInput}
+					/>
+				</div>
+				<div className="form_control">
+					<label htmlFor="user-email">Email: </label>
 					<input
 						type="email"
 						id="user-email"
-						name="username"
+						name="email"
 						placeholder="example@yahoo.com"
 						aria-describedby="user-email"
 						aria-invalid="false"
 						onChange={handleInput}
 					/>
-					<div id="user-email" className="sr-only">
-						Please enter a valid username. It must contain at least 6
-						characters.
-					</div>
 				</div>
 				<div className="form_control">
-					<label htmlFor="password">Password:</label>
+					<label htmlFor="password">Password: </label>
 					<input
 						type="password"
 						id="password"
@@ -76,7 +86,7 @@ const Register = () => {
 					/>
 				</div>
 				<div className="form_control">
-					<label htmlFor="password">Confirm Password:</label>
+					<label htmlFor="password">Confirm Password: </label>
 					<input
 						type="password"
 						id="password2"

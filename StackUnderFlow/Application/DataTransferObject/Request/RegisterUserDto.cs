@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace StackUnderFlow.Application.DataTransferObject;
+namespace StackUnderFlow.Application.DataTransferObject.Request;
 
 public class RegisterUserDto
 {

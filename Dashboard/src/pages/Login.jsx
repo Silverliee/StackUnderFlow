@@ -3,19 +3,20 @@ import { useAuth } from "../hooks/AuthProvider";
 import { TiArrowBack } from "react-icons/ti";
 import "../styles/login.css";
 import { useNavigate } from "react-router-dom";
+import { loginRequest } from "../Axios/index.js";
 
 const Login = () => {
 	const [input, setInput] = useState({
-		username: "",
+		email: "",
 		password: "",
 	});
 	const navigate = useNavigate();
 
 	const auth = useAuth();
-	const handleSubmitEvent = (e) => {
+	const handleSubmitEvent = async (e) => {
 		console.log(input);
 		e.preventDefault();
-		if (input.username !== "" && input.password !== "") {
+		if (input.email !== "" && input.password !== "") {
 			auth.loginAction(input);
 			return;
 		}
@@ -30,7 +31,7 @@ const Login = () => {
 		}));
 	};
 
-	const handleClick = () => {
+	const handleClick = async () => {
 		console.log("clicked");
 		navigate("/");
 	};
@@ -47,7 +48,7 @@ const Login = () => {
 					<input
 						type="email"
 						id="user-email"
-						name="username"
+						name="email"
 						placeholder="example@yahoo.com"
 						aria-describedby="user-email"
 						aria-invalid="false"
