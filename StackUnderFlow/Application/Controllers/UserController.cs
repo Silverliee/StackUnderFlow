@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
 using StackUnderFlow.Application.DataTransferObject.Request;
-using StackUnderFlow.Application.DataTransferObject.Response;
 using StackUnderFlow.Domains.Services;
 
 namespace StackUnderFlow.Application.Controllers;
@@ -9,7 +8,6 @@ namespace StackUnderFlow.Application.Controllers;
 [Route("[controller]")] 
 public class UserController(ILoginService loginService) : ControllerBase
 {
-
     [HttpPost("register")]
     public async Task<IActionResult> Register(RegisterUserDto user)
     {
