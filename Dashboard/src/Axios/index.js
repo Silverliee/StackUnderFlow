@@ -28,13 +28,13 @@ export const loginRequest = async (data) => {
 	}
 };
 /*
- * register:
+ * registerRequest:
  * @param {object} data:
  * @param {string} data.userName
  * @param {string} data.email
  * @param {string} data.password
  */
-export const register = async (data) => {
+export const registerRequest = async (data) => {
 	const apiUrl = baseUrl + "User/register";
 	try {
 		const response = await axios.post(apiUrl, data, config);

@@ -1,6 +1,6 @@
 import { useContext, createContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { loginRequest, register } from "../Axios/index.js";
+import { loginRequest, registerRequest } from "../Axios/index.js";
 
 const AuthContext = createContext();
 
@@ -29,23 +29,17 @@ const AuthProvider = ({ children }) => {
 
 	const register = async (data) => {
 		console.log(`register Action ${data}`);
-		// try {
-		// 	const response = await fetch("your-api-endpoint/auth/login", {
-		// 		method: "POST",
-		// 		headers: {
-		// 			"Content-Type": "application/json",
-		// 		},
-		// 		body: JSON.stringify(data),
-		// 	});
-		// 	const res = await response.json();
-		// 	if (res.data) {
-		// 		alert("User registered successfully");
-		// 	}
-		// 	throw new Error(res.message);
-		// } catch (err) {
-		// 	console.error(err);
-		// }
-		navigate("/login");
+		try {
+			const response = await registerRequest(data);
+			if (response) {
+				alert("Registration successful");
+				navigate("/login");
+				return;
+			}
+			alert("Invalid registration credentials");
+		} catch (err) {
+			console.error(err);
+		}
 	};
 
 	const logOut = () => {
