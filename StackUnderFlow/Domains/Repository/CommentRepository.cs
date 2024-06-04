@@ -43,6 +43,7 @@ public class CommentRepository(MySqlDbContext context) : ICommentRepository
     public async Task<Comment?> DeleteComment(int id)
     {
         var comment = await context.Comments.FirstOrDefaultAsync(c => c.CommentId == id);
+
         if (comment == null)
         {
             return null;

@@ -1,0 +1,179 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\Nourdine Arbaoui\\source\\repos\\StackUnderFlow\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{00DD3035-83AE-4556-935B-3416D471E024}|StackUnderFlow\\StackUnderFlow.csproj|c:\\users\\nourdine arbaoui\\source\\repos\\stackunderflow\\stackunderflow\\application\\controllers\\socialinteractioncontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{00DD3035-83AE-4556-935B-3416D471E024}|StackUnderFlow\\StackUnderFlow.csproj|solutionrelative:stackunderflow\\application\\controllers\\socialinteractioncontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{00DD3035-83AE-4556-935B-3416D471E024}|StackUnderFlow\\StackUnderFlow.csproj|c:\\users\\nourdine arbaoui\\source\\repos\\stackunderflow\\stackunderflow\\domains\\services\\reactionservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{00DD3035-83AE-4556-935B-3416D471E024}|StackUnderFlow\\StackUnderFlow.csproj|solutionrelative:stackunderflow\\domains\\services\\reactionservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{00DD3035-83AE-4556-935B-3416D471E024}|StackUnderFlow\\StackUnderFlow.csproj|c:\\users\\nourdine arbaoui\\source\\repos\\stackunderflow\\stackunderflow\\domains\\repository\\commentrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{00DD3035-83AE-4556-935B-3416D471E024}|StackUnderFlow\\StackUnderFlow.csproj|solutionrelative:stackunderflow\\domains\\repository\\commentrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{00DD3035-83AE-4556-935B-3416D471E024}|StackUnderFlow\\StackUnderFlow.csproj|c:\\users\\nourdine arbaoui\\source\\repos\\stackunderflow\\stackunderflow\\application\\datatransferobject\\patchcommentdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{00DD3035-83AE-4556-935B-3416D471E024}|StackUnderFlow\\StackUnderFlow.csproj|solutionrelative:stackunderflow\\application\\datatransferobject\\patchcommentdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{00DD3035-83AE-4556-935B-3416D471E024}|StackUnderFlow\\StackUnderFlow.csproj|c:\\users\\nourdine arbaoui\\source\\repos\\stackunderflow\\stackunderflow\\domains\\model\\comment.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{00DD3035-83AE-4556-935B-3416D471E024}|StackUnderFlow\\StackUnderFlow.csproj|solutionrelative:stackunderflow\\domains\\model\\comment.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{00DD3035-83AE-4556-935B-3416D471E024}|StackUnderFlow\\StackUnderFlow.csproj|c:\\users\\nourdine arbaoui\\source\\repos\\stackunderflow\\stackunderflow\\domains\\repository\\icommentrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{00DD3035-83AE-4556-935B-3416D471E024}|StackUnderFlow\\StackUnderFlow.csproj|solutionrelative:stackunderflow\\domains\\repository\\icommentrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{00DD3035-83AE-4556-935B-3416D471E024}|StackUnderFlow\\StackUnderFlow.csproj|c:\\users\\nourdine arbaoui\\source\\repos\\stackunderflow\\stackunderflow\\application\\datatransferobject\\commentdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{00DD3035-83AE-4556-935B-3416D471E024}|StackUnderFlow\\StackUnderFlow.csproj|solutionrelative:stackunderflow\\application\\datatransferobject\\commentdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{00DD3035-83AE-4556-935B-3416D471E024}|StackUnderFlow\\StackUnderFlow.csproj|c:\\users\\nourdine arbaoui\\source\\repos\\stackunderflow\\stackunderflow\\application\\datatransferobject\\postcommentdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{00DD3035-83AE-4556-935B-3416D471E024}|StackUnderFlow\\StackUnderFlow.csproj|solutionrelative:stackunderflow\\application\\datatransferobject\\postcommentdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{00DD3035-83AE-4556-935B-3416D471E024}|StackUnderFlow\\StackUnderFlow.csproj|c:\\users\\nourdine arbaoui\\source\\repos\\stackunderflow\\stackunderflow\\domains\\services\\ireactionservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{00DD3035-83AE-4556-935B-3416D471E024}|StackUnderFlow\\StackUnderFlow.csproj|solutionrelative:stackunderflow\\domains\\services\\ireactionservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 307,
+          "SelectedChildIndex": 3,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "PatchCommentDto.cs",
+              "DocumentMoniker": "C:\\Users\\Nourdine Arbaoui\\source\\repos\\StackUnderFlow\\StackUnderFlow\\Application\\DataTransferObject\\PatchCommentDto.cs",
+              "RelativeDocumentMoniker": "StackUnderFlow\\Application\\DataTransferObject\\PatchCommentDto.cs",
+              "ToolTip": "C:\\Users\\Nourdine Arbaoui\\source\\repos\\StackUnderFlow\\StackUnderFlow\\Application\\DataTransferObject\\PatchCommentDto.cs",
+              "RelativeToolTip": "StackUnderFlow\\Application\\DataTransferObject\\PatchCommentDto.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAcAAAAqAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-05-27T14:39:44.852Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "Comment.cs",
+              "DocumentMoniker": "C:\\Users\\Nourdine Arbaoui\\source\\repos\\StackUnderFlow\\StackUnderFlow\\Domains\\Model\\Comment.cs",
+              "RelativeDocumentMoniker": "StackUnderFlow\\Domains\\Model\\Comment.cs",
+              "ToolTip": "C:\\Users\\Nourdine Arbaoui\\source\\repos\\StackUnderFlow\\StackUnderFlow\\Domains\\Model\\Comment.cs",
+              "RelativeToolTip": "StackUnderFlow\\Domains\\Model\\Comment.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAqwBAAAAAmAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-05-27T11:06:28.443Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "PostCommentDto.cs",
+              "DocumentMoniker": "C:\\Users\\Nourdine Arbaoui\\Source\\Repos\\StackUnderFlow\\StackUnderFlow\\Application\\DataTransferObject\\PostCommentDto.cs",
+              "RelativeDocumentMoniker": "StackUnderFlow\\Application\\DataTransferObject\\PostCommentDto.cs",
+              "ToolTip": "C:\\Users\\Nourdine Arbaoui\\Source\\Repos\\StackUnderFlow\\StackUnderFlow\\Application\\DataTransferObject\\PostCommentDto.cs",
+              "RelativeToolTip": "StackUnderFlow\\Application\\DataTransferObject\\PostCommentDto.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAgAAAAnAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-05-27T10:50:57.841Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "SocialInteractionController.cs",
+              "DocumentMoniker": "C:\\Users\\Nourdine Arbaoui\\source\\repos\\StackUnderFlow\\StackUnderFlow\\Application\\Controllers\\SocialInteractionController.cs",
+              "RelativeDocumentMoniker": "StackUnderFlow\\Application\\Controllers\\SocialInteractionController.cs",
+              "ToolTip": "C:\\Users\\Nourdine Arbaoui\\source\\repos\\StackUnderFlow\\StackUnderFlow\\Application\\Controllers\\SocialInteractionController.cs",
+              "RelativeToolTip": "StackUnderFlow\\Application\\Controllers\\SocialInteractionController.cs",
+              "ViewState": "AQIAABMAAAAAAAAAAAAgwC0AAABLAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-05-27T10:50:06.763Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "IReactionService.cs",
+              "DocumentMoniker": "C:\\Users\\Nourdine Arbaoui\\source\\repos\\StackUnderFlow\\StackUnderFlow\\Domains\\Services\\IReactionService.cs",
+              "RelativeDocumentMoniker": "StackUnderFlow\\Domains\\Services\\IReactionService.cs",
+              "ToolTip": "C:\\Users\\Nourdine Arbaoui\\source\\repos\\StackUnderFlow\\StackUnderFlow\\Domains\\Services\\IReactionService.cs",
+              "RelativeToolTip": "StackUnderFlow\\Domains\\Services\\IReactionService.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAqwAoAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-05-27T10:02:09.385Z",
+              "EditorCaption": ""
+            }
+          ]
+        },
+        {
+          "DockedWidth": 319,
+          "SelectedChildIndex": 3,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "CommentDto.cs",
+              "DocumentMoniker": "C:\\Users\\Nourdine Arbaoui\\source\\repos\\StackUnderFlow\\StackUnderFlow\\Application\\DataTransferObject\\CommentDto.cs",
+              "RelativeDocumentMoniker": "StackUnderFlow\\Application\\DataTransferObject\\CommentDto.cs",
+              "ToolTip": "C:\\Users\\Nourdine Arbaoui\\source\\repos\\StackUnderFlow\\StackUnderFlow\\Application\\DataTransferObject\\CommentDto.cs",
+              "RelativeToolTip": "StackUnderFlow\\Application\\DataTransferObject\\CommentDto.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAcAAAAqAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-05-27T14:41:10.356Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "CommentRepository.cs",
+              "DocumentMoniker": "C:\\Users\\Nourdine Arbaoui\\source\\repos\\StackUnderFlow\\StackUnderFlow\\Domains\\Repository\\CommentRepository.cs",
+              "RelativeDocumentMoniker": "StackUnderFlow\\Domains\\Repository\\CommentRepository.cs",
+              "ToolTip": "C:\\Users\\Nourdine Arbaoui\\source\\repos\\StackUnderFlow\\StackUnderFlow\\Domains\\Repository\\CommentRepository.cs",
+              "RelativeToolTip": "StackUnderFlow\\Domains\\Repository\\CommentRepository.cs",
+              "ViewState": "AQIAAAgAAAAAAAAAAAAQwBkAAABTAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-05-27T11:46:45.019Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "ICommentRepository.cs",
+              "DocumentMoniker": "C:\\Users\\Nourdine Arbaoui\\source\\repos\\StackUnderFlow\\StackUnderFlow\\Domains\\Repository\\ICommentRepository.cs",
+              "RelativeDocumentMoniker": "StackUnderFlow\\Domains\\Repository\\ICommentRepository.cs",
+              "ToolTip": "C:\\Users\\Nourdine Arbaoui\\source\\repos\\StackUnderFlow\\StackUnderFlow\\Domains\\Repository\\ICommentRepository.cs",
+              "RelativeToolTip": "StackUnderFlow\\Domains\\Repository\\ICommentRepository.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAqwBIAAAAwAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-05-27T11:43:13.836Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "ReactionService.cs",
+              "DocumentMoniker": "C:\\Users\\Nourdine Arbaoui\\source\\repos\\StackUnderFlow\\StackUnderFlow\\Domains\\Services\\ReactionService.cs",
+              "RelativeDocumentMoniker": "StackUnderFlow\\Domains\\Services\\ReactionService.cs",
+              "ToolTip": "C:\\Users\\Nourdine Arbaoui\\source\\repos\\StackUnderFlow\\StackUnderFlow\\Domains\\Services\\ReactionService.cs",
+              "RelativeToolTip": "StackUnderFlow\\Domains\\Services\\ReactionService.cs",
+              "ViewState": "AQIAADIAAAAAAAAAAAAwwE4AAAAqAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-05-27T10:03:51.852Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
