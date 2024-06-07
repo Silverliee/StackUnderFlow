@@ -33,7 +33,7 @@ public partial class Program
         String connectionString = builder.Configuration.GetConnectionString("database");
         builder.Services.AddDbContext<MySqlDbContext>(options =>
         {
-            options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
+            options.UseSqlServer(connectionString);
         });
         
         builder.Services.AddCors(options =>
@@ -63,6 +63,7 @@ public partial class Program
         builder.Services.AddScoped<ISharingRepository,SharingRepository>();
         builder.Services.AddScoped<IStatusRepository,StatusRepository>();
         builder.Services.AddScoped<IUserRepository,UserRepository>();
+        builder.Services.AddScoped<IScriptVersionRepository,ScriptVersionRepository>();
         builder.Services.AddSingleton<AuthentificationMiddleware>();
 
         builder.Services.AddSwaggerGen(options =>
