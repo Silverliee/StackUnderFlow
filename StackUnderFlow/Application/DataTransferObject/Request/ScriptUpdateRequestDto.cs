@@ -18,4 +18,5 @@ public class ScriptUpdateRequestDto
     public string Visibility { get; set; }
     [Required]
     public int ScriptId { get; set; }
+
 }

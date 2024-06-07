@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using Microsoft.AspNetCore.Mvc;
 using StackUnderFlow.Application.DataTransferObject.Request;
 using StackUnderFlow.Domains.Model;
@@ -9,7 +10,7 @@ namespace StackUnderFlow.Application.Controllers;
 [Route("[controller]")] 
 public class ScriptController(IScriptService scriptService) : ControllerBase
 {
-    [HttpGet("script/{scriptId:int}")]
+    [HttpGet("{scriptId:int}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -32,6 +33,39 @@ public class ScriptController(IScriptService scriptService) : ControllerBase
         return Ok(scripts);
     }
     
+    [HttpGet("{userId:int}/{scriptId:int}/blob")]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> GetScriptBlobByScriptId(int scriptId, int userId)
+    {
+        var blob = await scriptService.GetScriptBlobByScriptId(scriptId, userId);
+        if (blob == null)
+        {
+            return NotFound();
+        }
+        HttpContext.Response.Headers.Append("Content-Disposition", "attachment; filename=" + blob.FileName);
+        return File(blob.Blob, "application/octet-stream");
+    }
+    
+    [HttpGet("{userId:int}/{scriptVersionId:int}/versionBlob")]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> GetScriptVersionBlobById(int scriptVersionId, int userId)
+    {
+        var blob = await scriptService.GetScriptVersionBlobById(scriptVersionId);
+        if (blob == null)
+        {
+            return NotFound();
+        }
+        HttpContext.Response.Headers.Append("Content-Disposition", "attachment; filename=" + blob.FileName);
+        return File(blob.Blob, "application/octet-stream");
+    }
+    
+    [HttpGet("versions/{scriptId:int}")]
+    public async Task<IActionResult> GetScriptVersionsByScriptId(int scriptId)
+    {
+        var scriptVersions = await scriptService.GetScriptVersionsByScriptId(scriptId);
+        return Ok(scriptVersions);
+    }
+    
     [HttpPost("upload")]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -47,6 +81,15 @@ public class ScriptController(IScriptService scriptService) : ControllerBase
         return Created($"{response.ScriptId}",response);
     }
     
+    [HttpPost("upload/version")]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> AddScriptVersion([FromBody] ScriptVersionUploadRequestDto scriptVersionUploadRequestDto)
+    {
+        await scriptService.AddScriptVersion(scriptVersionUploadRequestDto);
+        return Created();
+    }
+    
     [HttpPut("update")]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -55,5 +98,25 @@ public class ScriptController(IScriptService scriptService) : ControllerBase
         await scriptService.UpdateScript(scriptUpdateRequestDto);
         return Ok();
     }
-    
+    [HttpDelete("deleteFull/{scriptId:int}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    public async Task<IActionResult> DeleteScript(int scriptId)
+    {
+        await scriptService.DeleteScriptAndVersions(scriptId);
+        return NoContent();
+    }
+    [HttpDelete("delete/version/{scriptVersionId:int}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    public async Task<IActionResult> DeleteScriptVersionById(int scriptVersionId)
+    {
+        await scriptService.DeleteScriptVersionById(scriptVersionId);
+        return NoContent();
+    }
+
+    [HttpGet("search/{keyword}")]
+    public async Task<IActionResult> GetScriptsByKeyWord(string keyword)
+    {
+        var scripts = await scriptService.GetScriptsByKeyWord(keyword);
+        return Ok(scripts);
+    }
 }

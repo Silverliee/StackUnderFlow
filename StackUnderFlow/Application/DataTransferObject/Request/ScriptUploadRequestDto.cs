@@ -1,3 +1,4 @@
+using System.Buffers.Text;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using StackUnderFlow.Domains.Model;
@@ -20,4 +21,6 @@ public class ScriptUploadRequestDto
     public string Visibility { get; set; }
     [Required]
     public int UserId { get; set; }
+    [Required]
+    public string SourceScriptBinary { get; set; }
 }

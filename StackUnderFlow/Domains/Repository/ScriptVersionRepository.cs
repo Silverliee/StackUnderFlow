@@ -45,4 +45,18 @@ public class ScriptVersionRepository(MySqlDbContext context) : IScriptVersionRep
         if (scriptVersion != null) context.ScriptVersions.Remove(scriptVersion);
         await context.SaveChangesAsync();
     }
+    
+    //get latest script version by script id
+    public async Task<ScriptVersion?> GetLatestScriptVersionByScriptId(int scriptId)
+    {
+        return await context.ScriptVersions.Where(x => x.ScriptId == scriptId).OrderByDescending(x => x.CreationDate).FirstOrDefaultAsync();
+    }
+    
+    //delete all version of a script
+    public async Task DeleteScriptVersionsByScriptId(int scriptId)
+    {
+        var scriptVersions = await context.ScriptVersions.Where(x => x.ScriptId == scriptId).ToListAsync();
+        context.ScriptVersions.RemoveRange(scriptVersions);
+        await context.SaveChangesAsync();
+    }
 }

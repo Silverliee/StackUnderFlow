@@ -15,6 +15,18 @@ public class ScriptRunnerController : ControllerBase
     {
         if (script == null || script.Length == 0)
             return BadRequest("No script file uploaded");
+        
+        using (var ms = new MemoryStream())
+        {
+            script.CopyTo(ms);
+            var fileBytes = ms.ToArray();
+            var s = Convert.ToBase64String(fileBytes);
+            Console.Write(s);
+            
+            var fileBytesBack = Convert.FromBase64String(s);
+            var ms2 = new MemoryStream(fileBytesBack);
+            
+        }
 
         var scriptPath = Path.Combine(Path.GetTempPath(), script.FileName);
         await using (var stream = System.IO.File.Create(scriptPath))

@@ -7,7 +7,9 @@ public interface IScriptVersionRepository
     Task<List<ScriptVersion>> GetAllScriptVersions();
     Task<ScriptVersion?> GetScriptVersionById(int id);
     Task<List<ScriptVersion>> GetScriptVersionsByScriptId(int scriptId);
+    Task<ScriptVersion?> GetLatestScriptVersionByScriptId(int scriptId);
     Task AddScriptVersion(ScriptVersion? scriptVersion);
     Task UpdateScriptVersion(ScriptVersion? scriptVersion);
     Task DeleteScriptVersion(int id);
+    Task DeleteScriptVersionsByScriptId(int scriptId);
 }

@@ -47,4 +47,10 @@ public class ScriptRepository(MySqlDbContext context) : IScriptRepository
         context.Scripts.Remove(script);
         await context.SaveChangesAsync();
     }
+
+    public async Task<List<Script?>> GetScriptsByKeyWord(string keyword)
+    {
+        return await context.Scripts.Where(x => x.ScriptName.Contains(keyword)).ToListAsync();
+    }
+
 }
