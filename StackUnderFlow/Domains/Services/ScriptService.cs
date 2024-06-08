@@ -147,20 +147,18 @@ public class ScriptService(IScriptRepository scriptRepository, IUserRepository u
         
         //Check with token if scriptInBdd.UserId == token.UserId
         // ....
+
+        scriptInBdd.ScriptId = scriptUpdateRequestDto.ScriptId;
+        scriptInBdd.ScriptName = scriptUpdateRequestDto.ScriptName;
+        scriptInBdd.Description = scriptUpdateRequestDto.Description;
+        scriptInBdd.InputScriptType = scriptUpdateRequestDto.InputScriptType;
+        scriptInBdd.OutputScriptType = scriptUpdateRequestDto.OutputScriptType;
+        scriptInBdd.ProgrammingLanguage = scriptUpdateRequestDto.ProgrammingLanguage;
+        scriptInBdd.Visibility = scriptUpdateRequestDto.Visibility;
+        scriptInBdd.UserId = scriptInBdd.UserId;
+        scriptInBdd.CreatorName = scriptInBdd.CreatorName;
         
-        var scriptFromRequest = new Script
-        {
-            ScriptId = scriptUpdateRequestDto.ScriptId,
-            ScriptName = scriptUpdateRequestDto.ScriptName,
-            Description = scriptUpdateRequestDto.Description,
-            InputScriptType = scriptUpdateRequestDto.InputScriptType,
-            OutputScriptType = scriptUpdateRequestDto.OutputScriptType,
-            ProgrammingLanguage = scriptUpdateRequestDto.ProgrammingLanguage,
-            Visibility = scriptUpdateRequestDto.Visibility,
-            UserId = scriptInBdd.UserId,
-            CreatorName = scriptInBdd.CreatorName
-        };
-        var scriptUpdated = await scriptRepository.UpdateScript(scriptFromRequest);
+        var scriptUpdated = await scriptRepository.UpdateScript(scriptInBdd);
         
         if (scriptUpdated == null)
         {
