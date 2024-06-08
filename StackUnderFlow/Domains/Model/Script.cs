@@ -14,6 +14,7 @@ public class Script
     public string ProgrammingLanguage { get; set; }
     public string Visibility { get; set; }
     public int UserId { get; set; }
+    public string CreatorName { get; set; }
 
     [ForeignKey("UserId")]
     public User User { get; set; }

@@ -50,7 +50,6 @@ public class ScriptRepository(MySqlDbContext context) : IScriptRepository
 
     public async Task<List<Script?>> GetScriptsByKeyWord(string keyword)
     {
-        return await context.Scripts.Where(x => x.ScriptName.Contains(keyword)).ToListAsync();
+        return await context.Scripts.Where(x => x.ScriptName.Contains(keyword) || x.Description.Contains(keyword)).ToListAsync();
     }
-
 }

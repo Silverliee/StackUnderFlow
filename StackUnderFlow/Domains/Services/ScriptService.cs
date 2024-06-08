@@ -22,7 +22,9 @@ public class ScriptService(IScriptRepository scriptRepository, IUserRepository u
             InputScriptType = script.InputScriptType,
             UserId = script.UserId,
             OutputScriptType = script.OutputScriptType,
-            ProgrammingLanguage = script.ProgrammingLanguage
+            ProgrammingLanguage = script.ProgrammingLanguage,
+            Visibility = script.Visibility,
+            CreatorName = script.CreatorName
         };
     }
     
@@ -42,7 +44,8 @@ public class ScriptService(IScriptRepository scriptRepository, IUserRepository u
             UserId = script.UserId,
             OutputScriptType = script.OutputScriptType,
             ProgrammingLanguage = script.ProgrammingLanguage,
-            Visibility = script.Visibility
+            Visibility = script.Visibility,
+            CreatorName = script.CreatorName
         }).ToList();
     }
 
@@ -98,7 +101,8 @@ public class ScriptService(IScriptRepository scriptRepository, IUserRepository u
             OutputScriptType = scriptUploadRequestDto.OutputScriptType,
             ProgrammingLanguage = scriptUploadRequestDto.ProgrammingLanguage,
             Visibility = scriptUploadRequestDto.Visibility,
-            UserId = scriptUploadRequestDto.UserId
+            UserId = scriptUploadRequestDto.UserId,
+            CreatorName = user.Username
         };
         var scriptUploaded = await scriptRepository.AddScript(script);
         if (scriptUploaded == null)
@@ -127,7 +131,8 @@ public class ScriptService(IScriptRepository scriptRepository, IUserRepository u
             UserId = script.UserId,
             OutputScriptType = script.OutputScriptType,
             ProgrammingLanguage = script.ProgrammingLanguage,
-            Visibility = script.Visibility
+            Visibility = script.Visibility,
+            CreatorName = user.Username
         };
     }
     
@@ -152,7 +157,8 @@ public class ScriptService(IScriptRepository scriptRepository, IUserRepository u
             OutputScriptType = scriptUpdateRequestDto.OutputScriptType,
             ProgrammingLanguage = scriptUpdateRequestDto.ProgrammingLanguage,
             Visibility = scriptUpdateRequestDto.Visibility,
-            UserId = scriptInBdd.UserId
+            UserId = scriptInBdd.UserId,
+            CreatorName = scriptInBdd.CreatorName
         };
         var scriptUpdated = await scriptRepository.UpdateScript(scriptFromRequest);
         
@@ -168,7 +174,9 @@ public class ScriptService(IScriptRepository scriptRepository, IUserRepository u
             InputScriptType = scriptUpdated.InputScriptType,
             UserId = scriptUpdated.UserId,
             OutputScriptType = scriptUpdated.OutputScriptType,
-            ProgrammingLanguage = scriptUpdated.ProgrammingLanguage
+            ProgrammingLanguage = scriptUpdated.ProgrammingLanguage,
+            CreatorName = scriptUpdated.CreatorName
+
         };
     }
     
@@ -258,7 +266,8 @@ public class ScriptService(IScriptRepository scriptRepository, IUserRepository u
             UserId = script.UserId,
             OutputScriptType = script.OutputScriptType,
             ProgrammingLanguage = script.ProgrammingLanguage,
-            Visibility = script.Visibility
+            Visibility = script.Visibility,
+            CreatorName = script.CreatorName
         }).ToList();
     }
 }
