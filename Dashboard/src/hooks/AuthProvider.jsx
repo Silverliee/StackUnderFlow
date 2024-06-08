@@ -1,39 +1,38 @@
 import { useContext, createContext, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { loginRequest, registerRequest } from "../Axios/index.js";
 
 const AuthContext = createContext();
 
 const AuthProvider = ({ children }) => {
 	const [user, setUser] = useState(null);
-	const [token, setToken] = useState(localStorage.getItem("site") || "");
-	const navigate = useNavigate();
-	const loginAction = async (data) => {
+	const [userId, setUserId] = useState(null);
+	const [token, setToken] = useState("");
+	const loginAction = async (data, callback) => {
 		console.log("login Action");
 		try {
 			const response = await loginRequest(data);
-
-			if (response.token) {
-				setUser(response.username);
+			console.log({ response });
+			if (response && response.token) {
+				console.log(response.user);
+				setUser(response.user);
 				setToken(response.token);
-				localStorage.setItem("site", response.token);
-				navigate("/dashboard");
-				return;
+				setUserId(response.user.userId);
+				callback();
+			} else {
+				alert("Invalid login credentials");
 			}
-			alert("Invalid login credentials");
 		} catch (err) {
 			console.error(err);
 		}
-		navigate("/login");
 	};
 
-	const register = async (data) => {
+	const register = async (data, callback) => {
 		console.log(`register Action ${data}`);
 		try {
 			const response = await registerRequest(data);
 			if (response) {
 				alert("Registration successful");
-				navigate("/login");
+				callback();
 				return;
 			}
 			alert("Invalid registration credentials");
@@ -42,16 +41,16 @@ const AuthProvider = ({ children }) => {
 		}
 	};
 
-	const logOut = () => {
+	const logout = (callback) => {
 		setUser(null);
+		setUserId(null);
 		setToken("");
-		localStorage.removeItem("site");
-		navigate("/login");
+		callback();
 	};
 
 	return (
 		<AuthContext.Provider
-			value={{ token, user, loginAction, logOut, register }}
+			value={{ token, user, userId, loginAction, logout, register }}
 		>
 			{children}
 		</AuthContext.Provider>

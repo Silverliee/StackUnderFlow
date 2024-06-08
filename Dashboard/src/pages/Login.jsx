@@ -3,7 +3,6 @@ import { useAuth } from "../hooks/AuthProvider";
 import { TiArrowBack } from "react-icons/ti";
 import "../styles/login.css";
 import { useNavigate } from "react-router-dom";
-import { loginRequest } from "../Axios/index.js";
 
 const Login = () => {
 	const [input, setInput] = useState({
@@ -11,13 +10,14 @@ const Login = () => {
 		password: "",
 	});
 	const navigate = useNavigate();
+	const navigateDashboard = () => navigate("/dashboard", { replace: true });
 
 	const auth = useAuth();
 	const handleSubmitEvent = async (e) => {
 		console.log(input);
 		e.preventDefault();
 		if (input.email !== "" && input.password !== "") {
-			auth.loginAction(input);
+			auth.loginAction(input, navigateDashboard);
 			return;
 		}
 		alert("please provide a valid input");
@@ -32,7 +32,6 @@ const Login = () => {
 	};
 
 	const handleClick = async () => {
-		console.log("clicked");
 		navigate("/");
 	};
 

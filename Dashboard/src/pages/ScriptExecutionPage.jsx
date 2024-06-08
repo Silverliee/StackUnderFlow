@@ -3,7 +3,7 @@ import "../styles/scriptPage.css";
 import { TiArrowBack } from "react-icons/ti";
 import { useNavigate } from "react-router-dom";
 
-function ScriptPage() {
+function ScriptExecutionPage() {
 	const [file, setFile] = useState(null);
 
 	const navigate = useNavigate();
@@ -12,7 +12,13 @@ function ScriptPage() {
 		console.log(file);
 	};
 	function handleChange(event) {
-		setFile(event.target.files[0]);
+		setFile(null);
+		const selectedFile = event.target.files[0];
+		if (selectedFile && selectedFile.type) {
+			setFile(selectedFile);
+		} else {
+			alert("Invalid file type");
+		}
 	}
 	return (
 		<>
@@ -31,4 +37,4 @@ function ScriptPage() {
 	);
 }
 
-export default ScriptPage;
+export default ScriptExecutionPage;

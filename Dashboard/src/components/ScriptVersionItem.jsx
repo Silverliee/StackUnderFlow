@@ -1,0 +1,36 @@
+import React from "react";
+import { ListItem, ListItemIcon, Checkbox, ListItemText } from "@mui/material";
+import DeleteIcon from "@mui/icons-material/Delete";
+import DownloadIcon from "@mui/icons-material/Download";
+import { Button } from "@mui/material";
+
+const ScriptVersionItem = ({ sv, userId, handleDelete, handleEditOnline }) => {
+	return (
+		<ListItem role={undefined} dense button>
+			<ListItemIcon>
+				<Checkbox
+					edge="start"
+					tabIndex={-1}
+					disableRipple
+					id={`${sv.scriptVersionId}`}
+				/>
+			</ListItemIcon>
+			<ListItemText
+				id={sv.scriptVersionId}
+				primary={`version: ${sv.versionNumber}`}
+				secondary={`updated on ${sv.creationDate.split("T")[0]}`}
+			/>
+			<Button onClick={() => handleEditOnline(sv.scriptVersionId)}>
+				Edit online
+			</Button>
+			<a
+				href={`http://localhost:5008/Script/${userId}/${sv.scriptVersionId}/versionBlob`}
+			>
+				<DownloadIcon></DownloadIcon>
+			</a>
+			<DeleteIcon onClick={() => handleDelete(sv.scriptVersionId)}></DeleteIcon>
+		</ListItem>
+	);
+};
+
+export default ScriptVersionItem;
