@@ -93,7 +93,7 @@ public class ScriptController(IScriptService scriptService) : ControllerBase
     [HttpPut("update")]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> UpdateScript(int scriptId, [FromBody] ScriptUpdateRequestDto scriptUpdateRequestDto)
+    public async Task<IActionResult> UpdateScript([FromBody] ScriptUpdateRequestDto scriptUpdateRequestDto)
     {
         await scriptService.UpdateScript(scriptUpdateRequestDto);
         return Ok();
