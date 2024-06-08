@@ -8,6 +8,7 @@
 
     <ItemGroup>
         <PackageReference Include="EntityFramework" Version="6.5.0-preview2-24180-01" />
+        <PackageReference Include="KubernetesClient" Version="14.0.2" />
         <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.5" />
         <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.5" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.5">
@@ -23,6 +24,11 @@
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
         <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.5.2" />
 
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Infrastructure\Kubernetes\csharp-scripts\" />
+      <Folder Include="Infrastructure\Kubernetes\python-scripts\" />
     </ItemGroup>
 
 </Project>
