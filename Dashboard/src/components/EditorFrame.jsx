@@ -1,0 +1,236 @@
+import React, { useEffect } from "react";
+import Editor from "@monaco-editor/react";
+import { Button, Input, Modal, Box } from "@mui/material";
+import { useState } from "react";
+import { getScriptVersionBlob, postScriptVersion } from "../Axios";
+import { useAuth } from "../hooks/AuthProvider";
+import UnstyledTextareaIntroduction from "./UnstyledTextareaIntroduction";
+import UnstyledInputIntroduction from "./UnstyledInputIntroduction";
+
+function EditorFrame({
+	scriptVersionIdEdited,
+	scriptName,
+	scriptId,
+	setOpenEditor,
+}) {
+	const [fileName, setFileName] = useState("");
+	const [versionNumber, setVersionNumber] = useState("");
+	const [file, setFile] = useState(null);
+	const [fileValue, setFileValue] = useState("");
+	const [newFileValue, setNewFileValue] = useState("");
+	const [comment, setComment] = useState("");
+	const [openFileNameInput, setOpenFileNameInput] = useState(false);
+	const [openVersionNumberInput, setOpenVersionNumberInput] = useState(false);
+	const { userId } = useAuth();
+	const [backup, setBackup] = useState("");
+	const [reset, setReset] = useState(false);
+	useEffect(() => {
+		handleGetScriptVersionBlob(scriptVersionIdEdited);
+	}, [scriptVersionIdEdited]);
+
+	useEffect(() => {
+		if (reset) {
+			setFileValue(backup);
+			setNewFileValue(backup);
+			setReset(false);
+		}
+	}, [reset, backup]);
+
+	const style = {
+		position: "absolute",
+		top: "50%",
+		left: "50%",
+		transform: "translate(-50%, -50%)",
+		width: 400,
+		bgcolor: "background.paper",
+		border: "2px solid #000",
+		boxShadow: 24,
+		pt: 2,
+		px: 4,
+		pb: 3,
+	};
+
+	const handleGetScriptVersionBlob = async (scriptVersionIdEdited) => {
+		//blob given as a string
+		const file = await getScriptVersionBlob(scriptVersionIdEdited, userId);
+		if (file) {
+			setFileValue(file);
+			setNewFileValue(file);
+			setFileName(file.fileName);
+			setFile(file);
+			setBackup(file);
+		}
+	};
+	function handleEditorChange(value, event) {
+		setNewFileValue(value);
+	}
+
+	function handleReset() {
+		if (confirm("Are you sure you want to discard your changes?")) {
+			setFileValue(newFileValue);
+			setReset(true);
+		}
+	}
+
+	function handleCloseAndSave() {
+		setOpenFileNameInput(false);
+		const element = document.createElement("a");
+		const file = new Blob([newFileValue], { type: "text/plain" });
+		element.href = URL.createObjectURL(file);
+		element.download = fileName;
+		comment;
+		document.body.appendChild(element); // Required for this to work in FireFox
+		element.click();
+		document.body.removeChild(element); // Clean up after the download
+		setFileValue(newFileValue);
+	}
+
+	const handleCloseAndSaveAndAddVersion = async () => {
+		setOpenVersionNumberInput(false);
+		const data = {
+			ScriptId: scriptId,
+			VersionNumber: versionNumber,
+			CreatorUserId: userId,
+			SourceScriptBinary: newFileValue,
+			Comment: comment,
+		};
+		let result = await postScriptVersion(data);
+		console.log(result);
+		if (result) {
+			alert("Script version uploaded successfully");
+		} else {
+			alert("Error uploading script version");
+		}
+	};
+
+	function clearModal() {
+		setOpenFileNameInput(false);
+		setOpenVersionNumberInput(false);
+		setComment("");
+		setVersionNumber("");
+		setFileName("");
+	}
+
+	function handleSaveAndDownload() {
+		setOpenFileNameInput(true);
+	}
+
+	function handleSaveAndAddVersion() {
+		setOpenVersionNumberInput(true);
+	}
+	function handleEditorValidation(markers) {
+		// model markers
+		markers.forEach((marker) => console.log("onValidate:", marker.message));
+	}
+
+	return (
+		<div>
+			<Modal
+				open={openFileNameInput}
+				onClose={() => clearModal()}
+				aria-labelledby="parent-modal-title"
+				aria-describedby="parent-modal-description"
+			>
+				<Box sx={{ ...style, width: 400 }}>
+					<h2 id="parent-modal-title">Add a new version of {scriptName}</h2>
+					<div
+						style={{
+							display: "flex",
+							flexDirection: "column",
+							gap: "5px",
+							marginBottom: "20px",
+						}}
+					>
+						<div>
+							<label>File name: </label>
+							<UnstyledTextareaIntroduction
+								id="file-name"
+								name="file-name"
+								handleInput={(event) => setFileName(event.target.value)}
+							/>
+						</div>
+					</div>
+					<Button
+						component="label"
+						role={undefined}
+						variant="contained"
+						tabIndex={-1}
+						onClick={handleCloseAndSave}
+						disabled={!fileName}
+					>
+						Submit
+					</Button>
+				</Box>
+			</Modal>
+			<Modal
+				open={openVersionNumberInput}
+				onClose={() => clearModal()}
+				aria-labelledby="parent-modal-title"
+				aria-describedby="parent-modal-description"
+			>
+				<Box sx={{ ...style, width: 400 }}>
+					<h2 id="parent-modal-title">Add a new version of {scriptName}</h2>
+					<div
+						style={{
+							display: "flex",
+							flexDirection: "column",
+							gap: "5px",
+							marginBottom: "20px",
+						}}
+					>
+						<div>
+							<label>Comment: </label>
+							<UnstyledTextareaIntroduction
+								id="comment"
+								name="comment"
+								handleInput={(event) => setComment(event.target.value)}
+							/>
+						</div>
+						<div>
+							<label>Version: </label>
+							<UnstyledInputIntroduction
+								id="version"
+								name="version"
+								handleInput={(event) => setVersionNumber(event.target.value)}
+							/>
+						</div>
+					</div>
+					<Button
+						component="label"
+						role={undefined}
+						variant="contained"
+						tabIndex={-1}
+						onClick={handleCloseAndSaveAndAddVersion}
+						disabled={!comment || !versionNumber}
+					>
+						Submit
+					</Button>
+				</Box>
+			</Modal>
+			<div style={{ display: "flex" }}>
+				<Button onClick={handleSaveAndDownload}>Save & Download</Button>
+				<Button onClick={handleSaveAndAddVersion}>Save & Add Version</Button>
+				<Button onClick={handleReset}>Reset</Button>
+				<Button
+					onClick={() => {
+						clearModal();
+						setOpenEditor(false);
+					}}
+				>
+					Back to details
+				</Button>
+			</div>
+			<Editor
+				height="80vh"
+				theme="vs-dark"
+				path={file?.name}
+				language={file?.name?.endsWith(".py") ? "python" : "csharp"}
+				value={fileValue}
+				onChange={handleEditorChange}
+				onValidate={handleEditorValidation}
+			/>
+		</div>
+	);
+}
+
+export default EditorFrame;

@@ -12,36 +12,22 @@ import AuthProvider from "./hooks/AuthProvider";
 import PrivateRoute from "./router/PrivateRoute";
 import Profile from "./components/Profile";
 import Register from "./pages/Register";
-import ScriptPage from "./pages/ScriptPage";
+import ScriptExecutionPage from "./pages/ScriptExecutionPage";
 import Contacts from "./pages/Contacts";
+import SharePage from "./pages/SharePage";
+import ScriptListPage from "./pages/ScriptListPage";
+import ScriptDetails from "./pages/ScriptDetails";
+import ScriptVersionPage from "./pages/ScriptVersionPage";
+import Layout from "./Layout";
+import Welcome from "./pages/Welcome";
+import EditorTest from "./pages/EditorTest";
+import EditProfile from "./pages/EditProfile";
+import ScriptModal from "./components/ScriptModal";
 
 const App = () => {
 	const [loggedIn, setLoggedIn] = useState(false);
 	const [email, setEmail] = useState("");
 
-	useEffect(() => {
-		// Fetch the user email and token from local storage
-		const user = JSON.parse(localStorage.getItem("user"));
-
-		// If the token/email does not exist, mark the user as logged out
-		if (!user || !user.token) {
-			setLoggedIn(false);
-			return;
-		}
-
-		// If the token exists, verify it with the auth server to see if it is valid
-		fetch("http://localhost:3080/verify", {
-			method: "POST",
-			headers: {
-				"jwt-token": user.token,
-			},
-		})
-			.then((r) => r.json())
-			.then((r) => {
-				setLoggedIn("success" === r.message);
-				setEmail(user.email || "");
-			});
-	}, []);
 	return (
 		<div className="App">
 			<Router>
@@ -58,21 +44,30 @@ const App = () => {
 								/>
 							}
 						/>
+						<Route exact path="/login" element={<Home />} />
 						<Route
-							path="/login"
-							element={<Login setLoggedIn={setLoggedIn} setEmail={setEmail} />}
-						/>
-						<Route
+							exact
 							path="/register"
 							element={
 								<Register setLoggedIn={setLoggedIn} setEmail={setEmail} />
 							}
 						/>
-						<Route element={<PrivateRoute />}>
-							<Route path="/dashboard" element={<Dashboard />} />
-							<Route path="/exec" element={<ScriptPage />} />
-							<Route path="/contacts" element={<Contacts />} />
-							<Route path="/profile" element={<Profile />} />
+						<Route element={<Layout />}>
+							<Route element={<PrivateRoute />}>
+								<Route path="/dashboard" element={<Welcome />} />
+								<Route path="/exec" element={<ScriptExecutionPage />} />
+								<Route path="/contacts" element={<Contacts />} />
+								<Route path="/profile" element={<Profile />} />
+								{/* <Route path="/share" element={<SharePage />} /> */}
+								<Route path="/share" element={<ScriptModal />} />
+								<Route path="/edit" element={<EditorTest />} />
+								<Route
+									path="/script/:scriptId/version"
+									element={<ScriptVersionPage />}
+								/>
+								<Route path="/script/:scriptId" element={<ScriptDetails />} />
+								<Route path="/script" element={<ScriptListPage />} />
+							</Route>
 						</Route>
 						{/* <Route exact path="*" component={NotFound} /> */}
 					</Routes>
