@@ -4,6 +4,6 @@ namespace StackUnderFlow.Domains.Services;
 
 public interface ILoginService
 {
-    public Task<RegisterUserDto> Register(RegisterUserDto user);
-    public Task<LoginUserResponseDto> Login(LoginUserDto loginUserDto);
+    public Task<RegisterUserDto?> Register(RegisterUserDto? user);
+    public Task<LoginUserResponseDto?> Login(LoginUserDto loginUserDto);
 }

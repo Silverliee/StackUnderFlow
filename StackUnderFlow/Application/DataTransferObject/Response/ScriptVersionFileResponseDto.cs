@@ -1,7 +1,7 @@
 namespace StackUnderFlow.Application.DataTransferObject.Response;
 
-public class ScriptBlobResponseDto
+public class ScriptVersionFileResponseDto
 {
-    public byte[] Blob { get; set; }
+    public byte[] File { get; set; }
     public string FileName { get; set; }
 }
