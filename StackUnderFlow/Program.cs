@@ -30,7 +30,7 @@ public partial class Program
         // Add services to the container.
 
         builder.Services.AddControllers();
-        String connectionString = builder.Configuration.GetConnectionString("database");
+        var connectionString = builder.Configuration.GetConnectionString("database");
         builder.Services.AddDbContext<MySqlDbContext>(options =>
         {
             options.UseSqlServer(connectionString);
@@ -64,7 +64,7 @@ public partial class Program
         builder.Services.AddScoped<IStatusRepository,StatusRepository>();
         builder.Services.AddScoped<IUserRepository,UserRepository>();
         builder.Services.AddScoped<IScriptVersionRepository,ScriptVersionRepository>();
-        builder.Services.AddSingleton<AuthentificationMiddleware>();
+        builder.Services.AddSingleton<AuthenticationMiddleware>();
 
         builder.Services.AddSwaggerGen(options =>
         {
@@ -99,7 +99,7 @@ public partial class Program
                     ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,
                     ValidAudience = builder.Configuration["Jwt:Audience"],
-                    ValidIssuer =builder.Configuration["Jwt:Issuer"],
+                    ValidIssuer = builder.Configuration["Jwt:Issuer"],
                     IssuerSigningKey = new SymmetricSecurityKey(
                         Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!)
                     )
