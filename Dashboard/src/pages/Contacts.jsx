@@ -5,7 +5,6 @@ import {
 	BiLogoReact,
 	BiSearch,
 } from "react-icons/bi";
-import "../styles/contacts.css";
 import { FaRegTrashAlt } from "react-icons/fa";
 
 import Image1 from "../assets/tree.jpg";
