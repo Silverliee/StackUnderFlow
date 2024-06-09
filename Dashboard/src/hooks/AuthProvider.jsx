@@ -1,22 +1,42 @@
-import { useContext, createContext, useState } from "react";
-import { loginRequest, registerRequest } from "../Axios/index.js";
+import { useContext, useEffect, createContext, useState } from "react";
+import AxiosRq from "../Axios/AxiosRequester.js";
 
 const AuthContext = createContext();
 
 const AuthProvider = ({ children }) => {
-	const [user, setUser] = useState(null);
-	const [userId, setUserId] = useState(null);
-	const [token, setToken] = useState("");
+	const [authData, setAuthData] = useState(() => {
+		const savedAuthData = localStorage.getItem("authData");
+		return savedAuthData ? JSON.parse(savedAuthData) : null;
+	});
+	const [isLoggedIn, setIsLoggedIn] = useState(!!authData);
+
+	useEffect(() => {
+		if (authData) {
+			localStorage.setItem("authData", JSON.stringify(authData));
+		} else {
+			localStorage.removeItem("authData");
+		}
+		setIsLoggedIn(!!authData);
+	}, [authData]);
+
+	useEffect(() => {
+		if (authData && authData.token) {
+			AxiosRq.getInstance().setToken(authData.token);
+		}
+	}, [authData]);
+
 	const loginAction = async (data, callback) => {
-		console.log("login Action");
 		try {
-			const response = await loginRequest(data);
-			console.log({ response });
+			const response = await AxiosRq.getInstance().loginRequest(data);
 			if (response && response.token) {
-				console.log(response.user);
-				setUser(response.user);
-				setToken(response.token);
-				setUserId(response.user.userId);
+				AxiosRq.getInstance().setToken(response.token);
+				const user = await AxiosRq.getInstance().getUserByToken();
+				setAuthData({
+					token: response.token,
+					username: user.username,
+					userId: user.userId,
+				});
+				setIsLoggedIn(true);
 				callback();
 			} else {
 				alert("Invalid login credentials");
@@ -29,7 +49,7 @@ const AuthProvider = ({ children }) => {
 	const register = async (data, callback) => {
 		console.log(`register Action ${data}`);
 		try {
-			const response = await registerRequest(data);
+			const response = await AxiosRq.getInstance().registerRequest(data);
 			if (response) {
 				alert("Registration successful");
 				callback();
@@ -42,15 +62,21 @@ const AuthProvider = ({ children }) => {
 	};
 
 	const logout = (callback) => {
-		setUser(null);
-		setUserId(null);
-		setToken("");
+		setAuthData(null);
+		localStorage.removeItem("authData");
+		setIsLoggedIn(false);
 		callback();
 	};
 
 	return (
 		<AuthContext.Provider
-			value={{ token, user, userId, loginAction, logout, register }}
+			value={{
+				authData,
+				isLoggedIn,
+				loginAction,
+				logout,
+				register,
+			}}
 		>
 			{children}
 		</AuthContext.Provider>

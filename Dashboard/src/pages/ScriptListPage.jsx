@@ -1,13 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { getScripts } from "../Axios";
+import AxiosRq from "../Axios/AxiosRequester";
 import { useAuth } from "../hooks/AuthProvider";
 import ScriptsList from "../components/ScriptsList";
 import { Container } from "@mui/material";
-import { deleteScript, getScriptBlob } from "../Axios";
 import { TiArrowBack } from "react-icons/ti";
 import { useNavigate } from "react-router-dom";
 import ListSearchResults from "./ListSearchResults";
-import { searchScriptsByKeyWord } from "../Axios";
 import UnstyledInputIntroduction from "../components/UnstyledInputIntroduction";
 import { Button } from "@mui/material";
 
@@ -22,25 +20,24 @@ function ScriptListPage() {
 	const [scriptsFoundFiltered, setScriptsFoundFiltered] = useState([]);
 	const [page, setPage] = React.useState(0);
 	const [rowsPerPage, setRowsPerPage] = React.useState(5);
-	const { userId } = useAuth();
-
+	const userId = useAuth().authData?.userId;
 	useEffect(() => {
-		const fetchScripts = async (userId) => {
-			const scriptsLoaded = await getScripts(userId);
+		const fetchScripts = async () => {
+			const scriptsLoaded = await AxiosRq.getInstance().getScripts();
 			setScriptsFound(scriptsLoaded);
 			setScriptsFoundFiltered(
-				scriptsFound.filter((script) => {
+				scriptsFound?.filter((script) => {
 					if (selectedLanguage === "Any language") return true;
 					return script.programmingLanguage === selectedLanguage;
 				})
 			);
 			setDisplay("block");
 		};
-		fetchScripts(userId);
+		fetchScripts();
 	}, [userId]);
 	useEffect(() => {
 		setScriptsFoundFiltered(
-			scriptsFound.filter((script) => {
+			scriptsFound?.filter((script) => {
 				if (selectedLanguage === "Any language") return true;
 				return script.programmingLanguage === selectedLanguage;
 			})
@@ -66,8 +63,8 @@ function ScriptListPage() {
 				"Are you sure you want to delete this script? (All version will be removed)"
 			)
 		) {
-			deleteScript(scriptId);
-			var scriptsFiltered = scriptsFound.filter(
+			AxiosRq.getInstance().deleteScript(scriptId);
+			var scriptsFiltered = scriptsFound?.filter(
 				(script) => script.scriptId !== scriptId
 			);
 			setScriptsFound(scriptsFiltered);
@@ -81,8 +78,8 @@ function ScriptListPage() {
 		) {
 			var scriptsWithoutDeletedScripts = scriptsFound;
 			selectedScripts.forEach(async (scriptId) => {
-				deleteScript(scriptId);
-				scriptsWithoutDeletedScripts = scriptsWithoutDeletedScripts.filter(
+				AxiosRq.getInstance().deleteScript(scriptId);
+				scriptsWithoutDeletedScripts = scriptsWithoutDeletedScripts?.filter(
 					(script) => script.scriptId != scriptId
 				);
 			});
@@ -95,7 +92,7 @@ function ScriptListPage() {
 		const value = event?.target?.innerHTML; // Get the selected value
 		setSelectedLanguage(value);
 		setScriptsFoundFiltered(
-			scriptsFound.filter((script) => {
+			scriptsFound?.filter((script) => {
 				if (value === "Any language") return true;
 				return script.programmingLanguage === value;
 			})
@@ -130,12 +127,14 @@ function ScriptListPage() {
 	const handleSearch = async () => {
 		setScriptsFoundFiltered(
 			scriptsFound
-				.filter((script) => {
+				?.filter((script) => {
 					if (selectedLanguage === "Any language") return true;
 					return script.programmingLanguage === selectedLanguage;
 				})
-				.filter((script) => {
-					return script.scriptName.toLowerCase().includes(search.toLowerCase());
+				?.filter((script) => {
+					return script.scriptName
+						.toLowerCase()
+						?.includes(search.toLowerCase());
 				})
 		);
 		setDisplay("block");
@@ -146,7 +145,7 @@ function ScriptListPage() {
 			setSelectedScripts([...selectedScripts, event.target.id]);
 		} else {
 			setSelectedScripts(
-				selectedScripts.filter((script) => script !== event.target.id)
+				selectedScripts?.filter((script) => script !== event.target.id)
 			);
 		}
 	};

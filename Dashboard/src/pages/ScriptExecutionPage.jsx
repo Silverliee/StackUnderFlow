@@ -24,7 +24,7 @@ function ScriptExecutionPage() {
 		<>
 			<div className="script--header">
 				<h1>Script Page Execution</h1>
-				<TiArrowBack onClick={() => navigate("/dashboard")} />
+				<TiArrowBack onClick={() => navigate("/home")} />
 			</div>
 			<div className="script--content">
 				<p>Here you can execute your scripts</p>

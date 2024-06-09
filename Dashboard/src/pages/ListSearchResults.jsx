@@ -37,7 +37,7 @@ function ListSearchResults({
 			<div id="search-results" style={{ display: display }}>
 				Results for: {search} {scriptsFoundFiltered.length} result(s)
 				<div>
-					{scriptsFoundPaginated.map((script) => (
+					{scriptsFoundPaginated?.map((script) => (
 						<ScriptItem
 							key={script.scriptId}
 							script={script}
@@ -46,7 +46,7 @@ function ListSearchResults({
 							userId={userId}
 							check={
 								selectedScripts
-									? selectedScripts.includes(script.scriptId.toString())
+									? selectedScripts?.includes(script.scriptId.toString())
 									: false
 							}
 						/>

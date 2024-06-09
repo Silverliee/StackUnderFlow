@@ -4,13 +4,13 @@ import { Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 
-function ProfileBanner({ user }) {
+function ProfileBanner({ username }) {
 	const navigate = useNavigate();
 
 	return (
 		<>
 			<div className="container--profile-banner">
-				Welcome {user.username}
+				Welcome {username}
 				<Button onClick={() => navigate("/profile")}>
 					<AccountCircleIcon />
 				</Button>

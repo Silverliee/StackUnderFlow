@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import * as React from "react";
+import React, { useEffect } from "react";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
@@ -16,10 +16,9 @@ import { useAuth } from "../hooks/AuthProvider";
 import { isValidEmail } from "../utils/utils";
 import RegisterModal from "../components/RegisterModal";
 
-export default function Home() {
+export default function WelcomePage() {
 	const [email, setEmail] = React.useState("");
 	const [password, setPassword] = React.useState("");
-
 	const [open, setOpen] = React.useState(false);
 	const [username, setUsername] = React.useState("");
 	const [emailRegister, setEmailRegister] = React.useState("");
@@ -28,7 +27,14 @@ export default function Home() {
 
 	const auth = useAuth();
 	const navigate = useNavigate();
-	const navigateDashboard = () => navigate("/dashboard", { replace: true });
+
+	useEffect(() => {
+		if (auth.isLoggedIn) {
+			navigateDashboard();
+		}
+	});
+
+	const navigateDashboard = () => navigate("/home", { replace: true });
 
 	const handleClose = () => {
 		setUsername("");
@@ -39,7 +45,6 @@ export default function Home() {
 	};
 
 	const handleSubmitEvent = async (e) => {
-		console.log({ email, password });
 		e.preventDefault();
 		if (!email !== "" && password !== "") {
 			auth.loginAction({ email, password }, navigateDashboard);

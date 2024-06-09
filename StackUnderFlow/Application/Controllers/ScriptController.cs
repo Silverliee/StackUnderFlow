@@ -1,5 +1,6 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using StackUnderFlow.Application.DataTransferObject.Request;
 using StackUnderFlow.Domains.Services;
@@ -8,6 +9,7 @@ namespace StackUnderFlow.Application.Controllers
 {
     [ApiController]
     [Route("[controller]")]
+    [EnableCors("AllowAll")]
     public class ScriptController(IScriptService scriptService) : ControllerBase
     {
         #region Script
@@ -66,6 +68,8 @@ namespace StackUnderFlow.Application.Controllers
 
             try
             {
+                var userId = Convert.ToInt32(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+                scriptUploadRequestDto.UserId = userId;
                 var response = await scriptService.AddScript(scriptUploadRequestDto);
                 if (response == null)
                 {
@@ -207,7 +211,8 @@ namespace StackUnderFlow.Application.Controllers
             {
                 return BadRequest();
             }
-
+            var userId = Convert.ToInt32(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+            scriptVersionUploadRequestDto.CreatorUserId = userId;
             try
             {
                 var response = await scriptService.AddScriptVersion(scriptVersionUploadRequestDto);

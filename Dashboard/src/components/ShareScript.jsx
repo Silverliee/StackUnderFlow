@@ -5,11 +5,10 @@ import { styled } from "@mui/material/styles";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import UnstyledTextareaIntroduction from "./UnstyledTextareaIntroduction";
 import UnstyledInputIntroduction from "./UnstyledInputIntroduction";
-import { useAuth } from "../hooks/AuthProvider";
-import { postScript } from "../Axios";
-import UnstyledSelectIntroduction from "../components/UnstyledSelectIntroduction";
+import AxiosRq from "../Axios/AxiosRequester";
+import UnstyledSelectIntroduction from "./UnstyledSelectIntroduction";
 
-const ScriptModal = ({ script }) => {
+const ShareScript = ({ script }) => {
 	const [open, setOpen] = useState(false);
 	const [file, setFile] = useState(null);
 	const [scriptName, setScriptName] = useState("");
@@ -18,8 +17,6 @@ const ScriptModal = ({ script }) => {
 	const [inputType, setInputType] = useState("None");
 	const [outputType, setOutputType] = useState("None");
 	const [visibility, setVisibility] = useState("Publique");
-
-	const auth = useAuth();
 
 	const acceptedFiles = [".py", ".cs"];
 
@@ -70,7 +67,7 @@ const ScriptModal = ({ script }) => {
 			visibility,
 			file,
 		});
-		let result = await postScript({
+		let result = await AxiosRq.getInstance().postScript({
 			ScriptName: scriptName,
 			Description: description,
 			ProgrammingLanguage: language,
@@ -78,7 +75,6 @@ const ScriptModal = ({ script }) => {
 			OutputScriptType: outputType,
 			Visibility: visibility,
 			SourceScriptBinary: file,
-			UserId: auth.userId,
 		});
 		console.log(result);
 		if (!result) {
@@ -223,4 +219,4 @@ const ScriptModal = ({ script }) => {
 	);
 };
 
-export default ScriptModal;
+export default ShareScript;

@@ -4,7 +4,12 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import DownloadIcon from "@mui/icons-material/Download";
 import { Button } from "@mui/material";
 
-const ScriptVersionItem = ({ sv, userId, handleDelete, handleEditOnline }) => {
+const ScriptVersionItem = ({
+	sv,
+	handleDelete,
+	handleEditOnline,
+	handleDownload,
+}) => {
 	return (
 		<ListItem role={undefined} dense button>
 			<ListItemIcon>
@@ -23,11 +28,7 @@ const ScriptVersionItem = ({ sv, userId, handleDelete, handleEditOnline }) => {
 			<Button onClick={() => handleEditOnline(sv.scriptVersionId)}>
 				Edit online
 			</Button>
-			<a
-				href={`http://localhost:5008/Script/${userId}/${sv.scriptVersionId}/versionBlob`}
-			>
-				<DownloadIcon></DownloadIcon>
-			</a>
+			<DownloadIcon onClick={() => handleDownload(sv)}></DownloadIcon>
 			<DeleteIcon onClick={() => handleDelete(sv.scriptVersionId)}></DeleteIcon>
 		</ListItem>
 	);

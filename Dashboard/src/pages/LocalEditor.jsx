@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import Editor from "@monaco-editor/react";
 import { Button, Input } from "@mui/material";
 
-function EditorTest() {
+function LocalEditor() {
 	const [fileName, setFileName] = useState("default.txt");
 	const [file, setFile] = useState(null);
 	const [fileValue, setFileValue] = useState("");
@@ -90,4 +90,4 @@ function EditorTest() {
 	);
 }
 
-export default EditorTest;
+export default LocalEditor;

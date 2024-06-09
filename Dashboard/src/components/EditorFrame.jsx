@@ -2,8 +2,7 @@ import React, { useEffect } from "react";
 import Editor from "@monaco-editor/react";
 import { Button, Input, Modal, Box } from "@mui/material";
 import { useState } from "react";
-import { getScriptVersionBlob, postScriptVersion } from "../Axios";
-import { useAuth } from "../hooks/AuthProvider";
+import AxiosRq from "../Axios/AxiosRequester";
 import UnstyledTextareaIntroduction from "./UnstyledTextareaIntroduction";
 import UnstyledInputIntroduction from "./UnstyledInputIntroduction";
 
@@ -21,7 +20,6 @@ function EditorFrame({
 	const [comment, setComment] = useState("");
 	const [openFileNameInput, setOpenFileNameInput] = useState(false);
 	const [openVersionNumberInput, setOpenVersionNumberInput] = useState(false);
-	const { userId } = useAuth();
 	const [backup, setBackup] = useState("");
 	const [reset, setReset] = useState(false);
 	useEffect(() => {
@@ -52,7 +50,9 @@ function EditorFrame({
 
 	const handleGetScriptVersionBlob = async (scriptVersionIdEdited) => {
 		//blob given as a string
-		const file = await getScriptVersionBlob(scriptVersionIdEdited, userId);
+		const file = await AxiosRq.getInstance().getScriptVersionBlob(
+			scriptVersionIdEdited
+		);
 		if (file) {
 			setFileValue(file);
 			setNewFileValue(file);
@@ -78,7 +78,6 @@ function EditorFrame({
 		const file = new Blob([newFileValue], { type: "text/plain" });
 		element.href = URL.createObjectURL(file);
 		element.download = fileName;
-		comment;
 		document.body.appendChild(element); // Required for this to work in FireFox
 		element.click();
 		document.body.removeChild(element); // Clean up after the download
@@ -90,11 +89,10 @@ function EditorFrame({
 		const data = {
 			ScriptId: scriptId,
 			VersionNumber: versionNumber,
-			CreatorUserId: userId,
 			SourceScriptBinary: newFileValue,
 			Comment: comment,
 		};
-		let result = await postScriptVersion(data);
+		let result = await AxiosRq.getInstance().postScriptVersion(data);
 		console.log(result);
 		if (result) {
 			alert("Script version uploaded successfully");

@@ -35,4 +35,19 @@ public class LoginService(IUserRepository userRepository, AuthenticationMiddlewa
         };
         return result;
     }
+    
+    public async Task<UserResponseDto?> GetUserById(int userId)
+    {
+        var user = await userRepository.GetUserById(userId);
+        if (user == null)
+        {
+            return null;
+        }
+        return new UserResponseDto
+        {
+            UserId = user.UserId,
+            Username = user.Username,
+            Email = user.Email
+        };
+    }
 }
