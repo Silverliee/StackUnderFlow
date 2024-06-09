@@ -260,7 +260,6 @@ class AxiosRequester {
 
 	getUserByToken = async () => {
 		const apiUrl = this.baseUrl + `User`;
-		console.log(this.getConfig());
 		try {
 			const response = await axios.get(apiUrl, this.getConfig());
 			console.log("Réponse de l'API :", { response: response });
@@ -268,6 +267,44 @@ class AxiosRequester {
 				return response.data;
 			} else {
 				return null;
+			}
+		} catch (error) {
+			console.error("Erreur lors de la requête :", error);
+		}
+	};
+
+	getFriends = async () => {
+		const apiUrl = this.baseUrl + `SocialInteraction/friends`;
+		try {
+			const response = await axios.get(apiUrl, this.getConfig());
+			console.log("Réponse de l'API :", { response: response });
+			if (response.status === 200) {
+				return response.data;
+			} else {
+				return null;
+			}
+		} catch (error) {
+			console.error("Erreur lors de la requête :", error);
+		}
+	};
+
+	deleteFriend = async (userId) => {
+		const apiUrl = this.baseUrl + `SocialInteraction/friends/${userId}`;
+		try {
+			const response = await axios.delete(apiUrl, this.getConfig());
+			console.log("Réponse de l'API :", { response: response });
+		} catch (error) {
+			console.error("Erreur lors de la requête :", error);
+		}
+	};
+
+	addFriend = async (userId) => {
+		const apiUrl = this.baseUrl + `SocialInteraction/friends/${userId}`;
+		try {
+			const response = await axios.post(apiUrl, {}, this.getConfig());
+			console.log("Réponse de l'API :", { response: response });
+			if (response.status === 201) {
+				return response.data;
 			}
 		} catch (error) {
 			console.error("Erreur lors de la requête :", error);

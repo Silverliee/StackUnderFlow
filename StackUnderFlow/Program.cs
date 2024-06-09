@@ -63,7 +63,10 @@ public partial class Program
         builder.Services.AddScoped<ISharingRepository,SharingRepository>();
         builder.Services.AddScoped<IStatusRepository,StatusRepository>();
         builder.Services.AddScoped<IUserRepository,UserRepository>();
+        builder.Services.AddScoped<ISocialInteractionService,SocialInteractionService>();
         builder.Services.AddScoped<IScriptVersionRepository,ScriptVersionRepository>();
+        builder.Services.AddScoped<IFriendRepository,FriendRepository>();
+        builder.Services.AddScoped<IFollowRepository,FollowRepository>();
         builder.Services.AddSingleton<AuthenticationMiddleware>();
 
         builder.Services.AddSwaggerGen(options =>

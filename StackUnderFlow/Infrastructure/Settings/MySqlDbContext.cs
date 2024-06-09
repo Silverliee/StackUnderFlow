@@ -21,6 +21,9 @@ public class MySqlDbContext : DbContext
     public DbSet<ScriptVersion> ScriptVersions { get; set; }
     public DbSet<Pipeline> Pipelines { get; set; }
     public DbSet<Status?> Statuses { get; set; }
+    
+    public DbSet<Friend> Friends { get; set; }
+    public DbSet<Follow> Follows { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -37,7 +40,37 @@ public class MySqlDbContext : DbContext
             .WithMany(u => u.Comments)
             .HasForeignKey(c => c.UserId)
             .OnDelete(DeleteBehavior.NoAction);
+        
+        modelBuilder.Entity<Friend>()
+            .HasKey(f => new { f.UserId1, f.UserId2 });
+        modelBuilder.Entity<Friend>()
+            .HasOne(f => f.User1)
+            .WithMany(u => u.Friends1)
+            .HasForeignKey(f => f.UserId1)
+            .OnDelete(DeleteBehavior.NoAction);
+        modelBuilder.Entity<Friend>()
+            .HasOne(f => f.User2)
+            .WithMany(u => u.Friends2)
+            .HasForeignKey(f => f.UserId2)
+            .OnDelete(DeleteBehavior.NoAction);
+        
+        // Ensure UserId1 and UserId2 are different
+        modelBuilder.Entity<Friend>()
+            .HasCheckConstraint("CK_Friend_UserIds_Different", "[UserId1] <> [UserId2]");
 
+        modelBuilder.Entity<Follow>()
+            .HasKey(f => new { f.UserId1, f.UserId2 });
+        modelBuilder.Entity<Follow>()
+            .HasOne(f => f.User1)
+            .WithMany(u => u.Follower)
+            .HasForeignKey(f => f.UserId1)
+            .OnDelete(DeleteBehavior.NoAction);
+        modelBuilder.Entity<Follow>()
+            .HasOne(f => f.User2)
+            .WithMany(u => u.Followed)
+            .HasForeignKey(f => f.UserId2)
+            .OnDelete(DeleteBehavior.NoAction);
+        
         modelBuilder.Entity<Group>()
             .HasKey(g => g.GroupId);
 
