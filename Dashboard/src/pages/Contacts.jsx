@@ -5,7 +5,6 @@ import {
 	BiLogoReact,
 	BiSearch,
 } from "react-icons/bi";
-import "../styles/contacts.css";
 import { FaRegTrashAlt } from "react-icons/fa";
 
 import Image1 from "../assets/tree.jpg";
@@ -63,12 +62,12 @@ const Contacts = () => {
 	return (
 		<>
 			<div className="contacts--header">
-				<TiArrowBack onClick={() => navigate("/dashboard")} />
+				<TiArrowBack onClick={() => navigate("/home")} />
 			</div>
 			<div className="contacts--main-container">
 				<div className="contacts--left-container">
 					<h1>Your contact list</h1>
-					{contactList.map((item, index) => (
+					{contactList?.map((item, index) => (
 						<div key={index} className="contact">
 							<img className="contact--photo" src={item.photo} alt="" />
 							<div className="contact--name">
@@ -86,7 +85,7 @@ const Contacts = () => {
 						<input type="text" placeholder="Search a contact on the site" />
 						<BiSearch className="icon" onClick={() => handleSearch()} />
 					</div>
-					{contactListSearched.map((item, index) => (
+					{contactListSearched?.map((item, index) => (
 						<div key={index} className="contact">
 							<img className="contact--photo" src={item.photo} alt="" />
 							<div className="contact--name">

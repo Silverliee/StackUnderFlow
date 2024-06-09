@@ -6,9 +6,9 @@ using StackUnderFlow.Domains.Repository;
 
 namespace StackUnderFlow.Domains.Services;
 
-public class LoginService(IUserRepository userRepository, AuthentificationMiddleware authentificationMiddleware) : ILoginService
+public class LoginService(IUserRepository userRepository, AuthenticationMiddleware authenticationMiddleware) : ILoginService
 {
-    public async Task<RegisterUserDto> Register(RegisterUserDto user)
+    public async Task<RegisterUserDto?> Register(RegisterUserDto? user)
     {
         var myUser = new User
         {
@@ -17,22 +17,37 @@ public class LoginService(IUserRepository userRepository, AuthentificationMiddle
             Password = user.Password
         };
         var result = await userRepository.CreateUser(myUser);
-        return user;
+        return result == null ? null : user;
     }
     
-    public async Task<LoginUserResponseDto> Login(LoginUserDto loginUserDto)
+    public async Task<LoginUserResponseDto?> Login(LoginUserDto loginUserDto)
     {
         var user = await userRepository.GetUserByEmail(loginUserDto.Email);
         if (user == null || user.Password != loginUserDto.Password)
         {
-            return new LoginUserResponseDto();
+            return null;
         }
-        var token = authentificationMiddleware.GenerateJwtToken(user.Username);
+        var token = authenticationMiddleware.GenerateJwtToken(user.UserId);
         var result = new LoginUserResponseDto
         {
-            User = user,
+            Username = user.Username,
             Token = token
         };
         return result;
+    }
+    
+    public async Task<UserResponseDto?> GetUserById(int userId)
+    {
+        var user = await userRepository.GetUserById(userId);
+        if (user == null)
+        {
+            return null;
+        }
+        return new UserResponseDto
+        {
+            UserId = user.UserId,
+            Username = user.Username,
+            Email = user.Email
+        };
     }
 }

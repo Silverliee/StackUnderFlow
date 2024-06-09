@@ -1,10 +1,12 @@
 using Microsoft.AspNetCore.Mvc;
 using StackUnderFlow.Infrastructure.Kubernetes;
+using Microsoft.AspNetCore.Cors;
 
 namespace StackUnderFlow.Application.Controllers;
 
 [ApiController]
 [Route("[controller]")] 
+[EnableCors("AllowAll")]
 public class ScriptRunnerController : ControllerBase
 {
     private readonly KubernetesService _kubernetesService = new();

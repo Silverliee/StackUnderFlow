@@ -1,80 +1,55 @@
 import React from "react";
-
-import Dashboard from "./pages/Dashboard";
-import { useEffect, useState } from "react";
-
 import "./App.css";
 
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import Login from "./pages/Login";
-import Home from "./pages/Home";
+import {
+	BrowserRouter as Router,
+	Route,
+	Routes,
+	Navigate,
+} from "react-router-dom";
+import WelcomePage from "./pages/WelcomePage";
 import AuthProvider from "./hooks/AuthProvider";
 import PrivateRoute from "./router/PrivateRoute";
 import Profile from "./components/Profile";
 import Register from "./pages/Register";
-import ScriptPage from "./pages/ScriptPage";
+import ScriptExecutionPage from "./pages/ScriptExecutionPage";
 import Contacts from "./pages/Contacts";
+import ScriptListPage from "./pages/ScriptListPage";
+import ScriptDetails from "./pages/ScriptDetails";
+import ScriptVersionPage from "./pages/ScriptVersionPage";
+import Layout from "./Layout";
+import HomePage from "./pages/HomePage";
+import LocalEditor from "./pages/LocalEditor";
+import EditProfile from "./pages/EditProfile";
+import ShareScript from "./components/ShareScript";
 
 const App = () => {
-	const [loggedIn, setLoggedIn] = useState(false);
-	const [email, setEmail] = useState("");
-
-	useEffect(() => {
-		// Fetch the user email and token from local storage
-		const user = JSON.parse(localStorage.getItem("user"));
-
-		// If the token/email does not exist, mark the user as logged out
-		if (!user || !user.token) {
-			setLoggedIn(false);
-			return;
-		}
-
-		// If the token exists, verify it with the auth server to see if it is valid
-		fetch("http://localhost:3080/verify", {
-			method: "POST",
-			headers: {
-				"jwt-token": user.token,
-			},
-		})
-			.then((r) => r.json())
-			.then((r) => {
-				setLoggedIn("success" === r.message);
-				setEmail(user.email || "");
-			});
-	}, []);
 	return (
 		<div className="App">
 			<Router>
 				<AuthProvider>
 					<Routes>
-						<Route
-							exact
-							path="/"
-							element={
-								<Home
-									email={email}
-									loggedIn={loggedIn}
-									setLoggedIn={setLoggedIn}
+						<Route exact path="/" element={<WelcomePage />} />
+						<Route exact path="/login" element={<WelcomePage />} />
+						<Route exact path="/register" element={<Register />} />
+						<Route element={<Layout />}>
+							<Route element={<PrivateRoute />}>
+								<Route path="/home" element={<HomePage />} />
+								<Route path="/exec" element={<ScriptExecutionPage />} />
+								<Route path="/contacts" element={<Contacts />} />
+								<Route path="/profile" element={<Profile />} />
+								<Route path="/share" element={<ShareScript />} />
+								<Route exact path="/edit" element={<LocalEditor />} />
+								<Route path="/editProfile" element={<EditProfile />} />
+								<Route
+									path="/script/:scriptId/version"
+									element={<ScriptVersionPage />}
 								/>
-							}
-						/>
-						<Route
-							path="/login"
-							element={<Login setLoggedIn={setLoggedIn} setEmail={setEmail} />}
-						/>
-						<Route
-							path="/register"
-							element={
-								<Register setLoggedIn={setLoggedIn} setEmail={setEmail} />
-							}
-						/>
-						<Route element={<PrivateRoute />}>
-							<Route path="/dashboard" element={<Dashboard />} />
-							<Route path="/exec" element={<ScriptPage />} />
-							<Route path="/contacts" element={<Contacts />} />
-							<Route path="/profile" element={<Profile />} />
+								<Route path="/script/:scriptId" element={<ScriptDetails />} />
+								<Route path="/script" element={<ScriptListPage />} />
+							</Route>
 						</Route>
-						{/* <Route exact path="*" component={NotFound} /> */}
+						<Route path="*" element={<Navigate to="/" />} />
 					</Routes>
 				</AuthProvider>
 			</Router>

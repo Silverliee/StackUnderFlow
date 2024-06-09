@@ -1,39 +1,58 @@
-import { useContext, createContext, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { loginRequest, registerRequest } from "../Axios/index.js";
+import { useContext, useEffect, createContext, useState } from "react";
+import AxiosRq from "../Axios/AxiosRequester.js";
 
 const AuthContext = createContext();
 
 const AuthProvider = ({ children }) => {
-	const [user, setUser] = useState(null);
-	const [token, setToken] = useState(localStorage.getItem("site") || "");
-	const navigate = useNavigate();
-	const loginAction = async (data) => {
-		console.log("login Action");
-		try {
-			const response = await loginRequest(data);
+	const [authData, setAuthData] = useState(() => {
+		const savedAuthData = localStorage.getItem("authData");
+		return savedAuthData ? JSON.parse(savedAuthData) : null;
+	});
+	const [isLoggedIn, setIsLoggedIn] = useState(!!authData);
 
-			if (response.token) {
-				setUser(response.username);
-				setToken(response.token);
-				localStorage.setItem("site", response.token);
-				navigate("/dashboard");
-				return;
+	useEffect(() => {
+		if (authData) {
+			localStorage.setItem("authData", JSON.stringify(authData));
+		} else {
+			localStorage.removeItem("authData");
+		}
+		setIsLoggedIn(!!authData);
+	}, [authData]);
+
+	useEffect(() => {
+		if (authData && authData.token) {
+			AxiosRq.getInstance().setToken(authData.token);
+		}
+	}, [authData]);
+
+	const loginAction = async (data, callback) => {
+		try {
+			const response = await AxiosRq.getInstance().loginRequest(data);
+			if (response && response.token) {
+				AxiosRq.getInstance().setToken(response.token);
+				const user = await AxiosRq.getInstance().getUserByToken();
+				setAuthData({
+					token: response.token,
+					username: user.username,
+					userId: user.userId,
+				});
+				setIsLoggedIn(true);
+				callback();
+			} else {
+				alert("Invalid login credentials");
 			}
-			alert("Invalid login credentials");
 		} catch (err) {
 			console.error(err);
 		}
-		navigate("/login");
 	};
 
-	const register = async (data) => {
+	const register = async (data, callback) => {
 		console.log(`register Action ${data}`);
 		try {
-			const response = await registerRequest(data);
+			const response = await AxiosRq.getInstance().registerRequest(data);
 			if (response) {
 				alert("Registration successful");
-				navigate("/login");
+				callback();
 				return;
 			}
 			alert("Invalid registration credentials");
@@ -42,16 +61,22 @@ const AuthProvider = ({ children }) => {
 		}
 	};
 
-	const logOut = () => {
-		setUser(null);
-		setToken("");
-		localStorage.removeItem("site");
-		navigate("/login");
+	const logout = (callback) => {
+		setAuthData(null);
+		localStorage.removeItem("authData");
+		setIsLoggedIn(false);
+		callback();
 	};
 
 	return (
 		<AuthContext.Provider
-			value={{ token, user, loginAction, logOut, register }}
+			value={{
+				authData,
+				isLoggedIn,
+				loginAction,
+				logout,
+				register,
+			}}
 		>
 			{children}
 		</AuthContext.Provider>

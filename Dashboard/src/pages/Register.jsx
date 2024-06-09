@@ -18,11 +18,14 @@ const Register = () => {
 		e.preventDefault();
 		if (input.username !== "" && input.password !== "" && input.email !== "") {
 			if (input.password === input.password2) {
-				auth.register({
-					username: input.username,
-					email: input.email,
-					password: input.password,
-				});
+				auth.register(
+					{
+						username: input.username,
+						email: input.email,
+						password: input.password,
+					},
+					() => navigate("/login")
+				);
 				return;
 			}
 			alert("passwords do not match");
