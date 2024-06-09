@@ -5,8 +5,8 @@ import ProfileBanner from "./components/ProfileBanner";
 import { useAuth } from "./hooks/AuthProvider";
 
 const Layout = () => {
-	const { user } = useAuth();
-	console.log("User in Layout:", user);
+	const username = useAuth().authData?.username;
+
 	return (
 		<div className="container--layout">
 			<div className="sidebar">
@@ -16,7 +16,7 @@ const Layout = () => {
 				className="content"
 				style={{ display: "flex", flexDirection: "column" }}
 			>
-				<ProfileBanner user={user} />
+				<ProfileBanner username={username} />
 				<Outlet />
 			</div>
 		</div>

@@ -9,6 +9,7 @@ import {
 import DeleteIcon from "@mui/icons-material/Delete";
 import DownloadIcon from "@mui/icons-material/Download";
 import { Link, useLocation } from "react-router-dom";
+import AxiosRq from "../Axios/AxiosRequester";
 
 export const ScriptItem = ({
 	script,
@@ -20,6 +21,21 @@ export const ScriptItem = ({
 	const location = useLocation();
 	const pathSegments = location.pathname.split("/");
 	const lastSegment = pathSegments[pathSegments.length - 1] || "/";
+
+	const handleDownload = async () => {
+		const data = await AxiosRq.getInstance().getScriptVersionBlob(
+			script.scriptId
+		);
+		const element = document.createElement("a");
+		const file = new Blob([data], { type: "text/plain" });
+		element.href = URL.createObjectURL(file);
+		element.download =
+			script.scriptName +
+			(script.programmingLanguage == "Python" ? ".py" : ".cs");
+		document.body.appendChild(element); // Required for this to work in FireFox
+		element.click();
+		document.body.removeChild(element);
+	};
 
 	return (
 		<ListItem key={script.scriptId} role={undefined} dense button>
@@ -46,11 +62,7 @@ export const ScriptItem = ({
 				primary={"By " + script.creatorName}
 			/>{" "}
 			<Link to={`/script/${script.scriptId}`}>See details</Link>
-			<a
-				href={`http://localhost:5008/Script/${userId}/${script.scriptId}/blob`}
-			>
-				<DownloadIcon></DownloadIcon>
-			</a>
+			<DownloadIcon onClick={handleDownload}></DownloadIcon>
 			{lastSegment == "script" && script.userId === userId && (
 				<DeleteIcon onClick={() => handleDelete(script.scriptId)}></DeleteIcon>
 			)}

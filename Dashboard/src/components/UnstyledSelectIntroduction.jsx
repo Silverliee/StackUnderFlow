@@ -19,7 +19,7 @@ export default function UnstyledSelectIntroduction({
 			onChange={handleSelectChange}
 		>
 			<Option value="Any">Any language</Option>
-			{options.map((option, index) => (
+			{options?.map((option, index) => (
 				<Option value={option} key={index}>
 					{option}
 				</Option>

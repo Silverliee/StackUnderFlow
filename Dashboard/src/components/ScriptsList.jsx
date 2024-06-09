@@ -6,6 +6,7 @@ import { useAuth } from "../hooks/AuthProvider";
 import ScriptItem from "./ScriptItem";
 
 const ScriptsList = ({ scripts, handleDelete }) => {
+	const userId = useAuth().authData?.userId;
 	const handleClick = (script) => {
 		console.log(script);
 	};
@@ -15,16 +16,14 @@ const ScriptsList = ({ scripts, handleDelete }) => {
 		console.log(scripts);
 	});
 
-	const { userId } = useAuth();
-
 	return (
 		<>
 			<div>My scripts</div>
 			<List id="scriptsList">
 				{scripts.length > 0 &&
 					scripts
-						.filter((item) => item.userId == userId)
-						.map((script) => (
+						?.filter((item) => item.userId == userId)
+						?.map((script) => (
 							<ScriptItem
 								key={script.scriptId}
 								script={script}
@@ -38,8 +37,8 @@ const ScriptsList = ({ scripts, handleDelete }) => {
 			<List id="scriptsList">
 				{scripts.length > 0 &&
 					scripts
-						.filter((item) => item.userId != userId)
-						.map((script) => (
+						?.filter((item) => item.userId != userId)
+						?.map((script) => (
 							<ScriptItem
 								key={script.scriptId}
 								script={script}

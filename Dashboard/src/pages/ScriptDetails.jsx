@@ -1,13 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { TiArrowBack } from "react-icons/ti";
-import {
-	getScriptVersions,
-	getScriptById,
-	deleteScriptVersion,
-	deleteScript,
-	updateScript,
-} from "../Axios";
+import AxiosRq from "../Axios/AxiosRequester";
 
 import { List } from "@mui/material";
 import ScriptVersionModal from "../components/ScriptVersionModal";
@@ -21,7 +15,6 @@ import { ThumbUpFilled as ThumbUpOffAltIcon } from "@mui/icons-material/ThumbUpO
 import { ThumbUp as ThumbUpAltIcon } from "@mui/icons-material/ThumbUpAlt";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import EditIcon from "@mui/icons-material/Edit";
-import { postScriptVersion } from "../Axios";
 import { Modal, Box } from "@mui/material";
 import Button from "@mui/material/Button";
 import UnstyledTextareaIntroduction from "../components/UnstyledTextareaIntroduction";
@@ -50,23 +43,26 @@ const ScriptDetails = () => {
 	const [language, setLanguage] = useState(script.programmingLanguage);
 	const [visibility, setVisibility] = useState(script.visibility);
 	const [updated, setUpdated] = useState(false);
-	const { userId } = useAuth();
-
+	const userId = useAuth().authData?.userId;
 	useEffect(() => {
-		getScriptById(scriptId).then((script) => {
-			setScript(script);
-			console.log(script);
-			setNewDescription(script.description);
-			setNewScriptName(script.scriptName);
-			setNewInputType(script.inputScriptType);
-			setNewOutputType(script.outputScriptType);
-			setNewVisibility(script.visibility);
-			setLanguage(script.programmingLanguage);
-			setVisibility(script.visibility);
-		});
-		getScriptVersions(scriptId).then((data) => {
-			setScriptVersions(data);
-		});
+		AxiosRq.getInstance()
+			.getScriptById(scriptId)
+			.then((script) => {
+				setScript(script);
+				console.log(script);
+				setNewDescription(script.description);
+				setNewScriptName(script.scriptName);
+				setNewInputType(script.inputScriptType);
+				setNewOutputType(script.outputScriptType);
+				setNewVisibility(script.visibility);
+				setLanguage(script.programmingLanguage);
+				setVisibility(script.visibility);
+			});
+		AxiosRq.getInstance()
+			.getScriptVersions(scriptId)
+			.then((data) => {
+				setScriptVersions(data);
+			});
 	}, [scriptId, updated]);
 
 	useEffect(() => {
@@ -100,12 +96,15 @@ const ScriptDetails = () => {
 		) {
 			if (deleteVersion) {
 				//remove last script version and script from DB
-				deleteScript(scriptId);
+				AxiosRq.getInstance().deleteScript(scriptId);
 				navigate("/script");
 			} else {
-				deleteScriptVersion(scriptVersionId, deleteVersion);
+				AxiosRq.getInstance().deleteScriptVersion(
+					scriptVersionId,
+					deleteVersion
+				);
 			}
-			var scriptVersionsFiltered = scriptVersions.filter(
+			var scriptVersionsFiltered = scriptVersions?.filter(
 				(scriptVersion) => scriptVersion.scriptVersionId !== scriptVersionId
 			);
 			setScriptVersions(scriptVersionsFiltered);
@@ -120,10 +119,9 @@ const ScriptDetails = () => {
 
 	const handleSubmitEvent = async () => {
 		console.log("submitting", comment, version, file);
-		let result = await postScriptVersion({
+		let result = await AxiosRq.getInstance().postScriptVersion({
 			ScriptId: script.scriptId,
 			VersionNumber: version,
-			CreatorUserId: userId,
 			SourceScriptBinary: file,
 			Comment: comment,
 		});
@@ -136,9 +134,10 @@ const ScriptDetails = () => {
 		setFile(null);
 		setComment("");
 		setVersion("");
+		handleCloseAddVersion();
 	};
 	const handleSubmitUpdateEvent = async () => {
-		const result = await updateScript({
+		const result = await AxiosRq.getInstance().updateScript({
 			ScriptId: script.scriptId,
 			ScriptName: newScriptName,
 			Description: newDescription,
@@ -165,6 +164,24 @@ const ScriptDetails = () => {
 		setFile(selectedFile);
 		console.log(selectedFile);
 	}
+
+	const handleDownload = async (scriptVersion) => {
+		const data = await AxiosRq.getInstance().getScriptVersionBlob(
+			scriptVersion.scriptVersionId
+		);
+		console.log(scriptVersion);
+		const element = document.createElement("a");
+		const file = new Blob([data], { type: "text/plain" });
+		element.href = URL.createObjectURL(file);
+		element.download =
+			script.scriptName +
+			`_v${scriptVersion.versionNumber}_` +
+			scriptVersion.creationDate.split("T")[0] +
+			(script.programmingLanguage == "Python" ? ".py" : ".cs");
+		document.body.appendChild(element); // Required for this to work in FireFox
+		element.click();
+		document.body.removeChild(element);
+	};
 
 	const handleOpenAddVersion = () => {
 		setOpenAddVersion(true);
@@ -225,13 +242,14 @@ const ScriptDetails = () => {
 							Script versions
 						</Typography>
 						<List dense={dense}>
-							{scriptVersions.map((sv) => (
+							{scriptVersions?.map((sv) => (
 								<ScriptVersionItem
 									key={sv.scriptVersionId}
 									sv={sv}
 									userId={userId}
 									handleDelete={handleDelete}
 									handleEditOnline={handleEditOnline}
+									handleDownload={handleDownload}
 								></ScriptVersionItem>
 							))}
 						</List>

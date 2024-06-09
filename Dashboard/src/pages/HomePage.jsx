@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
 import UnstyledInputIntroduction from "../components/UnstyledInputIntroduction";
-import { searchScriptsByKeyWord } from "../Axios";
+import AxiosRq from "../Axios/AxiosRequester";
 import { Button } from "@mui/material";
 
 import { useAuth } from "../hooks/AuthProvider";
 
 import ListSearchResults from "./ListSearchResults";
 
-function Welcome() {
+function HomePage() {
 	const [search, setSearch] = React.useState("");
 	const [display, setDisplay] = React.useState("none");
 	const [scriptsFound, setScriptsFound] = React.useState([]);
@@ -17,6 +17,7 @@ function Welcome() {
 	const [scriptsFoundFiltered, setScriptsFoundFiltered] = useState([]);
 	const [page, setPage] = React.useState(0);
 	const [rowsPerPage, setRowsPerPage] = React.useState(5);
+	const userId = useAuth().authData?.userId;
 
 	const handleChangePage = (event, newPage) => {
 		setPage(newPage);
@@ -26,7 +27,6 @@ function Welcome() {
 		setRowsPerPage(parseInt(event.target.value, 10));
 		setPage(0);
 	};
-	const { userId } = useAuth();
 
 	useEffect(() => {
 		setScriptsFoundPaginated(
@@ -40,7 +40,7 @@ function Welcome() {
 		const value = event?.target?.innerHTML; // Get the selected value
 		setSelectedLanguage(value);
 		setScriptsFoundFiltered(
-			scriptsFound.filter((script) => {
+			scriptsFound?.filter((script) => {
 				if (value === "Any language") return true;
 				return script.programmingLanguage === value;
 			})
@@ -67,11 +67,13 @@ function Welcome() {
 
 	const handleSearch = async () => {
 		if (search.length > 3) {
-			const scriptsFound = await searchScriptsByKeyWord(search);
+			const scriptsFound = await AxiosRq.getInstance().searchScriptsByKeyWord(
+				search
+			);
 			console.log("Scripts found :", scriptsFound);
 			setScriptsFound(scriptsFound);
 			setScriptsFoundFiltered(
-				scriptsFound.filter((script) => {
+				scriptsFound?.filter((script) => {
 					if (selectedLanguage === "Any language") return true;
 					return script.programmingLanguage === selectedLanguage;
 				})
@@ -83,10 +85,6 @@ function Welcome() {
 	};
 
 	const handleClick = () => {};
-
-	const handlePageChange = (event, newPage) => {
-		setPage(newPage);
-	};
 
 	return (
 		<>
@@ -127,4 +125,4 @@ function Welcome() {
 	);
 }
 
-export default Welcome;
+export default HomePage;
