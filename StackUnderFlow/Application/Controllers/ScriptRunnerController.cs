@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using StackUnderFlow.Infrastructure.Kubernetes;
 using Microsoft.AspNetCore.Cors;
@@ -12,6 +13,7 @@ public class ScriptRunnerController() : ControllerBase
     private readonly KubernetesService _kubernetesService = new();
     
     [HttpPost]
+    [Authorize]
     public async Task<IActionResult> ExecuteScript(
         IFormFile? script)
     {
