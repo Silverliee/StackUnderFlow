@@ -330,10 +330,10 @@ const ScriptDetails = () => {
 							<UnstyledSelectIntroduction
 								id="visibility"
 								name="visibility"
-								options={["Publique", "Privé"]}
+								options={["Public", "Friend", "Group", "Private"]}
 								value={visibility}
 								handleInput={(event) => setNewVisibility(event.target.value)}
-								defaultValue="Publique"
+								defaultValue="Public"
 							/>
 						</div>
 					</div>

@@ -16,8 +16,9 @@ public class User
     public ICollection<Sharing> Sharings { get; set; }
     public ICollection<ScriptVersion> Versions { get; set; }
     public ICollection<Pipeline> Pipelines { get; set; }
-    public ICollection<Friend> Friends1 { get; set; }
-    public ICollection<Friend> Friends2 { get; set; }
+    public ICollection<FriendRequest> Friends { get; set; }
     public ICollection<Follow> Follower { get; set; }
     public ICollection<Follow> Followed { get; set; }
+    public ICollection<GroupRequest> GroupRequests { get; set; }
+
 }

@@ -12,6 +12,7 @@ public class Script
     public string InputScriptType { get; set; }
     public string OutputScriptType { get; set; }
     public string ProgrammingLanguage { get; set; }
+    // Visibility can be "Public", "Friend", "Group", "Private"
     public string Visibility { get; set; }
     public int UserId { get; set; }
     public string CreatorName { get; set; }

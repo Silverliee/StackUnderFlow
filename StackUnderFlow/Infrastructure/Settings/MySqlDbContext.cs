@@ -20,10 +20,12 @@ public class MySqlDbContext : DbContext
     public DbSet<Sharing> Sharings { get; set; }
     public DbSet<ScriptVersion> ScriptVersions { get; set; }
     public DbSet<Pipeline> Pipelines { get; set; }
-    public DbSet<Status?> Statuses { get; set; }
+    public DbSet<Status> Statuses { get; set; }
     
-    public DbSet<Friend> Friends { get; set; }
+    public DbSet<FriendRequest> Friends { get; set; }
     public DbSet<Follow> Follows { get; set; }
+    
+    public DbSet<GroupRequest> GroupRequests { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -41,22 +43,26 @@ public class MySqlDbContext : DbContext
             .HasForeignKey(c => c.UserId)
             .OnDelete(DeleteBehavior.NoAction);
         
-        modelBuilder.Entity<Friend>()
+        modelBuilder.Entity<FriendRequest>()
             .HasKey(f => new { f.UserId1, f.UserId2 });
-        modelBuilder.Entity<Friend>()
+        modelBuilder.Entity<FriendRequest>()
             .HasOne(f => f.User1)
-            .WithMany(u => u.Friends1)
+            .WithMany(u => u.Friends)
             .HasForeignKey(f => f.UserId1)
             .OnDelete(DeleteBehavior.NoAction);
-        modelBuilder.Entity<Friend>()
-            .HasOne(f => f.User2)
-            .WithMany(u => u.Friends2)
-            .HasForeignKey(f => f.UserId2)
-            .OnDelete(DeleteBehavior.NoAction);
         
-        // Ensure UserId1 and UserId2 are different
-        modelBuilder.Entity<Friend>()
-            .HasCheckConstraint("CK_Friend_UserIds_Different", "[UserId1] <> [UserId2]");
+        modelBuilder.Entity<GroupRequest>()
+            .HasKey(gr => new { gr.GroupId, gr.UserId });
+
+        modelBuilder.Entity<GroupRequest>()
+            .HasOne(gr => gr.User)
+            .WithMany(u => u.GroupRequests)
+            .HasForeignKey(gr => gr.UserId);
+
+        modelBuilder.Entity<GroupRequest>()
+            .HasOne(gr => gr.Group)
+            .WithMany(g => g.GroupRequests)
+            .HasForeignKey(gr => gr.GroupId);
 
         modelBuilder.Entity<Follow>()
             .HasKey(f => new { f.UserId1, f.UserId2 });

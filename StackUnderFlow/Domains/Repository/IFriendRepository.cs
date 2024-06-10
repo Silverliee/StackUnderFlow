@@ -4,11 +4,15 @@ namespace StackUnderFlow.Domains.Repository;
 
 public interface IFriendRepository
 {
-    public Task<List<Friend>> GetAllFriends();
-
-    public Task<List<Friend>> GetFriendsByUserId(int id);
+    public Task<List<FriendRequest>> GetAllFriends();
     
-    public Task<Friend?> AddFriend(int userId, int friendId);
+    public Task<FriendRequest?> GetFriendRequest(int userId, int friendId);
+
+    public Task<List<FriendRequest>> GetFriendsByUserId(int id);
+    
+    public Task<FriendRequest?> CreateFriendRequest(int userId, int friendId);
 
     public Task RemoveFriend(int userId, int friendId);
+    
+    public Task<FriendRequest> AcceptFriendRequest(FriendRequest friendRequest);
 }
