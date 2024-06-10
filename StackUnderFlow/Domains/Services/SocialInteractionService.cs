@@ -28,9 +28,9 @@ public class SocialInteractionService(IFriendRepository friendRepository, IFollo
         await friendRepository.RemoveFriend(userId,friendId);
     }
     
-    public async Task<UserResponseDto?> CreateFriendRequest(int userId, int friendId)
+    public async Task<UserResponseDto?> CreateFriendRequest(int userId, int friendId, string message)
     {
-        var user = await friendRepository.CreateFriendRequest(userId,friendId);
+        var user = await friendRepository.CreateFriendRequest(userId,friendId,message);
         if (user == null)
         {
             return null;
@@ -54,7 +54,8 @@ public class SocialInteractionService(IFriendRepository friendRepository, IFollo
         {
             UserId = friendRequest.UserId1,
             FriendId = friendRequest.UserId2,
-            Status = friendRequest.Status
+            Status = friendRequest.Status,
+            Message = friendRequest.Message
         };
     }
 

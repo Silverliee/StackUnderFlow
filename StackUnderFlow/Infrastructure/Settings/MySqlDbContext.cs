@@ -12,8 +12,8 @@ public class MySqlDbContext : DbContext
         _configuration = configuration;
     }
 
-    public DbSet<User?> Users { get; set; }
-    public DbSet<Script?> Scripts { get; set; }
+    public DbSet<User> Users { get; set; }
+    public DbSet<Script> Scripts { get; set; }
     public DbSet<Like> Likes { get; set; }
     public DbSet<Comment> Comments { get; set; }
     public DbSet<Group> Groups { get; set; }

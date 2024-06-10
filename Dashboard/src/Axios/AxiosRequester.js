@@ -298,10 +298,14 @@ class AxiosRequester {
 		}
 	};
 
-	createFriendRequest = async (friendId) => {
+	createFriendRequest = async (friendId, message) => {
 		const apiUrl = this.baseUrl + `SocialInteraction/friends/${friendId}`;
 		try {
-			const response = await axios.post(apiUrl, {}, this.getConfig());
+			const response = await axios.post(
+				apiUrl,
+				{ Message: message },
+				this.getConfig()
+			);
 			console.log("Réponse de l'API :", { response: response });
 			if (response.status === 201) {
 				return response.data;
@@ -485,11 +489,15 @@ class AxiosRequester {
 		}
 	};
 
-	inviteUserToGroup = async (groupId, userId) => {
+	inviteUserToGroup = async (groupId, userId, message) => {
 		const apiUrl =
 			this.baseUrl + `SocialInteraction/groups/${groupId}/${userId}`;
 		try {
-			const response = await axios.post(apiUrl, {}, this.getConfig());
+			const response = await axios.post(
+				apiUrl,
+				{ Message: message },
+				this.getConfig()
+			);
 			console.log("Réponse de l'API :", { response: response });
 			if (response.status === 201) {
 				return response.data;

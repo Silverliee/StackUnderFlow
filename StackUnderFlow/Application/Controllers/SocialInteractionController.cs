@@ -39,12 +39,12 @@ public class SocialInteractionController(ISocialInteractionService socialInterac
     [Authorize]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> CreateFriendRequest(int friendId)
+    public async Task<IActionResult> CreateFriendRequest(int friendId, [FromBody] string message)
     {
         var userId = Convert.ToInt32(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
         try
         {
-            var friend = await socialInteractionService.CreateFriendRequest(userId, friendId);
+            var friend = await socialInteractionService.CreateFriendRequest(userId, friendId, message);
             if (friend == null)
             {
                 return BadRequest();
