@@ -288,6 +288,21 @@ class AxiosRequester {
 		}
 	};
 
+	getFriendRequests = async () => {
+		const apiUrl = this.baseUrl + `SocialInteraction/friends/requests`;
+		try {
+			const response = await axios.get(apiUrl, this.getConfig());
+			console.log("Réponse de l'API :", { response: response });
+			if (response.status === 200) {
+				return response.data;
+			} else {
+				return null;
+			}
+		} catch (error) {
+			console.error("Erreur lors de la requête :", error);
+		}
+	};
+
 	deleteFriend = async (userId) => {
 		const apiUrl = this.baseUrl + `SocialInteraction/friends/${userId}`;
 		try {

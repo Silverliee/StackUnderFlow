@@ -23,6 +23,22 @@ public class SocialInteractionService(IFriendRepository friendRepository, IFollo
         }).ToList();
     }
     
+    public async Task<List<FriendRequestResponseDto>> GetFriendRequestsByUserId(int userId)
+    {
+        var friendRequests = await friendRepository.GetFriendRequestsByUserId(userId);
+        if (friendRequests.Count == 0)
+        {
+            return [];
+        }
+        return friendRequests.Select(f => new FriendRequestResponseDto
+        {
+            UserId = f.UserId1,
+            FriendId = f.UserId2,
+            Status = f.Status,
+            Message = f.Message
+        }).ToList();
+    }
+    
     public async Task RemoveFriend(int userId, int friendId)
     {
         await friendRepository.RemoveFriend(userId,friendId);

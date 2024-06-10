@@ -21,6 +21,12 @@ public class FriendRepository(MySqlDbContext context) : IFriendRepository
         return await context.Friends.FirstOrDefaultAsync(f => f.UserId1 == userId && f.UserId2 == friendId || f.UserId1 == friendId && f.UserId2 == userId);
     }
 
+    public async Task<List<FriendRequest>> GetFriendRequestsByUserId(int id)
+    {
+        return await context.Friends.Where(f => f.UserId2 == id && f.Status == "Pending").ToListAsync();
+    }
+
+
     public async Task<FriendRequest> AcceptFriendRequest(FriendRequest friendRequest)
     {
         var result = context.Friends.Update(friendRequest);

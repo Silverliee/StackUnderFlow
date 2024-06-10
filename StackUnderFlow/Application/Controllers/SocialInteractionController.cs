@@ -35,6 +35,25 @@ public class SocialInteractionController(ISocialInteractionService socialInterac
         }
     }
     
+    [HttpGet("friends/request")]
+    [Authorize]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> GetFriendRequests()
+    {
+        var userId = Convert.ToInt32(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+        try
+        {
+            var requests = await socialInteractionService.GetFriendRequestsByUserId(userId);
+            return Ok(requests);
+        }
+        catch
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
+    }
+    
     [HttpPost("friends/{friendId:int}")]
     [Authorize]
     [ProducesResponseType(StatusCodes.Status201Created)]
@@ -328,7 +347,7 @@ public class SocialInteractionController(ISocialInteractionService socialInterac
         }
     }
     
-    [HttpPost("groups/{groupId:int}/{memberId:int")]
+    [HttpPost("groups/{groupId:int}/{memberId:int}")]
     [Authorize]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]

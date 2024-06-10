@@ -22,6 +22,7 @@ import HomePage from "./pages/HomePage";
 import LocalEditor from "./pages/LocalEditor";
 import EditProfile from "./pages/EditProfile";
 import ShareScript from "./components/ShareScript";
+import MessagePage from "./pages/MessagePage";
 
 const App = () => {
 	return (
@@ -41,6 +42,7 @@ const App = () => {
 								<Route path="/share" element={<ShareScript />} />
 								<Route exact path="/edit" element={<LocalEditor />} />
 								<Route path="/editProfile" element={<EditProfile />} />
+								<Route path="/message" element={<MessagePage />} />
 								<Route
 									path="/script/:scriptId/version"
 									element={<ScriptVersionPage />}

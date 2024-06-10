@@ -192,7 +192,7 @@ const ShareScript = ({ script }) => {
 							options={["Public", "Friend", "Group", "Private"]}
 							value={visibility}
 							handleInput={(event) => setVisibility(event.target.value)}
-							defaultValue="Public"
+							defaultValue={visibility}
 						/>
 					</div>
 				</div>
