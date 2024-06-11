@@ -12,15 +12,20 @@ public class MySqlDbContext : DbContext
         _configuration = configuration;
     }
 
-    public DbSet<User?> Users { get; set; }
-    public DbSet<Script?> Scripts { get; set; }
+    public DbSet<User> Users { get; set; }
+    public DbSet<Script> Scripts { get; set; }
     public DbSet<Like> Likes { get; set; }
     public DbSet<Comment> Comments { get; set; }
     public DbSet<Group> Groups { get; set; }
     public DbSet<Sharing> Sharings { get; set; }
     public DbSet<ScriptVersion> ScriptVersions { get; set; }
     public DbSet<Pipeline> Pipelines { get; set; }
-    public DbSet<Status?> Statuses { get; set; }
+    public DbSet<Status> Statuses { get; set; }
+    
+    public DbSet<FriendRequest> Friends { get; set; }
+    public DbSet<Follow> Follows { get; set; }
+    
+    public DbSet<GroupRequest> GroupRequests { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -37,7 +42,41 @@ public class MySqlDbContext : DbContext
             .WithMany(u => u.Comments)
             .HasForeignKey(c => c.UserId)
             .OnDelete(DeleteBehavior.NoAction);
+        
+        modelBuilder.Entity<FriendRequest>()
+            .HasKey(f => new { f.UserId1, f.UserId2 });
+        modelBuilder.Entity<FriendRequest>()
+            .HasOne(f => f.User1)
+            .WithMany(u => u.Friends)
+            .HasForeignKey(f => f.UserId1)
+            .OnDelete(DeleteBehavior.NoAction);
+        
+        modelBuilder.Entity<GroupRequest>()
+            .HasKey(gr => new { gr.GroupId, gr.UserId });
 
+        modelBuilder.Entity<GroupRequest>()
+            .HasOne(gr => gr.User)
+            .WithMany(u => u.GroupRequests)
+            .HasForeignKey(gr => gr.UserId);
+
+        modelBuilder.Entity<GroupRequest>()
+            .HasOne(gr => gr.Group)
+            .WithMany(g => g.GroupRequests)
+            .HasForeignKey(gr => gr.GroupId);
+
+        modelBuilder.Entity<Follow>()
+            .HasKey(f => new { f.UserId1, f.UserId2 });
+        modelBuilder.Entity<Follow>()
+            .HasOne(f => f.User1)
+            .WithMany(u => u.Follower)
+            .HasForeignKey(f => f.UserId1)
+            .OnDelete(DeleteBehavior.NoAction);
+        modelBuilder.Entity<Follow>()
+            .HasOne(f => f.User2)
+            .WithMany(u => u.Followed)
+            .HasForeignKey(f => f.UserId2)
+            .OnDelete(DeleteBehavior.NoAction);
+        
         modelBuilder.Entity<Group>()
             .HasKey(g => g.GroupId);
 

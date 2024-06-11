@@ -18,7 +18,7 @@ export default function UnstyledSelectIntroduction({
 			id="select"
 			onChange={handleSelectChange}
 		>
-			<Option value="Any">Any language</Option>
+			{defaultValue == "Any" && <Option value="Any">Any language</Option>}
 			{options?.map((option, index) => (
 				<Option value={option} key={index}>
 					{option}
@@ -244,5 +244,5 @@ const Option = styled(BaseOption)(
 );
 
 const Popup = styled("div")`
-	z-index: 1;
+	z-index: 1300;
 `;

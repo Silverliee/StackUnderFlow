@@ -199,8 +199,8 @@ const ScriptDetails = () => {
 		setOpenEdit(false);
 		setNewDescription(script.description);
 		setNewScriptName(script.scriptName);
-		setNewInputType(script.inputType);
-		setNewOutputType(script.outputType);
+		setNewInputType(script.inputScriptType);
+		setNewOutputType(script.outputScriptType);
 		setNewVisibility(script.visibility);
 	};
 
@@ -330,10 +330,12 @@ const ScriptDetails = () => {
 							<UnstyledSelectIntroduction
 								id="visibility"
 								name="visibility"
-								options={["Publique", "Privé"]}
+								options={["Public", "Friend", "Group", "Private"]}
 								value={visibility}
-								handleInput={(event) => setNewVisibility(event.target.value)}
-								defaultValue="Publique"
+								handleSelectChange={(event) =>
+									setNewVisibility(event.target.innerHTML)
+								}
+								defaultValue={visibility}
 							/>
 						</div>
 					</div>

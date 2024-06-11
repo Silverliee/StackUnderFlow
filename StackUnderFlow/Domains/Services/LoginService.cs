@@ -9,7 +9,7 @@ namespace StackUnderFlow.Domains.Services;
 public class LoginService(IUserRepository userRepository, AuthenticationMiddleware authenticationMiddleware) : ILoginService
 {
     public async Task<RegisterUserDto?> Register(RegisterUserDto? user)
-    {
+    {   
         var myUser = new User
         {
             Username = user.UserName,

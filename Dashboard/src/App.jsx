@@ -13,7 +13,7 @@ import PrivateRoute from "./router/PrivateRoute";
 import Profile from "./components/Profile";
 import Register from "./pages/Register";
 import ScriptExecutionPage from "./pages/ScriptExecutionPage";
-import Contacts from "./pages/Contacts";
+import ContactsPage from "./pages/ContactsPage";
 import ScriptListPage from "./pages/ScriptListPage";
 import ScriptDetails from "./pages/ScriptDetails";
 import ScriptVersionPage from "./pages/ScriptVersionPage";
@@ -22,6 +22,7 @@ import HomePage from "./pages/HomePage";
 import LocalEditor from "./pages/LocalEditor";
 import EditProfile from "./pages/EditProfile";
 import ShareScript from "./components/ShareScript";
+import MessagePage from "./pages/MessagePage";
 
 const App = () => {
 	return (
@@ -36,11 +37,12 @@ const App = () => {
 							<Route element={<PrivateRoute />}>
 								<Route path="/home" element={<HomePage />} />
 								<Route path="/exec" element={<ScriptExecutionPage />} />
-								<Route path="/contacts" element={<Contacts />} />
+								<Route path="/contacts" element={<ContactsPage />} />
 								<Route path="/profile" element={<Profile />} />
 								<Route path="/share" element={<ShareScript />} />
 								<Route exact path="/edit" element={<LocalEditor />} />
 								<Route path="/editProfile" element={<EditProfile />} />
+								<Route path="/message" element={<MessagePage />} />
 								<Route
 									path="/script/:scriptId/version"
 									element={<ScriptVersionPage />}

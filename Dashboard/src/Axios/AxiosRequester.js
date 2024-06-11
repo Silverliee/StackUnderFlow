@@ -260,7 +260,6 @@ class AxiosRequester {
 
 	getUserByToken = async () => {
 		const apiUrl = this.baseUrl + `User`;
-		console.log(this.getConfig());
 		try {
 			const response = await axios.get(apiUrl, this.getConfig());
 			console.log("Réponse de l'API :", { response: response });
@@ -269,6 +268,311 @@ class AxiosRequester {
 			} else {
 				return null;
 			}
+		} catch (error) {
+			console.error("Erreur lors de la requête :", error);
+		}
+	};
+
+	getFriends = async () => {
+		const apiUrl = this.baseUrl + `SocialInteraction/friends`;
+		try {
+			const response = await axios.get(apiUrl, this.getConfig());
+			console.log("Réponse de l'API :", { response: response });
+			if (response.status === 200) {
+				return response.data;
+			} else {
+				return null;
+			}
+		} catch (error) {
+			console.error("Erreur lors de la requête :", error);
+		}
+	};
+
+	getFriendRequests = async () => {
+		const apiUrl = this.baseUrl + `SocialInteraction/friends/requests`;
+		try {
+			const response = await axios.get(apiUrl, this.getConfig());
+			console.log("Réponse de l'API :", { response: response });
+			if (response.status === 200) {
+				return response.data;
+			} else {
+				return null;
+			}
+		} catch (error) {
+			console.error("Erreur lors de la requête :", error);
+		}
+	};
+
+	deleteFriend = async (userId) => {
+		const apiUrl = this.baseUrl + `SocialInteraction/friends/${userId}`;
+		try {
+			const response = await axios.delete(apiUrl, this.getConfig());
+			console.log("Réponse de l'API :", { response: response });
+		} catch (error) {
+			console.error("Erreur lors de la requête :", error);
+		}
+	};
+
+	createFriendRequest = async (friendId, message) => {
+		const apiUrl = this.baseUrl + `SocialInteraction/friends/${friendId}`;
+		try {
+			const response = await axios.post(
+				apiUrl,
+				{ Message: message },
+				this.getConfig()
+			);
+			console.log("Réponse de l'API :", { response: response });
+			if (response.status === 201) {
+				return response.data;
+			}
+		} catch (error) {
+			console.error("Erreur lors de la requête :", error);
+		}
+	};
+
+	acceptFriendRequest = async (friendId) => {
+		const apiUrl = this.baseUrl + `SocialInteraction/friends/${friendId}`;
+		try {
+			const response = await axios.patch(apiUrl, {}, this.getConfig());
+			console.log("Réponse de l'API :", { response: response });
+			if (response.status === 201) {
+				return response.data;
+			}
+		} catch (error) {
+			console.error("Erreur lors de la requête :", error);
+		}
+	};
+
+	rejectFriendRequest = async (userId) => {
+		const apiUrl = this.baseUrl + `SocialInteraction/friends/${userId}`;
+		try {
+			const response = await axios.delete(apiUrl, this.getConfig());
+			console.log("Réponse de l'API :", { response: response });
+			if (response.status === 201) {
+				return response.data;
+			}
+		} catch (error) {
+			console.error("Erreur lors de la requête :", error);
+		}
+	};
+
+	getFollows = async () => {
+		const apiUrl = this.baseUrl + `SocialInteraction/follows`;
+		try {
+			const response = await axios.get(apiUrl, this.getConfig());
+			console.log("Réponse de l'API :", { response: response });
+			if (response.status === 200) {
+				return response.data;
+			} else {
+				return null;
+			}
+		} catch (error) {
+			console.error("Erreur lors de la requête :", error);
+		}
+	};
+
+	deleteFollow = async (userId) => {
+		const apiUrl = this.baseUrl + `SocialInteraction/follows/${userId}`;
+		try {
+			const response = await axios.delete(apiUrl, this.getConfig());
+			console.log("Réponse de l'API :", { response: response });
+		} catch (error) {
+			console.error("Erreur lors de la requête :", error);
+		}
+	};
+
+	addFollow = async (userId) => {
+		const apiUrl = this.baseUrl + `SocialInteraction/follows/${userId}`;
+		try {
+			const response = await axios.post(apiUrl, {}, this.getConfig());
+			console.log("Réponse de l'API :", { response: response });
+			if (response.status === 201) {
+				return response.data;
+			}
+		} catch (error) {
+			console.error("Erreur lors de la requête :", error);
+		}
+	};
+
+	//for the current user
+	getGroups = async () => {
+		const apiUrl = this.baseUrl + `SocialInteraction/groups`;
+		try {
+			const response = await axios.get(apiUrl, this.getConfig());
+			console.log("Réponse de l'API :", { response: response });
+			if (response.status === 200) {
+				return response.data;
+			} else {
+				return null;
+			}
+		} catch (error) {
+			console.error("Erreur lors de la requête :", error);
+		}
+	};
+
+	getGroupByGroupId = async (groupId) => {
+		const apiUrl = this.baseUrl + `SocialInteraction/groups/${groupId}`;
+		try {
+			const response = await axios.get(apiUrl, this.getConfig());
+			console.log("Réponse de l'API :", { response: response });
+			if (response.status === 200) {
+				return response.data;
+			} else {
+				return null;
+			}
+		} catch (error) {
+			console.error("Erreur lors de la requête :", error);
+		}
+	};
+
+	getGroupMembers = async (groupId) => {
+		const apiUrl = this.baseUrl + `SocialInteraction/groups/${groupId}/members`;
+		try {
+			const response = await axios.get(apiUrl, this.getConfig());
+			console.log("Réponse de l'API :", { response: response });
+			if (response.status === 200) {
+				return response.data;
+			} else {
+				return null;
+			}
+		} catch (error) {
+			console.error("Erreur lors de la requête :", error);
+		}
+	};
+
+	//getGroupScripts = async (groupId) => {};
+
+	//for the current user
+	getGroupRequests = async () => {
+		const apiUrl = this.baseUrl + `SocialInteraction/groups/requests`;
+		try {
+			const response = await axios.get(apiUrl, this.getConfig());
+			console.log("Réponse de l'API :", { response: response });
+			if (response.status === 200) {
+				return response.data;
+			} else {
+				return null;
+			}
+		} catch (error) {
+			console.error("Erreur lors de la requête :", error);
+		}
+	};
+
+	getGroupRequestsByGroupId = async (groupId) => {
+		try {
+			const apiUrl =
+				this.baseUrl + `SocialInteraction/groups/${groupId}/requests`;
+			const response = await axios.get(apiUrl, this.getConfig());
+			console.log("Réponse de l'API :", { response: response });
+			if (response.status === 200) {
+				return response.data;
+			} else {
+				return null;
+			}
+		} catch (error) {
+			console.error("Erreur lors de la requête :", error);
+		}
+	};
+
+	/*
+		@params {string} data.GroupName
+		@params {string} data.Description (optional) 
+	*/
+	createGroup = async (data) => {
+		const apiUrl = this.baseUrl + `SocialInteraction/groups`;
+		try {
+			const response = await axios.post(apiUrl, data, this.getConfig());
+			console.log("Réponse de l'API :", { response: response });
+			if (response.status === 201) {
+				return response.data;
+			}
+		} catch (error) {
+			console.error("Erreur lors de la requête :", error);
+		}
+	};
+
+	updateGroupInformations = async (data) => {
+		const apiUrl = this.baseUrl + `SocialInteraction/groups`;
+		try {
+			const response = await axios.patch(apiUrl, data, this.getConfig());
+			console.log("Réponse de l'API :", { response: response });
+			if (response.status === 200) {
+				return response.data;
+			}
+		} catch (error) {
+			console.error("Erreur lors de la requête :", error);
+		}
+	};
+
+	inviteUserToGroup = async (groupId, userId, message) => {
+		const apiUrl =
+			this.baseUrl + `SocialInteraction/groups/${groupId}/${userId}`;
+		try {
+			const response = await axios.post(
+				apiUrl,
+				{ Message: message },
+				this.getConfig()
+			);
+			console.log("Réponse de l'API :", { response: response });
+			if (response.status === 201) {
+				return response.data;
+			}
+		} catch (error) {
+			console.error("Erreur lors de la requête :", error);
+		}
+	};
+
+	acceptGroupInvitation = async (groupId) => {
+		const apiUrl =
+			this.baseUrl + `SocialInteraction/groups/requests/${groupId}`;
+		try {
+			const response = await axios.patch(apiUrl, {}, this.getConfig());
+			console.log("Réponse de l'API :", { response: response });
+			if (response.status === 201) {
+				return response.data;
+			}
+		} catch (error) {
+			console.error("Erreur lors de la requête :", error);
+		}
+	};
+
+	rejectGroupInvitation = async (groupId) => {
+		const apiUrl =
+			this.baseUrl + `SocialInteraction/requests/groups/${groupId}`;
+		try {
+			const response = await axios.delete(apiUrl, this.getConfig());
+			console.log("Réponse de l'API :", { response: response });
+		} catch (error) {
+			console.error("Erreur lors de la requête :", error);
+		}
+	};
+
+	//same as rejectGroupInvitation
+	leaveGroup = async (groupId) => {
+		this.rejectGroupInvitation(groupId);
+	};
+
+	//same as removeUserFromGroup (only admin can add and remove users)
+	cancelGroupInvitation = async (groupId, userId) => {
+		this.removeUserFromGroup(groupId, userId);
+	};
+
+	removeUserFromGroup = async (groupId, userId) => {
+		const apiUrl =
+			this.baseUrl + `SocialInteraction/groups/${groupId}/${userId}`;
+		try {
+			const response = await axios.delete(apiUrl, this.getConfig());
+			console.log("Réponse de l'API :", { response: response });
+		} catch (error) {
+			console.error("Erreur lors de la requête :", error);
+		}
+	};
+
+	deleteGroup = async (groupId) => {
+		const apiUrl = this.baseUrl + `SocialInteraction/groups/${groupId}`;
+		try {
+			const response = await axios.delete(apiUrl, this.getConfig());
+			console.log("Réponse de l'API :", { response: response });
 		} catch (error) {
 			console.error("Erreur lors de la requête :", error);
 		}

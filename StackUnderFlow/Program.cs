@@ -53,15 +53,19 @@ public partial class Program
         builder.Services.AddScoped<IReactionService, ReactionService>();
         builder.Services.AddScoped<IRunnerService, RunnerService>();
         builder.Services.AddScoped<IScriptService, ScriptService>();
-        builder.Services.AddScoped<ICommentRepository, CommentRepository>();
-        builder.Services.AddScoped<IGroupRepository, GroupRepository>();
-        builder.Services.AddScoped<ILikeRepository, LikeRepository>();
-        builder.Services.AddScoped<IPipelineRepository, PipelineRepository>();
-        builder.Services.AddScoped<IScriptRepository, ScriptRepository>();
-        builder.Services.AddScoped<ISharingRepository, SharingRepository>();
-        builder.Services.AddScoped<IStatusRepository, StatusRepository>();
-        builder.Services.AddScoped<IUserRepository, UserRepository>();
-        builder.Services.AddScoped<IScriptVersionRepository, ScriptVersionRepository>();
+        builder.Services.AddScoped<ICommentRepository,CommentRepository>();
+        builder.Services.AddScoped<IGroupRepository,GroupRepository>();
+        builder.Services.AddScoped<ILikeRepository,LikeRepository>();
+        builder.Services.AddScoped<IPipelineRepository,PipelineRepository>();
+        builder.Services.AddScoped<IScriptRepository,ScriptRepository>();
+        builder.Services.AddScoped<ISharingRepository,SharingRepository>();
+        builder.Services.AddScoped<IStatusRepository,StatusRepository>();
+        builder.Services.AddScoped<IUserRepository,UserRepository>();
+        builder.Services.AddScoped<ISocialInteractionService,SocialInteractionService>();
+        builder.Services.AddScoped<IScriptVersionRepository,ScriptVersionRepository>();
+        builder.Services.AddScoped<IFriendRepository,FriendRepository>();
+        builder.Services.AddScoped<IFollowRepository,FollowRepository>();
+
         builder.Services.AddSingleton<AuthenticationMiddleware>();
 
         builder.Services.AddSwaggerGen(options =>

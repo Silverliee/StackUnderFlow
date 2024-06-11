@@ -16,7 +16,7 @@ const ShareScript = ({ script }) => {
 	const [language, setLanguage] = useState("");
 	const [inputType, setInputType] = useState("None");
 	const [outputType, setOutputType] = useState("None");
-	const [visibility, setVisibility] = useState("Publique");
+	const [visibility, setVisibility] = useState("Public");
 
 	const acceptedFiles = [".py", ".cs"];
 
@@ -54,7 +54,7 @@ const ShareScript = ({ script }) => {
 		setLanguage("");
 		setInputType("None");
 		setOutputType("None");
-		setVisibility("Publique");
+		setVisibility("Public");
 	};
 
 	const handleSubmitEvent = async () => {
@@ -91,7 +91,7 @@ const ShareScript = ({ script }) => {
 		setLanguage("");
 		setInputType("None");
 		setOutputType("None");
-		setVisibility("Publique");
+		setVisibility("Public");
 	}
 
 	async function handleChange(event) {
@@ -189,10 +189,10 @@ const ShareScript = ({ script }) => {
 						<UnstyledSelectIntroduction
 							id="visibility"
 							name="visibility"
-							options={["Publique", "Privé"]}
+							options={["Public", "Friend", "Group", "Private"]}
 							value={visibility}
 							handleInput={(event) => setVisibility(event.target.value)}
-							defaultValue="Publique"
+							defaultValue={visibility}
 						/>
 					</div>
 				</div>
