@@ -42,13 +42,24 @@ public class KubernetesService
             }
         };
 
-        await _client.BatchV1.CreateNamespacedJobAsync(job, namespaceName);
+        var createdJob = await _client.BatchV1.CreateNamespacedJobAsync(job, namespaceName);
+        if (createdJob == null)
+        {
+            throw new Exception($"Failed to create job with name {jobName} in namespace {namespaceName}");
+        }
         
-        //wait for job to complete here
         await Task.Delay(5000);
         
         var podName = await GetJobPodNameAsync(namespaceName, jobName);
+        if (podName == null)
+        {
+            throw new Exception($"Failed to get pod name for job {jobName} in namespace {namespaceName}");
+        }
         var logs = await GetPodLogsAsync(namespaceName, podName!);
+        if (logs == null)
+        {
+            throw new Exception($"Failed to get logs for pod {podName} in namespace {namespaceName}");
+        }
         DeleteJob(namespaceName, jobName);
         return logs;
     }
@@ -86,20 +97,38 @@ public class KubernetesService
             }
         };
 
-        await _client.BatchV1.CreateNamespacedJobAsync(job, namespaceName);
+        var createdJob = await _client.BatchV1.CreateNamespacedJobAsync(job, namespaceName);
+        if (createdJob == null)
+        {
+            throw new Exception($"Failed to create job with name {jobName} in namespace {namespaceName}");
+        }
+        
         await Task.Delay(5000);
+        
         var podName = await GetJobPodNameAsync(namespaceName, jobName);
+        if (podName == null)
+        {
+            throw new Exception($"Failed to get pod name for job {jobName} in namespace {namespaceName}");
+        }
         var logs = await GetPodLogsAsync(namespaceName, podName!);
+        if (logs == null)
+        {
+            throw new Exception($"Failed to get logs for pod {podName} in namespace {namespaceName}");
+        }
         DeleteJob(namespaceName, jobName);
         return logs;
     }
 
     private async void DeleteJob(string namespaceName, string jobName)
     {
-        await _client.BatchV1.DeleteNamespacedJobAsync(jobName, namespaceName, new V1DeleteOptions
+        var deletedJob = await _client.BatchV1.DeleteNamespacedJobAsync(jobName, namespaceName, new V1DeleteOptions
         {
             PropagationPolicy = "Foreground"
         });
+        if (deletedJob == null)
+        {
+            throw new Exception($"Failed to delete job with name {jobName} in namespace {namespaceName}");
+        }
     }
 
     private async Task<string?> GetJobPodNameAsync(string namespaceName, string jobName)
@@ -113,6 +142,10 @@ public class KubernetesService
         await using var logs = await _client.CoreV1.ReadNamespacedPodLogAsync(podName, namespaceName);
         using var reader = new StreamReader(logs);
         var result = await reader.ReadToEndAsync();
+        if (string.IsNullOrEmpty(result))
+        {
+            throw new Exception($"Failed to get logs for pod {podName} in namespace {namespaceName}");
+        }
         return result;
     }
 }
