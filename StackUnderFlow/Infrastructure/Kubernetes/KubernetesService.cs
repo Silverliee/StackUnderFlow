@@ -11,112 +11,126 @@ public class KubernetesService
     public async Task<string> CreatePythonJob(string namespaceName, string scriptContent)
     {
         var jobName = Guid.NewGuid().ToString();
-        var job = new V1Job
+        try
         {
-            ApiVersion = "batch/v1",
-            Kind = "Job",
-            Metadata = new V1ObjectMeta { Name = jobName },
-            Spec = new V1JobSpec
+            var job = new V1Job
             {
-                Template = new V1PodTemplateSpec
+                ApiVersion = "batch/v1",
+                Kind = "Job",
+                Metadata = new V1ObjectMeta { Name = jobName },
+                Spec = new V1JobSpec
                 {
-                    Spec = new V1PodSpec
+                    Template = new V1PodTemplateSpec
                     {
-                        Containers = new List<V1Container>
+                        Spec = new V1PodSpec
                         {
-                            new()
+                            Containers = new List<V1Container>
                             {
-                                Name = "python-container" + Guid.NewGuid(),
-                                Image = "python:3.9",
-                                Command = new List<string>
+                                new()
                                 {
-                                    "bash",
-                                    "-c",
-                                    $"echo '{scriptContent}' | python"
+                                    Name = "python-container" + Guid.NewGuid(),
+                                    Image = "python:3.9",
+                                    Command = new List<string>
+                                    {
+                                        "bash",
+                                        "-c",
+                                        $"echo '{scriptContent}' | python"
+                                    }
                                 }
-                            }
-                        },
-                        RestartPolicy = "Never"
+                            },
+                            RestartPolicy = "Never"
+                        }
                     }
                 }
-            }
-        };
+            };
 
-        var createdJob = await _client.BatchV1.CreateNamespacedJobAsync(job, namespaceName);
-        if (createdJob == null)
-        {
-            throw new Exception($"Failed to create job with name {jobName} in namespace {namespaceName}");
-        }
+            var createdJob = await _client.BatchV1.CreateNamespacedJobAsync(job, namespaceName);
+            if (createdJob == null)
+            {
+                throw new Exception($"Failed to create job with name {jobName} in namespace {namespaceName}");
+            }
         
-        await Task.Delay(5000);
+            await Task.Delay(5000);
         
-        var podName = await GetJobPodNameAsync(namespaceName, jobName);
-        if (podName == null)
-        {
-            throw new Exception($"Failed to get pod name for job {jobName} in namespace {namespaceName}");
+            var podName = await GetJobPodNameAsync(namespaceName, jobName);
+            if (podName == null)
+            {
+                throw new Exception($"Failed to get pod name for job {jobName} in namespace {namespaceName}");
+            }
+            var logs = await GetPodLogsAsync(namespaceName, podName!);
+            if (logs == null)
+            {
+                throw new Exception($"Failed to get logs for pod {podName} in namespace {namespaceName}");
+            }
+            DeleteJob(namespaceName, jobName);
+            return logs;
         }
-        var logs = await GetPodLogsAsync(namespaceName, podName!);
-        if (logs == null)
+        catch (Exception ex)
         {
-            throw new Exception($"Failed to get logs for pod {podName} in namespace {namespaceName}");
+            throw new Exception($"exception: {ex.Message}");
         }
-        DeleteJob(namespaceName, jobName);
-        return logs;
     }
 
     public async Task<string> CreateCSharpJob(string namespaceName, string scriptContent)
     {
         var jobName = Guid.NewGuid().ToString();
-        var job = new V1Job
+        try
         {
-            ApiVersion = "batch/v1",
-            Kind = "Job",
-            Metadata = new V1ObjectMeta { Name = jobName },
-            Spec = new V1JobSpec
+            var job = new V1Job
             {
-                Template = new V1PodTemplateSpec
+                ApiVersion = "batch/v1",
+                Kind = "Job",
+                Metadata = new V1ObjectMeta { Name = jobName },
+                Spec = new V1JobSpec
                 {
-                    Spec = new V1PodSpec
+                    Template = new V1PodTemplateSpec
                     {
-                        Containers = new List<V1Container>
+                        Spec = new V1PodSpec
                         {
-                            new()
+                            Containers = new List<V1Container>
                             {
-                                Name = "csharp-container" + Guid.NewGuid(),
-                                Image = "mcr.microsoft.com/dotnet/sdk:8.0",
-                                Command = new List<string>
+                                new()
                                 {
-                                    "bash", "-c",
-                                    $"echo '{scriptContent}' > script.cs && mcs script.cs && mono script.exe"
-                                },
-                            }
-                        },
-                        RestartPolicy = "Never",
+                                    Name = "csharp-container" + Guid.NewGuid(),
+                                    Image = "mcr.microsoft.com/dotnet/sdk:8.0",
+                                    Command = new List<string>
+                                    {
+                                        "bash", "-c",
+                                        $"echo '{scriptContent}' > script.cs && mcs script.cs && mono script.exe"
+                                    },
+                                }
+                            },
+                            RestartPolicy = "Never",
+                        }
                     }
                 }
-            }
-        };
+            };
 
-        var createdJob = await _client.BatchV1.CreateNamespacedJobAsync(job, namespaceName);
-        if (createdJob == null)
-        {
-            throw new Exception($"Failed to create job with name {jobName} in namespace {namespaceName}");
-        }
+            var createdJob = await _client.BatchV1.CreateNamespacedJobAsync(job, namespaceName);
+            if (createdJob == null)
+            {
+                throw new Exception($"Failed to create job with name {jobName} in namespace {namespaceName}");
+            }
         
-        await Task.Delay(5000);
+            await Task.Delay(5000);
         
-        var podName = await GetJobPodNameAsync(namespaceName, jobName);
-        if (podName == null)
-        {
-            throw new Exception($"Failed to get pod name for job {jobName} in namespace {namespaceName}");
+            var podName = await GetJobPodNameAsync(namespaceName, jobName);
+            if (podName == null)
+            {
+                throw new Exception($"Failed to get pod name for job {jobName} in namespace {namespaceName}");
+            }
+            var logs = await GetPodLogsAsync(namespaceName, podName!);
+            if (logs == null)
+            {
+                throw new Exception($"Failed to get logs for pod {podName} in namespace {namespaceName}");
+            }
+            DeleteJob(namespaceName, jobName);
+            return logs;
         }
-        var logs = await GetPodLogsAsync(namespaceName, podName!);
-        if (logs == null)
+        catch (Exception ex)
         {
-            throw new Exception($"Failed to get logs for pod {podName} in namespace {namespaceName}");
+            throw new Exception($"exception: {ex.Message}");
         }
-        DeleteJob(namespaceName, jobName);
-        return logs;
     }
 
     private async void DeleteJob(string namespaceName, string jobName)
