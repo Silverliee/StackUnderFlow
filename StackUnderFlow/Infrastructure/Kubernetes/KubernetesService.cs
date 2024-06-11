@@ -26,7 +26,7 @@ public class KubernetesService
                         {
                             new()
                             {
-                                Name = "python-container",
+                                Name = "python-container" + Guid.NewGuid(),
                                 Image = "python:3.9",
                                 Command = new List<string>
                                 {
@@ -71,7 +71,7 @@ public class KubernetesService
                         {
                             new()
                             {
-                                Name = "csharp-container",
+                                Name = "csharp-container" + Guid.NewGuid(),
                                 Image = "mcr.microsoft.com/dotnet/sdk:8.0",
                                 Command = new List<string>
                                 {
