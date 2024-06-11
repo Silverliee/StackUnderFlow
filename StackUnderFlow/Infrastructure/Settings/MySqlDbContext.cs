@@ -57,13 +57,15 @@ public class MySqlDbContext : DbContext
             .Entity<GroupRequest>()
             .HasOne(gr => gr.User)
             .WithMany(u => u.GroupRequests)
-            .HasForeignKey(gr => gr.UserId);
+            .HasForeignKey(gr => gr.UserId)
+            .OnDelete(DeleteBehavior.Restrict);
 
         modelBuilder
             .Entity<GroupRequest>()
             .HasOne(gr => gr.Group)
             .WithMany(g => g.GroupRequests)
-            .HasForeignKey(gr => gr.GroupId);
+            .HasForeignKey(gr => gr.GroupId)
+            .OnDelete(DeleteBehavior.Restrict);
 
         modelBuilder.Entity<Follow>().HasKey(f => new { f.UserId1, f.UserId2 });
         modelBuilder
@@ -170,6 +172,31 @@ public class MySqlDbContext : DbContext
             .HasMany(u => u.Pipelines)
             .WithOne(p => p.Creator)
             .HasForeignKey(p => p.CreatorUserId);
+        
+        modelBuilder
+            .Entity<User>()
+            .HasMany(u => u.Friends)
+            .WithOne(f => f.User1)
+            .HasForeignKey(f => f.UserId1)
+            .OnDelete(DeleteBehavior.NoAction);
+        modelBuilder
+            .Entity<User>()
+            .HasMany(u => u.Follower)
+            .WithOne(f => f.User1)
+            .HasForeignKey(f => f.UserId2)
+            .OnDelete(DeleteBehavior.NoAction);
+        modelBuilder
+            .Entity<User>()
+            .HasMany(u => u.Followed)
+            .WithOne(f => f.User2)
+            .HasForeignKey(f => f.UserId1)
+            .OnDelete(DeleteBehavior.NoAction);
+        modelBuilder
+            .Entity<User>()
+            .HasMany(u => u.GroupRequests)
+            .WithOne(gr => gr.User)
+            .HasForeignKey(gr => gr.UserId)
+            .OnDelete(DeleteBehavior.NoAction);
 
         modelBuilder.Entity<ScriptVersion>().HasKey(v => v.ScriptVersionId);
 

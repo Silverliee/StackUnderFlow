@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace StackUnderFlow.Domains.Model;
 
 public class GroupRequest
@@ -9,6 +11,8 @@ public class GroupRequest
     public string Status { get; set; } = "Pending";
 
     // Navigation properties to User and Group entities
+    [ForeignKey("UserId")]
     public User User { get; set; }
+    [ForeignKey("GroupId")]
     public Group Group { get; set; }
 }

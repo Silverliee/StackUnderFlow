@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace StackUnderFlow.Domains.Model;
 
 public class FriendRequest
@@ -10,6 +12,8 @@ public class FriendRequest
     public string Message { get; set; }
 
     // Navigation properties to User entities
+    [ForeignKey("UserId1")]
     public User User1 { get; set; }
+    [ForeignKey("UserId2")]
     public User User2 { get; set; }
 }
