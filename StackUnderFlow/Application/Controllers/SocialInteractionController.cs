@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Cors;
 using System.Security.Claims;
-using Microsoft.Extensions.FileProviders;
 using StackUnderFlow.Domains.Services;
 using StackUnderFlow.Application.DataTransferObject.Request;
 
@@ -35,7 +34,7 @@ public class SocialInteractionController(ISocialInteractionService socialInterac
         }
     }
     
-    [HttpGet("friends/request")]
+    [HttpGet("friends/requests")]
     [Authorize]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
