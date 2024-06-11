@@ -9,6 +9,7 @@ using StackUnderFlow.Domains.Repository;
 using StackUnderFlow.Domains.Services;
 using StackUnderFlow.Infrastructure.Settings;
 using StackUnderFlow.Application.Middleware;
+
 public partial class Program
 {
     private static FileVersionInfo GetAssemblyFileVersion()
@@ -26,16 +27,13 @@ public partial class Program
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
-        
+
         // Add services to the container.
 
         builder.Services.AddControllers();
         var connectionString = builder.Configuration.GetConnectionString("database");
-        builder.Services.AddDbContext<MySqlDbContext>(options =>
-        {
-            options.UseSqlServer(connectionString);
-        });
-        
+        builder.Services.AddDbContext<MySqlDbContext>(options => { options.UseSqlServer(connectionString); });
+
         builder.Services.AddCors(options =>
         {
             options.AddPolicy("AllowAll",
@@ -51,9 +49,9 @@ public partial class Program
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddScoped<ILoginService, LoginService>();
         builder.Services.AddScoped<INotificationService, NotificationService>();
-        builder.Services.AddScoped<IProfileService,ProfileService>();
+        builder.Services.AddScoped<IProfileService, ProfileService>();
         builder.Services.AddScoped<IReactionService, ReactionService>();
-        builder.Services.AddScoped<IRunnerService,RunnerService>();
+        builder.Services.AddScoped<IRunnerService, RunnerService>();
         builder.Services.AddScoped<IScriptService, ScriptService>();
         builder.Services.AddScoped<ICommentRepository,CommentRepository>();
         builder.Services.AddScoped<IGroupRepository,GroupRepository>();
@@ -67,6 +65,7 @@ public partial class Program
         builder.Services.AddScoped<IScriptVersionRepository,ScriptVersionRepository>();
         builder.Services.AddScoped<IFriendRepository,FriendRepository>();
         builder.Services.AddScoped<IFollowRepository,FollowRepository>();
+
         builder.Services.AddSingleton<AuthenticationMiddleware>();
 
         builder.Services.AddSwaggerGen(options =>
@@ -85,7 +84,18 @@ public partial class Program
                         Url = new Uri("https://github.com/Silverliee")
                     }
                 });
+
+            options.AddSecurityDefinition("JWT-BEARER-TOKEN", new OpenApiSecurityScheme
+            {
+                Description =
+                    "Tu peux mettre ton token ici ;)",
+                Name = "Authorization",
+                In = ParameterLocation.Header,
+                Type = SecuritySchemeType.ApiKey,
+                Scheme = "Bearer"
+            });
         });
+
 
         // Configuration de JWT
         builder.Services.AddAuthentication(options =>

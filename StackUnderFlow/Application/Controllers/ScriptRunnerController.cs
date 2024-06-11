@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using StackUnderFlow.Infrastructure.Kubernetes;
 using Microsoft.AspNetCore.Cors;
@@ -7,11 +8,12 @@ namespace StackUnderFlow.Application.Controllers;
 [ApiController]
 [Route("[controller]")] 
 [EnableCors("AllowAll")]
-public class ScriptRunnerController : ControllerBase
+public class ScriptRunnerController() : ControllerBase
 {
     private readonly KubernetesService _kubernetesService = new();
     
     [HttpPost]
+    [Authorize]
     public async Task<IActionResult> ExecuteScript(
         IFormFile? script)
     {
@@ -19,6 +21,7 @@ public class ScriptRunnerController : ControllerBase
             return BadRequest("No script file uploaded");
 
         var rootPath = Directory.GetCurrentDirectory();
+        var output = "";
 
         string scriptDirectory;
         if (Path.GetExtension(script.FileName).Equals(".py", StringComparison.OrdinalIgnoreCase))
@@ -39,14 +42,25 @@ public class ScriptRunnerController : ControllerBase
             Directory.CreateDirectory(scriptDirectory);
         }
 
-        var scriptPath = Path.Combine(scriptDirectory, script.FileName);
+        var uniqueFileName = Guid.NewGuid() + Path.GetExtension(script.FileName);
+        var scriptPath = Path.Combine(scriptDirectory, uniqueFileName);
         await using (var stream = System.IO.File.Create(scriptPath))
         {
             await script.CopyToAsync(stream);
         }
-
-        _kubernetesService.CreatePythonJob("default", script.FileName);
-        return Ok();
+        
+        if (Path.GetExtension(script.FileName).Equals(".py", StringComparison.OrdinalIgnoreCase))
+        {
+            var pythonScript = await System.IO.File.ReadAllTextAsync(Path.Combine(scriptDirectory, uniqueFileName));
+            output = await _kubernetesService.CreatePythonJob("default", pythonScript);
+        }
+        else if (Path.GetExtension(script.FileName).Equals(".cs", StringComparison.OrdinalIgnoreCase))
+        {
+            var csharpScript = await System.IO.File.ReadAllTextAsync(Path.Combine(scriptDirectory, uniqueFileName));
+            output = await _kubernetesService.CreateCSharpJob("default", csharpScript);
+        }
+        
+        return Ok(output);
     }
 
 
