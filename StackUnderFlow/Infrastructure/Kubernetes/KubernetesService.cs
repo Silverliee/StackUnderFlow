@@ -1,22 +1,21 @@
-using System.Reflection;
 using k8s;
 using k8s.Models;
 
 namespace StackUnderFlow.Infrastructure.Kubernetes;
 
-public class KubernetesService()
+public class KubernetesService
 {
-    private readonly IKubernetes _client =  new k8s.Kubernetes(KubernetesClientConfiguration.BuildConfigFromConfigFile("Infrastructure/Kubernetes/kubeconfig/config"));
-    
-    public void CreatePythonJob(string namespaceName, string scriptFileName)
+    private readonly IKubernetes _client = new k8s.Kubernetes(
+        KubernetesClientConfiguration.BuildConfigFromConfigFile("Infrastructure/Kubernetes/kubeconfig/config"));
+
+    public async Task<string> CreatePythonJob(string namespaceName, string scriptContent)
     {
-        var rootPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-        var scriptDirectory = Path.Combine(rootPath!, "Infrastructure", "Kubernetes", "python-scripts");
+        var jobName = Guid.NewGuid().ToString();
         var job = new V1Job
         {
             ApiVersion = "batch/v1",
             Kind = "Job",
-            Metadata = new V1ObjectMeta { Name = "python-job" },
+            Metadata = new V1ObjectMeta { Name = jobName },
             Spec = new V1JobSpec
             {
                 Template = new V1PodTemplateSpec
@@ -29,48 +28,39 @@ public class KubernetesService()
                             {
                                 Name = "python-container",
                                 Image = "python:3.9",
-                                Command = new List<string> { "python", $"{scriptFileName}" },
-                                VolumeMounts = new List<V1VolumeMount>
+                                Command = new List<string>
                                 {
-                                    new()
-                                    {
-                                        Name = "python-script",
-                                        MountPath = scriptDirectory
-                                    }
+                                    "bash",
+                                    "-c",
+                                    $"echo '{scriptContent}' | python"
                                 }
                             }
                         },
-                        RestartPolicy = "Never",
-                        Volumes = new List<V1Volume>
-                        {
-                            new()
-                            {
-                                Name = "python-script",
-                                PersistentVolumeClaim = new V1PersistentVolumeClaimVolumeSource
-                                {
-                                    ClaimName = "python-script-pvc"
-                                }
-                            }
-                        }
+                        RestartPolicy = "Never"
                     }
                 }
             }
         };
+
+        await _client.BatchV1.CreateNamespacedJobAsync(job, namespaceName);
         
-        _client.BatchV1.CreateNamespacedJob(job, namespaceName);
-        //get output here
-        DeleteJob(namespaceName,job.Name());
+        //wait for job to complete here
+        await Task.Delay(5000);
+        
+        var podName = await GetJobPodNameAsync(namespaceName, jobName);
+        var logs = await GetPodLogsAsync(namespaceName, podName!);
+        DeleteJob(namespaceName, jobName);
+        return logs;
     }
-    
-    public void CreateCSharpJob(string namespaceName, string scriptFileName)
+
+    public async Task<string> CreateCSharpJob(string namespaceName, string scriptContent)
     {
-        var rootPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-        var scriptDirectory = Path.Combine(rootPath!, "Infrastructure", "Kubernetes", "csharp-scripts");
+        var jobName = Guid.NewGuid().ToString();
         var job = new V1Job
         {
             ApiVersion = "batch/v1",
             Kind = "Job",
-            Metadata = new V1ObjectMeta { Name = "csharp-job" },
+            Metadata = new V1ObjectMeta { Name = jobName },
             Spec = new V1JobSpec
             {
                 Template = new V1PodTemplateSpec
@@ -83,39 +73,46 @@ public class KubernetesService()
                             {
                                 Name = "csharp-container",
                                 Image = "mcr.microsoft.com/dotnet/sdk:8.0",
-                                Command = new List<string> { "bash", "-c", $"mcs {scriptFileName} && mono {Path.GetFileNameWithoutExtension(scriptFileName)}.exe" },
-                                VolumeMounts = new List<V1VolumeMount>
+                                Command = new List<string>
                                 {
-                                    new()
-                                    {
-                                        Name = "csharp-script",
-                                        MountPath = scriptDirectory
-                                    }
-                                }
+                                    "bash", "-c",
+                                    $"echo '{scriptContent}' > script.cs && mcs script.cs && mono script.exe"
+                                },
                             }
                         },
                         RestartPolicy = "Never",
-                        Volumes = new List<V1Volume>
-                        {
-                            new()
-                            {
-                                Name = "csharp-script",
-                                PersistentVolumeClaim = new V1PersistentVolumeClaimVolumeSource
-                                {
-                                    ClaimName = "csharp-script-pvc"
-                                }
-                            }
-                        }
                     }
                 }
             }
         };
 
-        _client.BatchV1.CreateNamespacedJob(job, namespaceName);
+        await _client.BatchV1.CreateNamespacedJobAsync(job, namespaceName);
+        await Task.Delay(5000);
+        var podName = await GetJobPodNameAsync(namespaceName, jobName);
+        var logs = await GetPodLogsAsync(namespaceName, podName!);
+        DeleteJob(namespaceName, jobName);
+        return logs;
     }
-    
-    public void DeleteJob(string namespaceName, string jobName)
+
+    private async void DeleteJob(string namespaceName, string jobName)
     {
-        _client.BatchV1.DeleteNamespacedJob(jobName, namespaceName);
+        await _client.BatchV1.DeleteNamespacedJobAsync(jobName, namespaceName, new V1DeleteOptions
+        {
+            PropagationPolicy = "Foreground"
+        });
+    }
+
+    private async Task<string?> GetJobPodNameAsync(string namespaceName, string jobName)
+    {
+        var pods = await _client.CoreV1.ListNamespacedPodAsync(namespaceName, labelSelector: $"job-name={jobName}");
+        return pods.Items.FirstOrDefault()?.Metadata.Name;
+    }
+
+    private async Task<string> GetPodLogsAsync(string namespaceName, string podName)
+    {
+        await using var logs = await _client.CoreV1.ReadNamespacedPodLogAsync(podName, namespaceName);
+        using var reader = new StreamReader(logs);
+        var result = await reader.ReadToEndAsync();
+        return result;
     }
 }
