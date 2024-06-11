@@ -19,7 +19,6 @@ public class MySqlDbContext : DbContext
     public DbSet<Group> Groups { get; set; }
     public DbSet<Sharing> Sharings { get; set; }
     public DbSet<ScriptVersion> ScriptVersions { get; set; }
-    public DbSet<Pipeline> Pipelines { get; set; }
     public DbSet<Status> Statuses { get; set; }
 
     public DbSet<FriendRequest> Friends { get; set; }
@@ -91,19 +90,6 @@ public class MySqlDbContext : DbContext
             .HasForeignKey(l => l.UserId)
             .OnDelete(DeleteBehavior.NoAction);
 
-        modelBuilder.Entity<Pipeline>().HasKey(p => p.PipelineId);
-        modelBuilder
-            .Entity<Pipeline>()
-            .HasOne(p => p.Creator)
-            .WithMany(u => u.Pipelines)
-            .HasForeignKey(p => p.CreatorUserId)
-            .OnDelete(DeleteBehavior.NoAction);
-        modelBuilder
-            .Entity<Pipeline>()
-            .HasOne(p => p.Status)
-            .WithMany()
-            .HasForeignKey(p => p.StatusId);
-
         modelBuilder.Entity<Script>().HasKey(s => s.ScriptId);
         modelBuilder
             .Entity<Script>()
@@ -167,12 +153,7 @@ public class MySqlDbContext : DbContext
             .HasMany(u => u.Versions)
             .WithOne(v => v.Creator)
             .HasForeignKey(v => v.CreatorUserId);
-        modelBuilder
-            .Entity<User>()
-            .HasMany(u => u.Pipelines)
-            .WithOne(p => p.Creator)
-            .HasForeignKey(p => p.CreatorUserId);
-        
+
         modelBuilder
             .Entity<User>()
             .HasMany(u => u.Friends)
