@@ -16,14 +16,16 @@ public class AuthenticationMiddleware(IConfiguration configuration)
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {
-                Subject = new ClaimsIdentity(new[]
-                {
-                    new Claim(ClaimTypes.NameIdentifier, userId.ToString())
-                }),
-                Expires = DateTime.UtcNow.AddDays(1), 
+                Subject = new ClaimsIdentity(
+                    new[] { new Claim(ClaimTypes.NameIdentifier, userId.ToString()) }
+                ),
+                Expires = DateTime.UtcNow.AddDays(1),
                 Issuer = configuration["Jwt:Issuer"],
                 Audience = configuration["Jwt:Audience"],
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+                SigningCredentials = new SigningCredentials(
+                    new SymmetricSecurityKey(key),
+                    SecurityAlgorithms.HmacSha256Signature
+                )
             };
 
             var token = tokenHandler.CreateToken(tokenDescriptor);
@@ -34,6 +36,5 @@ public class AuthenticationMiddleware(IConfiguration configuration)
             Console.WriteLine(e);
             throw;
         }
-        
     }
 }

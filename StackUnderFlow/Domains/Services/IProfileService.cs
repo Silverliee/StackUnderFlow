@@ -1,6 +1,3 @@
 namespace StackUnderFlow.Domains.Services;
 
-public interface IProfileService
-{
-    
-}
+public interface IProfileService { }

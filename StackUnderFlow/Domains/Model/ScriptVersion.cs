@@ -13,11 +13,12 @@ public class ScriptVersion
     public int CreatorUserId { get; set; }
     public string SourceScriptLink { get; set; }
     public byte[] SourceScriptBinary { get; set; }
-    
+
     public string Comment { get; set; }
-    
+
     [ForeignKey("ScriptId")]
     public Script Script { get; set; }
+
     [ForeignKey("CreatorUserId")]
     public User Creator { get; set; }
 }

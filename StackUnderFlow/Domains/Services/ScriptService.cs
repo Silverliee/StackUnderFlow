@@ -5,7 +5,11 @@ using StackUnderFlow.Domains.Repository;
 
 namespace StackUnderFlow.Domains.Services;
 
-public class ScriptService(IScriptRepository scriptRepository, IUserRepository userRepository, IScriptVersionRepository scriptVersionRepository) : IScriptService
+public class ScriptService(
+    IScriptRepository scriptRepository,
+    IUserRepository userRepository,
+    IScriptVersionRepository scriptVersionRepository
+) : IScriptService
 {
     public async Task<ScriptResponseDto?> GetScriptById(int scriptId)
     {
@@ -27,7 +31,7 @@ public class ScriptService(IScriptRepository scriptRepository, IUserRepository u
             CreatorName = script.CreatorName
         };
     }
-    
+
     public async Task<List<ScriptResponseDto>> GetScriptsByUserId(int userId)
     {
         var scripts = await scriptRepository.GetScriptsByUserId(userId);
@@ -35,22 +39,25 @@ public class ScriptService(IScriptRepository scriptRepository, IUserRepository u
         {
             return new List<ScriptResponseDto>();
         }
-        return scripts.Select(script => new ScriptResponseDto
-        {
-            ScriptId = script.ScriptId,
-            ScriptName = script.ScriptName,
-            Description = script.Description,
-            InputScriptType = script.InputScriptType,
-            UserId = script.UserId,
-            OutputScriptType = script.OutputScriptType,
-            ProgrammingLanguage = script.ProgrammingLanguage,
-            Visibility = script.Visibility,
-            CreatorName = script.CreatorName
-        }).ToList();
+        return scripts
+            .Select(script => new ScriptResponseDto
+            {
+                ScriptId = script.ScriptId,
+                ScriptName = script.ScriptName,
+                Description = script.Description,
+                InputScriptType = script.InputScriptType,
+                UserId = script.UserId,
+                OutputScriptType = script.OutputScriptType,
+                ProgrammingLanguage = script.ProgrammingLanguage,
+                Visibility = script.Visibility,
+                CreatorName = script.CreatorName
+            })
+            .ToList();
     }
 
     public async Task<ScriptVersionResponseDto?> AddScriptVersion(
-        ScriptVersionUploadRequestDto? scriptVersionUploadRequestDto)
+        ScriptVersionUploadRequestDto? scriptVersionUploadRequestDto
+    )
     {
         var script = await scriptRepository.GetScriptById(scriptVersionUploadRequestDto.ScriptId);
         if (script == null)
@@ -69,7 +76,7 @@ public class ScriptService(IScriptRepository scriptRepository, IUserRepository u
             SourceScriptLink = "None",
             SourceScriptBinary = blob
         };
-        
+
         await scriptVersionRepository.AddScriptVersion(scriptVersion);
         var response = new ScriptVersionResponseDto
         {
@@ -83,12 +90,12 @@ public class ScriptService(IScriptRepository scriptRepository, IUserRepository u
         };
         return response;
     }
-    
+
     public async Task<ScriptResponseDto?> AddScript(ScriptUploadRequestDto? scriptUploadRequestDto)
     {
         //Voir pour que le check soit sur le token renvoyé
         var user = await userRepository.GetUserById(scriptUploadRequestDto.UserId);
-        
+
         if (user == null)
         {
             return null;
@@ -135,16 +142,18 @@ public class ScriptService(IScriptRepository scriptRepository, IUserRepository u
             CreatorName = user.Username
         };
     }
-    
-    public async Task<ScriptResponseDto?> UpdateScript(ScriptUpdateRequestDto? scriptUpdateRequestDto)
-    {   
+
+    public async Task<ScriptResponseDto?> UpdateScript(
+        ScriptUpdateRequestDto? scriptUpdateRequestDto
+    )
+    {
         var scriptInBdd = await scriptRepository.GetScriptById(scriptUpdateRequestDto.ScriptId);
-        
+
         if (scriptInBdd == null)
         {
             return null;
         }
-        
+
         //Check with token if scriptInBdd.UserId == token.UserId
         // ....
 
@@ -157,9 +166,9 @@ public class ScriptService(IScriptRepository scriptRepository, IUserRepository u
         scriptInBdd.Visibility = scriptUpdateRequestDto.Visibility;
         scriptInBdd.UserId = scriptInBdd.UserId;
         scriptInBdd.CreatorName = scriptInBdd.CreatorName;
-        
+
         var scriptUpdated = await scriptRepository.UpdateScript(scriptInBdd);
-        
+
         if (scriptUpdated == null)
         {
             return null;
@@ -174,7 +183,6 @@ public class ScriptService(IScriptRepository scriptRepository, IUserRepository u
             OutputScriptType = scriptUpdated.OutputScriptType,
             ProgrammingLanguage = scriptUpdated.ProgrammingLanguage,
             CreatorName = scriptUpdated.CreatorName
-
         };
     }
 
@@ -186,31 +194,35 @@ public class ScriptService(IScriptRepository scriptRepository, IUserRepository u
         {
             return null;
         }
-        var latestScriptVersion = await scriptVersionRepository.GetLatestScriptVersionByScriptId(scriptId);
+        var latestScriptVersion = await scriptVersionRepository.GetLatestScriptVersionByScriptId(
+            scriptId
+        );
         if (latestScriptVersion == null)
         {
             return null;
         }
-        
-        var scriptNameWithExtension = script.ScriptName + (script.ProgrammingLanguage == "Python" ? ".py" : ".cs");
-        
+
+        var scriptNameWithExtension =
+            script.ScriptName + (script.ProgrammingLanguage == "Python" ? ".py" : ".cs");
+
         return new ScriptFileResponseDto
         {
             File = latestScriptVersion.SourceScriptBinary,
             FileName = scriptNameWithExtension
         };
     }
+
     public async Task DeleteScriptAndVersions(int scriptId)
     {
         await scriptVersionRepository.DeleteScriptVersionsByScriptId(scriptId);
         await scriptRepository.DeleteScript(scriptId);
     }
-    
+
     public async Task DeleteScriptVersionById(int scriptVersionId)
     {
         await scriptVersionRepository.DeleteScriptVersion(scriptVersionId);
     }
-    
+
     public async Task<List<ScriptVersionResponseDto>> GetScriptVersionsByScriptId(int scriptId)
     {
         var scriptVersions = await scriptVersionRepository.GetScriptVersionsByScriptId(scriptId);
@@ -218,17 +230,19 @@ public class ScriptService(IScriptRepository scriptRepository, IUserRepository u
         {
             return new List<ScriptVersionResponseDto>();
         }
-        return scriptVersions.Select(scriptVersion => new ScriptVersionResponseDto
-        {
-            ScriptVersionId = scriptVersion.ScriptVersionId,
-            ScriptId = scriptVersion.ScriptId,
-            VersionNumber = scriptVersion.VersionNumber,
-            CreationDate = scriptVersion.CreationDate,
-            CreatorUserId = scriptVersion.CreatorUserId,
-            SourceScriptLink = scriptVersion.SourceScriptLink
-        }).ToList();
+        return scriptVersions
+            .Select(scriptVersion => new ScriptVersionResponseDto
+            {
+                ScriptVersionId = scriptVersion.ScriptVersionId,
+                ScriptId = scriptVersion.ScriptId,
+                VersionNumber = scriptVersion.VersionNumber,
+                CreationDate = scriptVersion.CreationDate,
+                CreatorUserId = scriptVersion.CreatorUserId,
+                SourceScriptLink = scriptVersion.SourceScriptLink
+            })
+            .ToList();
     }
-    
+
     public async Task<ScriptVersionFileResponseDto?> GetScriptVersionFileById(int scriptVersionId)
     {
         var scriptVersion = await scriptVersionRepository.GetScriptVersionById(scriptVersionId);
@@ -244,10 +258,14 @@ public class ScriptService(IScriptRepository scriptRepository, IUserRepository u
         return new ScriptVersionFileResponseDto
         {
             File = scriptVersion.SourceScriptBinary,
-            FileName = script.ScriptName + $"_v{scriptVersion.VersionNumber}_" + (scriptVersion.CreationDate.ToString("yyyyMMddHHmmss")) + (script.ProgrammingLanguage == "Python" ? ".py" : ".cs")
+            FileName =
+                script.ScriptName
+                + $"_v{scriptVersion.VersionNumber}_"
+                + (scriptVersion.CreationDate.ToString("yyyyMMddHHmmss"))
+                + (script.ProgrammingLanguage == "Python" ? ".py" : ".cs")
         };
     }
-    
+
     public async Task<List<ScriptResponseDto>> GetScriptsByKeyWord(string keyword)
     {
         var scripts = await scriptRepository.GetScriptsByKeyWord(keyword);
@@ -255,17 +273,19 @@ public class ScriptService(IScriptRepository scriptRepository, IUserRepository u
         {
             return new List<ScriptResponseDto>();
         }
-        return scripts.Select(script => new ScriptResponseDto
-        {
-            ScriptId = script.ScriptId,
-            ScriptName = script.ScriptName,
-            Description = script.Description,
-            InputScriptType = script.InputScriptType,
-            UserId = script.UserId,
-            OutputScriptType = script.OutputScriptType,
-            ProgrammingLanguage = script.ProgrammingLanguage,
-            Visibility = script.Visibility,
-            CreatorName = script.CreatorName
-        }).ToList();
+        return scripts
+            .Select(script => new ScriptResponseDto
+            {
+                ScriptId = script.ScriptId,
+                ScriptName = script.ScriptName,
+                Description = script.Description,
+                InputScriptType = script.InputScriptType,
+                UserId = script.UserId,
+                OutputScriptType = script.OutputScriptType,
+                ProgrammingLanguage = script.ProgrammingLanguage,
+                Visibility = script.Visibility,
+                CreatorName = script.CreatorName
+            })
+            .ToList();
     }
 }

@@ -11,19 +11,19 @@ public class PipelineRepository(MySqlDbContext context) : IPipelineRepository
     {
         return await context.Pipelines.ToListAsync();
     }
-    
+
     //get pipeline by id
     public async Task<Pipeline?> GetPipelineById(int id)
     {
         return await context.Pipelines.FirstOrDefaultAsync(p => p.PipelineId == id);
     }
-    
+
     //get pipelines by user id
     public async Task<IEnumerable<Pipeline?>> GetPipelinesByUserId(int userId)
     {
         return await context.Pipelines.Where(p => p.CreatorUserId == userId).ToListAsync();
     }
-    
+
     //create pipeline
     public async Task<Pipeline?> CreatePipeline(Pipeline pipeline)
     {
@@ -31,7 +31,7 @@ public class PipelineRepository(MySqlDbContext context) : IPipelineRepository
         await context.SaveChangesAsync();
         return pipeline;
     }
-    
+
     //update pipeline
     public async Task<Pipeline?> UpdatePipeline(Pipeline pipeline)
     {
@@ -39,7 +39,7 @@ public class PipelineRepository(MySqlDbContext context) : IPipelineRepository
         await context.SaveChangesAsync();
         return pipeline;
     }
-    
+
     //delete pipeline
     public async Task<Pipeline?> DeletePipeline(int id)
     {
@@ -48,7 +48,7 @@ public class PipelineRepository(MySqlDbContext context) : IPipelineRepository
         {
             return null;
         }
-        
+
         context.Pipelines.Remove(pipeline);
         await context.SaveChangesAsync();
         return pipeline;

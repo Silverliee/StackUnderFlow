@@ -1,6 +1,7 @@
 using StackUnderFlow.Application.DataTransferObject.Request;
 using StackUnderFlow.Application.DataTransferObject.Response;
 using StackUnderFlow.Domains.Model;
+
 namespace StackUnderFlow.Domains.Services;
 
 public interface ILoginService

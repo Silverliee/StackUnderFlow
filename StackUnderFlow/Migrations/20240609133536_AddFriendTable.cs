@@ -25,25 +25,28 @@ namespace StackUnderFlow.Migrations
                         name: "FK_Friend_Users_UserId1",
                         column: x => x.UserId1,
                         principalTable: "Users",
-                        principalColumn: "UserId");
+                        principalColumn: "UserId"
+                    );
                     table.ForeignKey(
                         name: "FK_Friend_Users_UserId2",
                         column: x => x.UserId2,
                         principalTable: "Users",
-                        principalColumn: "UserId");
-                });
+                        principalColumn: "UserId"
+                    );
+                }
+            );
 
             migrationBuilder.CreateIndex(
                 name: "IX_Friend_UserId2",
                 table: "Friend",
-                column: "UserId2");
+                column: "UserId2"
+            );
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "Friend");
+            migrationBuilder.DropTable(name: "Friend");
         }
     }
 }

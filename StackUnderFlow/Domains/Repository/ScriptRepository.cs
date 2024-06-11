@@ -11,19 +11,19 @@ public class ScriptRepository(MySqlDbContext context) : IScriptRepository
     {
         return await context.Scripts.ToListAsync();
     }
-    
+
     //get script by id
     public async Task<Script?> GetScriptById(int id)
     {
         return await context.Scripts.FirstOrDefaultAsync(x => x.ScriptId == id);
     }
-    
+
     //get script by user id
     public async Task<List<Script>> GetScriptsByUserId(int userId)
     {
         return await context.Scripts.Where(x => x.UserId == userId).ToListAsync();
     }
-    
+
     //add script
     public async Task<Script?> AddScript(Script script)
     {
@@ -31,7 +31,7 @@ public class ScriptRepository(MySqlDbContext context) : IScriptRepository
         await context.SaveChangesAsync();
         return result.Entity;
     }
-    
+
     //update script
     public async Task<Script?> UpdateScript(Script script)
     {
@@ -39,7 +39,7 @@ public class ScriptRepository(MySqlDbContext context) : IScriptRepository
         await context.SaveChangesAsync();
         return result.Entity;
     }
-    
+
     //delete script
     public async Task DeleteScript(int id)
     {
@@ -50,6 +50,8 @@ public class ScriptRepository(MySqlDbContext context) : IScriptRepository
 
     public async Task<List<Script?>> GetScriptsByKeyWord(string keyword)
     {
-        return await context.Scripts.Where(x => x.ScriptName.Contains(keyword) || x.Description.Contains(keyword)).ToListAsync();
+        return await context
+            .Scripts.Where(x => x.ScriptName.Contains(keyword) || x.Description.Contains(keyword))
+            .ToListAsync();
     }
 }

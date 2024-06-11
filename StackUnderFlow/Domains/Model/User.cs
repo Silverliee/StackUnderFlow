@@ -20,5 +20,4 @@ public class User
     public ICollection<Follow> Follower { get; set; }
     public ICollection<Follow> Followed { get; set; }
     public ICollection<GroupRequest> GroupRequests { get; set; }
-
 }

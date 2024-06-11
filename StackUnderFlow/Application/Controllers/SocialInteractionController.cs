@@ -1,20 +1,21 @@
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Cors;
 using System.Security.Claims;
-using StackUnderFlow.Domains.Services;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Mvc;
 using StackUnderFlow.Application.DataTransferObject.Request;
+using StackUnderFlow.Domains.Services;
 
 namespace StackUnderFlow.Application.Controllers;
 
 [ApiController]
-[Route("[controller]")] 
+[Route("[controller]")]
 [EnableCors("AllowAll")]
-public class SocialInteractionController(ISocialInteractionService socialInteractionService) : ControllerBase
+public class SocialInteractionController(ISocialInteractionService socialInteractionService)
+    : ControllerBase
 {
     #region Friends
 
-    
+
     [HttpGet("friends")]
     [Authorize]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -33,7 +34,7 @@ public class SocialInteractionController(ISocialInteractionService socialInterac
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
     }
-    
+
     [HttpGet("friends/requests")]
     [Authorize]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -52,7 +53,7 @@ public class SocialInteractionController(ISocialInteractionService socialInterac
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
     }
-    
+
     [HttpPost("friends/{friendId:int}")]
     [Authorize]
     [ProducesResponseType(StatusCodes.Status201Created)]
@@ -62,7 +63,11 @@ public class SocialInteractionController(ISocialInteractionService socialInterac
         var userId = Convert.ToInt32(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
         try
         {
-            var friend = await socialInteractionService.CreateFriendRequest(userId, friendId, message);
+            var friend = await socialInteractionService.CreateFriendRequest(
+                userId,
+                friendId,
+                message
+            );
             if (friend == null)
             {
                 return BadRequest();
@@ -74,7 +79,7 @@ public class SocialInteractionController(ISocialInteractionService socialInterac
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
     }
-    
+
     [HttpPatch("friends/{friendId:int}")]
     [Authorize]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -91,7 +96,10 @@ public class SocialInteractionController(ISocialInteractionService socialInterac
             {
                 return NotFound();
             }
-            var friend = await socialInteractionService.AcceptFriendRequest(friendRequest.UserId, friendRequest.FriendId);
+            var friend = await socialInteractionService.AcceptFriendRequest(
+                friendRequest.UserId,
+                friendRequest.FriendId
+            );
             return Ok(friend);
         }
         catch
@@ -99,7 +107,7 @@ public class SocialInteractionController(ISocialInteractionService socialInterac
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
     }
-    
+
     [HttpDelete("friends/{friendId:int}")]
     [Authorize]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -118,10 +126,10 @@ public class SocialInteractionController(ISocialInteractionService socialInterac
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
     }
-    
+
     #endregion
     #region Follows
-    
+
     [HttpGet("follows")]
     [Authorize]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -140,6 +148,7 @@ public class SocialInteractionController(ISocialInteractionService socialInterac
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
     }
+
     [HttpDelete("follows/{followId:int}")]
     [Authorize]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -158,7 +167,7 @@ public class SocialInteractionController(ISocialInteractionService socialInterac
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
     }
-    
+
     [HttpPost("follows/{followId:int}")]
     [Authorize]
     [ProducesResponseType(StatusCodes.Status201Created)]
@@ -179,10 +188,10 @@ public class SocialInteractionController(ISocialInteractionService socialInterac
         {
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
-    }   
+    }
     #endregion
     #region Group
-    
+
     [HttpGet("groups")]
     [Authorize]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -201,7 +210,7 @@ public class SocialInteractionController(ISocialInteractionService socialInterac
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
     }
-    
+
     [HttpGet("groups/{groupId:int}")]
     [Authorize]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -224,7 +233,7 @@ public class SocialInteractionController(ISocialInteractionService socialInterac
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
     }
-    
+
     [HttpGet("groups/{groupId:int}/members")]
     [Authorize]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -248,7 +257,7 @@ public class SocialInteractionController(ISocialInteractionService socialInterac
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
     }
-    
+
     [HttpGet("groups/{groupId:int}/requests")]
     [Authorize]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -272,7 +281,7 @@ public class SocialInteractionController(ISocialInteractionService socialInterac
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
     }
-    
+
     [HttpGet("groups/requests")]
     [Authorize]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -291,7 +300,7 @@ public class SocialInteractionController(ISocialInteractionService socialInterac
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
     }
-    
+
     [HttpPost("groups")]
     [Authorize]
     [ProducesResponseType(StatusCodes.Status201Created)]
@@ -313,7 +322,7 @@ public class SocialInteractionController(ISocialInteractionService socialInterac
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
     }
-    
+
     [HttpPatch("groups/{groupId:int}")]
     [Authorize]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -336,7 +345,7 @@ public class SocialInteractionController(ISocialInteractionService socialInterac
             {
                 return Unauthorized();
             }
-            
+
             var updatedGroup = await socialInteractionService.UpdateGroup(groupId, groupRequestDto);
             return Ok(updatedGroup);
         }
@@ -345,7 +354,7 @@ public class SocialInteractionController(ISocialInteractionService socialInterac
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
     }
-    
+
     [HttpPost("groups/{groupId:int}/{memberId:int}")]
     [Authorize]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -358,7 +367,7 @@ public class SocialInteractionController(ISocialInteractionService socialInterac
         try
         {
             var userId = Convert.ToInt32(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
-            
+
             var group = await socialInteractionService.GetGroupById(groupId);
             if (group == null)
             {
@@ -380,7 +389,7 @@ public class SocialInteractionController(ISocialInteractionService socialInterac
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
     }
-    
+
     [HttpPatch("groups/requests/{groupId:int}")]
     [Authorize]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -405,7 +414,7 @@ public class SocialInteractionController(ISocialInteractionService socialInterac
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
     }
-    
+
     [HttpDelete("groups/requests/{groupId:int}")]
     [Authorize]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -422,7 +431,7 @@ public class SocialInteractionController(ISocialInteractionService socialInterac
                 return NoContent();
             }
 
-            await socialInteractionService.RejectGroupRequest(userId,groupId);
+            await socialInteractionService.RejectGroupRequest(userId, groupId);
             return NoContent();
         }
         catch
@@ -430,7 +439,7 @@ public class SocialInteractionController(ISocialInteractionService socialInterac
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
     }
-    
+
     [HttpDelete("groups/{groupId:int}/{memberId:int}")]
     [Authorize]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -453,7 +462,7 @@ public class SocialInteractionController(ISocialInteractionService socialInterac
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
     }
-    
+
     [HttpDelete("groups/{groupId:int}")]
     [Authorize]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -476,6 +485,6 @@ public class SocialInteractionController(ISocialInteractionService socialInterac
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
     }
-    
+
     #endregion
 }

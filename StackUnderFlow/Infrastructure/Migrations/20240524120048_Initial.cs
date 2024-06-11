@@ -17,37 +17,54 @@ namespace StackUnderFlow.Infrastructure.Migrations
                 name: "Statuses",
                 columns: table => new
                 {
-                    StatusId = table.Column<int>(type: "int", nullable: false)
+                    StatusId = table
+                        .Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Label = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Statuses", x => x.StatusId);
-                });
+                }
+            );
 
             migrationBuilder.CreateTable(
                 name: "Users",
                 columns: table => new
                 {
-                    UserId = table.Column<int>(type: "int", nullable: false)
+                    UserId = table
+                        .Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Username = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
+                    Username = table.Column<string>(
+                        type: "nvarchar(100)",
+                        maxLength: 100,
+                        nullable: false
+                    ),
+                    Email = table.Column<string>(
+                        type: "nvarchar(200)",
+                        maxLength: 200,
+                        nullable: false
+                    ),
                     Password = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Users", x => x.UserId);
-                });
+                }
+            );
 
             migrationBuilder.CreateTable(
                 name: "Groups",
                 columns: table => new
                 {
-                    GroupId = table.Column<int>(type: "int", nullable: false)
+                    GroupId = table
+                        .Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    GroupName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    GroupName = table.Column<string>(
+                        type: "nvarchar(100)",
+                        maxLength: 100,
+                        nullable: false
+                    ),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CreatorUserID = table.Column<int>(type: "int", nullable: false)
                 },
@@ -59,14 +76,17 @@ namespace StackUnderFlow.Infrastructure.Migrations
                         column: x => x.CreatorUserID,
                         principalTable: "Users",
                         principalColumn: "UserId",
-                        onDelete: ReferentialAction.Cascade);
-                });
+                        onDelete: ReferentialAction.Cascade
+                    );
+                }
+            );
 
             migrationBuilder.CreateTable(
                 name: "Pipelines",
                 columns: table => new
                 {
-                    PipelineId = table.Column<int>(type: "int", nullable: false)
+                    PipelineId = table
+                        .Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     CreatorUserId = table.Column<int>(type: "int", nullable: false),
                     StatusId = table.Column<int>(type: "int", nullable: false),
@@ -81,25 +101,40 @@ namespace StackUnderFlow.Infrastructure.Migrations
                         column: x => x.StatusId,
                         principalTable: "Statuses",
                         principalColumn: "StatusId",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Cascade
+                    );
                     table.ForeignKey(
                         name: "FK_Pipelines_Users_CreatorUserId",
                         column: x => x.CreatorUserId,
                         principalTable: "Users",
-                        principalColumn: "UserId");
-                });
+                        principalColumn: "UserId"
+                    );
+                }
+            );
 
             migrationBuilder.CreateTable(
                 name: "Scripts",
                 columns: table => new
                 {
-                    ScriptId = table.Column<int>(type: "int", nullable: false)
+                    ScriptId = table
+                        .Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    ScriptName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: false),
+                    ScriptName = table.Column<string>(
+                        type: "nvarchar(100)",
+                        maxLength: 100,
+                        nullable: false
+                    ),
+                    Description = table.Column<string>(
+                        type: "nvarchar(1000)",
+                        maxLength: 1000,
+                        nullable: false
+                    ),
                     InputScriptType = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     OutputScriptType = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ProgrammingLanguage = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ProgrammingLanguage = table.Column<string>(
+                        type: "nvarchar(max)",
+                        nullable: false
+                    ),
                     Visibility = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     UserId = table.Column<int>(type: "int", nullable: false)
                 },
@@ -110,14 +145,17 @@ namespace StackUnderFlow.Infrastructure.Migrations
                         name: "FK_Scripts_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
-                        principalColumn: "UserId");
-                });
+                        principalColumn: "UserId"
+                    );
+                }
+            );
 
             migrationBuilder.CreateTable(
                 name: "Comments",
                 columns: table => new
                 {
-                    CommentId = table.Column<int>(type: "int", nullable: false)
+                    CommentId = table
+                        .Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     UserId = table.Column<int>(type: "int", nullable: false),
                     ScriptId = table.Column<int>(type: "int", nullable: false),
@@ -131,19 +169,23 @@ namespace StackUnderFlow.Infrastructure.Migrations
                         column: x => x.ScriptId,
                         principalTable: "Scripts",
                         principalColumn: "ScriptId",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Cascade
+                    );
                     table.ForeignKey(
                         name: "FK_Comments_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
-                        principalColumn: "UserId");
-                });
+                        principalColumn: "UserId"
+                    );
+                }
+            );
 
             migrationBuilder.CreateTable(
                 name: "Likes",
                 columns: table => new
                 {
-                    LikeId = table.Column<int>(type: "int", nullable: false)
+                    LikeId = table
+                        .Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     UserId = table.Column<int>(type: "int", nullable: false),
                     ScriptId = table.Column<int>(type: "int", nullable: false)
@@ -156,19 +198,23 @@ namespace StackUnderFlow.Infrastructure.Migrations
                         column: x => x.ScriptId,
                         principalTable: "Scripts",
                         principalColumn: "ScriptId",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Cascade
+                    );
                     table.ForeignKey(
                         name: "FK_Likes_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
-                        principalColumn: "UserId");
-                });
+                        principalColumn: "UserId"
+                    );
+                }
+            );
 
             migrationBuilder.CreateTable(
                 name: "ScriptVersions",
                 columns: table => new
                 {
-                    ScriptVersionId = table.Column<int>(type: "int", nullable: false)
+                    ScriptVersionId = table
+                        .Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     ScriptId = table.Column<int>(type: "int", nullable: false),
                     VersionNumber = table.Column<int>(type: "int", nullable: false),
@@ -184,14 +230,17 @@ namespace StackUnderFlow.Infrastructure.Migrations
                         column: x => x.ScriptId,
                         principalTable: "Scripts",
                         principalColumn: "ScriptId",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Cascade
+                    );
                     table.ForeignKey(
                         name: "FK_ScriptVersions_Users_CreatorUserId",
                         column: x => x.CreatorUserId,
                         principalTable: "Users",
                         principalColumn: "UserId",
-                        onDelete: ReferentialAction.Cascade);
-                });
+                        onDelete: ReferentialAction.Cascade
+                    );
+                }
+            );
 
             migrationBuilder.CreateTable(
                 name: "Sharings",
@@ -209,13 +258,16 @@ namespace StackUnderFlow.Infrastructure.Migrations
                         column: x => x.ScritpId,
                         principalTable: "Scripts",
                         principalColumn: "ScriptId",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Cascade
+                    );
                     table.ForeignKey(
                         name: "FK_Sharings_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
-                        principalColumn: "UserId");
-                });
+                        principalColumn: "UserId"
+                    );
+                }
+            );
 
             migrationBuilder.InsertData(
                 table: "Statuses",
@@ -224,93 +276,92 @@ namespace StackUnderFlow.Infrastructure.Migrations
                 {
                     { 1, "Pending" },
                     { 2, "Completed" }
-                });
+                }
+            );
 
             migrationBuilder.CreateIndex(
                 name: "IX_Comments_ScriptId",
                 table: "Comments",
-                column: "ScriptId");
+                column: "ScriptId"
+            );
 
             migrationBuilder.CreateIndex(
                 name: "IX_Comments_UserId",
                 table: "Comments",
-                column: "UserId");
+                column: "UserId"
+            );
 
             migrationBuilder.CreateIndex(
                 name: "IX_Groups_CreatorUserID",
                 table: "Groups",
-                column: "CreatorUserID");
+                column: "CreatorUserID"
+            );
 
             migrationBuilder.CreateIndex(
                 name: "IX_Likes_ScriptId",
                 table: "Likes",
-                column: "ScriptId");
+                column: "ScriptId"
+            );
 
-            migrationBuilder.CreateIndex(
-                name: "IX_Likes_UserId",
-                table: "Likes",
-                column: "UserId");
+            migrationBuilder.CreateIndex(name: "IX_Likes_UserId", table: "Likes", column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Pipelines_CreatorUserId",
                 table: "Pipelines",
-                column: "CreatorUserId");
+                column: "CreatorUserId"
+            );
 
             migrationBuilder.CreateIndex(
                 name: "IX_Pipelines_StatusId",
                 table: "Pipelines",
-                column: "StatusId");
+                column: "StatusId"
+            );
 
             migrationBuilder.CreateIndex(
                 name: "IX_Scripts_UserId",
                 table: "Scripts",
-                column: "UserId");
+                column: "UserId"
+            );
 
             migrationBuilder.CreateIndex(
                 name: "IX_ScriptVersions_CreatorUserId",
                 table: "ScriptVersions",
-                column: "CreatorUserId");
+                column: "CreatorUserId"
+            );
 
             migrationBuilder.CreateIndex(
                 name: "IX_ScriptVersions_ScriptId",
                 table: "ScriptVersions",
-                column: "ScriptId");
+                column: "ScriptId"
+            );
 
             migrationBuilder.CreateIndex(
                 name: "IX_Sharings_UserId",
                 table: "Sharings",
-                column: "UserId");
+                column: "UserId"
+            );
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "Comments");
+            migrationBuilder.DropTable(name: "Comments");
 
-            migrationBuilder.DropTable(
-                name: "Groups");
+            migrationBuilder.DropTable(name: "Groups");
 
-            migrationBuilder.DropTable(
-                name: "Likes");
+            migrationBuilder.DropTable(name: "Likes");
 
-            migrationBuilder.DropTable(
-                name: "Pipelines");
+            migrationBuilder.DropTable(name: "Pipelines");
 
-            migrationBuilder.DropTable(
-                name: "ScriptVersions");
+            migrationBuilder.DropTable(name: "ScriptVersions");
 
-            migrationBuilder.DropTable(
-                name: "Sharings");
+            migrationBuilder.DropTable(name: "Sharings");
 
-            migrationBuilder.DropTable(
-                name: "Statuses");
+            migrationBuilder.DropTable(name: "Statuses");
 
-            migrationBuilder.DropTable(
-                name: "Scripts");
+            migrationBuilder.DropTable(name: "Scripts");
 
-            migrationBuilder.DropTable(
-                name: "Users");
+            migrationBuilder.DropTable(name: "Users");
         }
     }
 }

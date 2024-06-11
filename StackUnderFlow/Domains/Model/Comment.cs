@@ -13,6 +13,7 @@ public class Comment
 
     [ForeignKey("UserId")]
     public User User { get; set; }
+
     [ForeignKey("ScriptId")]
     public Script Script { get; set; }
 }

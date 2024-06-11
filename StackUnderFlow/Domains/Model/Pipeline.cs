@@ -14,6 +14,7 @@ public class Pipeline
 
     [ForeignKey("CreatorUserId")]
     public User Creator { get; set; }
+
     [ForeignKey("StatusId")]
     public Status Status { get; set; }
 }

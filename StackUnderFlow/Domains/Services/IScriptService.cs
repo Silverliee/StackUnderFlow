@@ -1,7 +1,7 @@
 namespace StackUnderFlow.Domains.Services;
 
-using StackUnderFlow.Application.DataTransferObject.Response;
 using StackUnderFlow.Application.DataTransferObject.Request;
+using StackUnderFlow.Application.DataTransferObject.Response;
 
 public interface IScriptService
 {
@@ -14,6 +14,8 @@ public interface IScriptService
     public Task DeleteScriptVersionById(int scriptVersionId);
     public Task<List<ScriptVersionResponseDto>> GetScriptVersionsByScriptId(int scriptId);
     public Task<ScriptVersionFileResponseDto?> GetScriptVersionFileById(int scriptVersionId);
-    public Task<ScriptVersionResponseDto?> AddScriptVersion(ScriptVersionUploadRequestDto? scriptVersionUploadRequestDto);
+    public Task<ScriptVersionResponseDto?> AddScriptVersion(
+        ScriptVersionUploadRequestDto? scriptVersionUploadRequestDto
+    );
     public Task<List<ScriptResponseDto>> GetScriptsByKeyWord(string keyword);
 }

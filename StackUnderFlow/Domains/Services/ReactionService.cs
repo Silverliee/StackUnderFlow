@@ -1,6 +1,3 @@
 namespace StackUnderFlow.Domains.Services;
 
-public class ReactionService : IReactionService
-{
-    
-}
+public class ReactionService : IReactionService { }

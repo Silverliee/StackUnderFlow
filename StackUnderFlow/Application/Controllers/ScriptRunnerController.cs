@@ -1,21 +1,20 @@
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using StackUnderFlow.Infrastructure.Kubernetes;
-using Microsoft.AspNetCore.Cors;
 
 namespace StackUnderFlow.Application.Controllers;
 
 [ApiController]
-[Route("[controller]")] 
+[Route("[controller]")]
 [EnableCors("AllowAll")]
 public class ScriptRunnerController() : ControllerBase
 {
     private readonly KubernetesService _kubernetesService = new();
-    
+
     [HttpPost]
     [Authorize]
-    public async Task<IActionResult> ExecuteScript(
-        IFormFile? script)
+    public async Task<IActionResult> ExecuteScript(IFormFile? script)
     {
         try
         {
@@ -26,19 +25,33 @@ public class ScriptRunnerController() : ControllerBase
             var output = "";
 
             string scriptDirectory;
-            if (Path.GetExtension(script.FileName).Equals(".py", StringComparison.OrdinalIgnoreCase))
+            if (
+                Path.GetExtension(script.FileName).Equals(".py", StringComparison.OrdinalIgnoreCase)
+            )
             {
-                scriptDirectory = Path.Combine(rootPath, "Infrastructure", "Kubernetes", "python-scripts");
+                scriptDirectory = Path.Combine(
+                    rootPath,
+                    "Infrastructure",
+                    "Kubernetes",
+                    "python-scripts"
+                );
             }
-            else if (Path.GetExtension(script.FileName).Equals(".cs", StringComparison.OrdinalIgnoreCase))
+            else if (
+                Path.GetExtension(script.FileName).Equals(".cs", StringComparison.OrdinalIgnoreCase)
+            )
             {
-                scriptDirectory = Path.Combine(rootPath, "Infrastructure", "Kubernetes", "csharp-scripts");
+                scriptDirectory = Path.Combine(
+                    rootPath,
+                    "Infrastructure",
+                    "Kubernetes",
+                    "csharp-scripts"
+                );
             }
             else
             {
                 return BadRequest("Unsupported file extension");
             }
-        
+
             if (!Directory.Exists(scriptDirectory))
             {
                 Directory.CreateDirectory(scriptDirectory);
@@ -50,27 +63,31 @@ public class ScriptRunnerController() : ControllerBase
             {
                 await script.CopyToAsync(stream);
             }
-        
-            if (Path.GetExtension(script.FileName).Equals(".py", StringComparison.OrdinalIgnoreCase))
+
+            if (
+                Path.GetExtension(script.FileName).Equals(".py", StringComparison.OrdinalIgnoreCase)
+            )
             {
-                var pythonScript = await System.IO.File.ReadAllTextAsync(Path.Combine(scriptDirectory, uniqueFileName));
+                var pythonScript = await System.IO.File.ReadAllTextAsync(
+                    Path.Combine(scriptDirectory, uniqueFileName)
+                );
                 output = await _kubernetesService.CreatePythonJob("default", pythonScript);
             }
-            else if (Path.GetExtension(script.FileName).Equals(".cs", StringComparison.OrdinalIgnoreCase))
+            else if (
+                Path.GetExtension(script.FileName).Equals(".cs", StringComparison.OrdinalIgnoreCase)
+            )
             {
-                var csharpScript = await System.IO.File.ReadAllTextAsync(Path.Combine(scriptDirectory, uniqueFileName));
+                var csharpScript = await System.IO.File.ReadAllTextAsync(
+                    Path.Combine(scriptDirectory, uniqueFileName)
+                );
                 output = await _kubernetesService.CreateCSharpJob("default", csharpScript);
             }
-        
+
             return Ok(output);
         }
         catch (Exception e)
         {
-           return StatusCode(StatusCodes.Status500InternalServerError);
+            return StatusCode(StatusCodes.Status500InternalServerError);
         }
-        
-        
     }
-
-
 }

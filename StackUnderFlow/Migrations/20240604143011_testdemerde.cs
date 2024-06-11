@@ -15,15 +15,14 @@ namespace StackUnderFlow.Migrations
                 table: "ScriptVersions",
                 type: "int",
                 nullable: false,
-                defaultValue: 0);
+                defaultValue: 0
+            );
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropColumn(
-                name: "coucou",
-                table: "ScriptVersions");
+            migrationBuilder.DropColumn(name: "coucou", table: "ScriptVersions");
         }
     }
 }

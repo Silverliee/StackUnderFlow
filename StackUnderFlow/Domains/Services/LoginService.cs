@@ -6,10 +6,13 @@ using StackUnderFlow.Domains.Repository;
 
 namespace StackUnderFlow.Domains.Services;
 
-public class LoginService(IUserRepository userRepository, AuthenticationMiddleware authenticationMiddleware) : ILoginService
+public class LoginService(
+    IUserRepository userRepository,
+    AuthenticationMiddleware authenticationMiddleware
+) : ILoginService
 {
     public async Task<RegisterUserDto?> Register(RegisterUserDto? user)
-    {   
+    {
         var myUser = new User
         {
             Username = user.UserName,
@@ -19,7 +22,7 @@ public class LoginService(IUserRepository userRepository, AuthenticationMiddlewa
         var result = await userRepository.CreateUser(myUser);
         return result == null ? null : user;
     }
-    
+
     public async Task<LoginUserResponseDto?> Login(LoginUserDto loginUserDto)
     {
         var user = await userRepository.GetUserByEmail(loginUserDto.Email);
@@ -28,14 +31,10 @@ public class LoginService(IUserRepository userRepository, AuthenticationMiddlewa
             return null;
         }
         var token = authenticationMiddleware.GenerateJwtToken(user.UserId);
-        var result = new LoginUserResponseDto
-        {
-            Username = user.Username,
-            Token = token
-        };
+        var result = new LoginUserResponseDto { Username = user.Username, Token = token };
         return result;
     }
-    
+
     public async Task<UserResponseDto?> GetUserById(int userId)
     {
         var user = await userRepository.GetUserById(userId);

@@ -11,6 +11,7 @@ public class Sharing
 
     [ForeignKey("ProgramId")]
     public Script Script { get; set; }
+
     [ForeignKey("UserId")]
     public User User { get; set; }
 }

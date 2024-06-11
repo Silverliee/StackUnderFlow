@@ -6,7 +6,11 @@ using StackUnderFlow.Domains.Repository;
 
 namespace StackUnderFlow.Domains.Services;
 
-public class SocialInteractionService(IFriendRepository friendRepository, IFollowRepository followRepository, IGroupRepository groupRepository) : ISocialInteractionService
+public class SocialInteractionService(
+    IFriendRepository friendRepository,
+    IFollowRepository followRepository,
+    IGroupRepository groupRepository
+) : ISocialInteractionService
 {
     public async Task<List<UserResponseDto>> GetFriendsByUserId(int userId)
     {
@@ -15,14 +19,16 @@ public class SocialInteractionService(IFriendRepository friendRepository, IFollo
         {
             return [];
         }
-        return friends.Select(f => new UserResponseDto
-        {
-            UserId = f.UserId2,
-            Username = f.User2.Username,
-            Email = f.User2.Email
-        }).ToList();
+        return friends
+            .Select(f => new UserResponseDto
+            {
+                UserId = f.UserId2,
+                Username = f.User2.Username,
+                Email = f.User2.Email
+            })
+            .ToList();
     }
-    
+
     public async Task<List<FriendRequestResponseDto>> GetFriendRequestsByUserId(int userId)
     {
         var friendRequests = await friendRepository.GetFriendRequestsByUserId(userId);
@@ -30,23 +36,29 @@ public class SocialInteractionService(IFriendRepository friendRepository, IFollo
         {
             return [];
         }
-        return friendRequests.Select(f => new FriendRequestResponseDto
-        {
-            UserId = f.UserId1,
-            FriendId = f.UserId2,
-            Status = f.Status,
-            Message = f.Message
-        }).ToList();
+        return friendRequests
+            .Select(f => new FriendRequestResponseDto
+            {
+                UserId = f.UserId1,
+                FriendId = f.UserId2,
+                Status = f.Status,
+                Message = f.Message
+            })
+            .ToList();
     }
-    
+
     public async Task RemoveFriend(int userId, int friendId)
     {
-        await friendRepository.RemoveFriend(userId,friendId);
+        await friendRepository.RemoveFriend(userId, friendId);
     }
-    
-    public async Task<UserResponseDto?> CreateFriendRequest(int userId, int friendId, string message)
+
+    public async Task<UserResponseDto?> CreateFriendRequest(
+        int userId,
+        int friendId,
+        string message
+    )
     {
-        var user = await friendRepository.CreateFriendRequest(userId,friendId,message);
+        var user = await friendRepository.CreateFriendRequest(userId, friendId, message);
         if (user == null)
         {
             return null;
@@ -58,10 +70,10 @@ public class SocialInteractionService(IFriendRepository friendRepository, IFollo
             Email = user.User2.Email
         };
     }
-    
+
     public async Task<FriendRequestResponseDto?> GetFriendRequest(int userId, int friendId)
     {
-        var friendRequest = await friendRepository.GetFriendRequest(userId,friendId);
+        var friendRequest = await friendRepository.GetFriendRequest(userId, friendId);
         if (friendRequest == null)
         {
             return null;
@@ -90,13 +102,12 @@ public class SocialInteractionService(IFriendRepository friendRepository, IFollo
         }
         return new UserResponseDto
         {
-            UserId = friendRequest.UserId2, 
-            Username = friendRequest.User2.Username, 
+            UserId = friendRequest.UserId2,
+            Username = friendRequest.User2.Username,
             Email = friendRequest.User2.Email
         };
     }
 
-    
     public async Task<List<UserResponseDto>> GetFollowsByUserId(int userId)
     {
         var followers = await followRepository.GetFollowsByUserId(userId);
@@ -104,22 +115,24 @@ public class SocialInteractionService(IFriendRepository friendRepository, IFollo
         {
             return [];
         }
-        return followers.Select(f => new UserResponseDto
-        {
-            UserId = f.UserId1,
-            Username = f.User1.Username,
-            Email = f.User1.Email
-        }).ToList();
+        return followers
+            .Select(f => new UserResponseDto
+            {
+                UserId = f.UserId1,
+                Username = f.User1.Username,
+                Email = f.User1.Email
+            })
+            .ToList();
     }
-    
+
     public async Task RemoveFollow(int userId, int followerId)
     {
-        await followRepository.RemoveFollow(userId,followerId);
+        await followRepository.RemoveFollow(userId, followerId);
     }
-    
+
     public async Task<UserResponseDto?> AddFollow(int userId, int followedId)
     {
-        var user = await followRepository.AddFollow(userId,followedId);
+        var user = await followRepository.AddFollow(userId, followedId);
         if (user == null)
         {
             return null;
@@ -140,7 +153,8 @@ public class SocialInteractionService(IFriendRepository friendRepository, IFollo
             return [];
         }
 
-        return result.Select(request => new GroupRequestResponseDto
+        return result
+            .Select(request => new GroupRequestResponseDto
             {
                 GroupId = request.GroupId,
                 GroupName = request.Group.GroupName,
@@ -158,15 +172,17 @@ public class SocialInteractionService(IFriendRepository friendRepository, IFollo
         {
             return [];
         }
-        return result.Select(g => new GroupResponseDto
-        {
-            GroupId = g.GroupId,
-            GroupName = g.GroupName,
-            Description = g.Description,
-            CreatorUserID = g.CreatorUserID
-        }).ToList();
+        return result
+            .Select(g => new GroupResponseDto
+            {
+                GroupId = g.GroupId,
+                GroupName = g.GroupName,
+                Description = g.Description,
+                CreatorUserID = g.CreatorUserID
+            })
+            .ToList();
     }
-    
+
     public async Task<GroupResponseDto?> GetGroupById(int groupId)
     {
         var group = await groupRepository.GetGroupById(groupId);
@@ -182,7 +198,7 @@ public class SocialInteractionService(IFriendRepository friendRepository, IFollo
             CreatorUserID = group.CreatorUserID
         };
     }
-    
+
     public async Task<List<UserResponseDto>> GetGroupMembers(int groupId)
     {
         var result = await groupRepository.GetGroupMembers(groupId);
@@ -190,9 +206,9 @@ public class SocialInteractionService(IFriendRepository friendRepository, IFollo
         {
             return [];
         }
-        
-        
-        return result.Select(user => new UserResponseDto
+
+        return result
+            .Select(user => new UserResponseDto
             {
                 UserId = user.UserId,
                 Username = user.Username,
@@ -200,7 +216,7 @@ public class SocialInteractionService(IFriendRepository friendRepository, IFollo
             })
             .ToList();
     }
-    
+
     public async Task<List<GroupRequestResponseDto>> GetGroupRequestsByGroupId(int groupId)
     {
         var result = await groupRepository.GetGroupRequestsByGroupId(groupId);
@@ -209,7 +225,8 @@ public class SocialInteractionService(IFriendRepository friendRepository, IFollo
             return [];
         }
 
-        return result.Select(request => new GroupRequestResponseDto
+        return result
+            .Select(request => new GroupRequestResponseDto
             {
                 GroupId = request.GroupId,
                 GroupName = request.Group.GroupName,
@@ -219,7 +236,7 @@ public class SocialInteractionService(IFriendRepository friendRepository, IFollo
             })
             .ToList();
     }
-    
+
     public async Task<GroupResponseDto?> CreateGroup(int userId, GroupRequestDto groupRequestDto)
     {
         var group = new Group
@@ -241,7 +258,7 @@ public class SocialInteractionService(IFriendRepository friendRepository, IFollo
             CreatorUserID = result.CreatorUserID
         };
     }
-    
+
     public async Task<GroupResponseDto> UpdateGroup(int groupId, GroupRequestDto groupRequestDto)
     {
         var group = await groupRepository.GetGroupById(groupId);
@@ -262,7 +279,7 @@ public class SocialInteractionService(IFriendRepository friendRepository, IFollo
             CreatorUserID = groupUpdated.CreatorUserID
         };
     }
-    
+
     public async Task<GroupRequestResponseDto?> CreateGroupRequest(int userId, int groupId)
     {
         var check = await groupRepository.GetGroupRequest(userId, groupId);
@@ -277,8 +294,8 @@ public class SocialInteractionService(IFriendRepository friendRepository, IFollo
             UserId = userId,
             Status = "Pending"
         };
-        
-            await groupRepository.CreateGroupRequest(groupRequest);
+
+        await groupRepository.CreateGroupRequest(groupRequest);
         return new GroupRequestResponseDto
         {
             GroupId = groupRequest.GroupId,
@@ -288,7 +305,7 @@ public class SocialInteractionService(IFriendRepository friendRepository, IFollo
             Status = groupRequest.Status
         };
     }
-    
+
     public async Task<GroupRequestResponseDto> AcceptGroupRequest(int userId, int groupId)
     {
         var groupRequest = await groupRepository.GetGroupRequest(userId, groupId);
@@ -311,7 +328,7 @@ public class SocialInteractionService(IFriendRepository friendRepository, IFollo
             Status = groupRequest.Status
         };
     }
-    
+
     public async Task RejectGroupRequest(int userId, int groupId)
     {
         var groupRequest = await groupRepository.GetGroupRequest(userId, groupId);
@@ -321,6 +338,7 @@ public class SocialInteractionService(IFriendRepository friendRepository, IFollo
         }
         await groupRepository.RemoveGroupRequest(groupRequest);
     }
+
     public async Task RemoveGroup(int groupId)
     {
         var group = await groupRepository.GetGroupById(groupId);
@@ -330,5 +348,4 @@ public class SocialInteractionService(IFriendRepository friendRepository, IFollo
         }
         await groupRepository.DeleteGroup(group);
     }
-
 }

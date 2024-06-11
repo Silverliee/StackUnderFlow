@@ -76,7 +76,11 @@ namespace StackUnderFlow.Application.Controllers
                     return StatusCode(StatusCodes.Status500InternalServerError);
                 }
 
-                return CreatedAtAction(nameof(GetScriptById), new { scriptId = response.ScriptId }, response);
+                return CreatedAtAction(
+                    nameof(GetScriptById),
+                    new { scriptId = response.ScriptId },
+                    response
+                );
             }
             catch
             {
@@ -90,7 +94,9 @@ namespace StackUnderFlow.Application.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> UpdateScript(ScriptUpdateRequestDto? scriptUpdateRequestDto)
+        public async Task<IActionResult> UpdateScript(
+            ScriptUpdateRequestDto? scriptUpdateRequestDto
+        )
         {
             if (scriptUpdateRequestDto == null)
             {
@@ -164,7 +170,10 @@ namespace StackUnderFlow.Application.Controllers
                     return NotFound();
                 }
 
-                HttpContext.Response.Headers.Append("Content-Disposition", "attachment; filename=" + file.FileName);
+                HttpContext.Response.Headers.Append(
+                    "Content-Disposition",
+                    "attachment; filename=" + file.FileName
+                );
                 return File(file.File, "application/octet-stream");
             }
             catch
@@ -191,7 +200,10 @@ namespace StackUnderFlow.Application.Controllers
                     return NotFound();
                 }
 
-                HttpContext.Response.Headers.Append("Content-Disposition", "attachment; filename=" + file.FileName);
+                HttpContext.Response.Headers.Append(
+                    "Content-Disposition",
+                    "attachment; filename=" + file.FileName
+                );
                 return File(file.File, "application/octet-stream");
             }
             catch
@@ -205,7 +217,9 @@ namespace StackUnderFlow.Application.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> AddScriptVersion(ScriptVersionUploadRequestDto? scriptVersionUploadRequestDto)
+        public async Task<IActionResult> AddScriptVersion(
+            ScriptVersionUploadRequestDto? scriptVersionUploadRequestDto
+        )
         {
             if (scriptVersionUploadRequestDto == null)
             {
@@ -221,15 +235,17 @@ namespace StackUnderFlow.Application.Controllers
                     return StatusCode(StatusCodes.Status500InternalServerError);
                 }
 
-                return CreatedAtAction(nameof(GetScriptVersionFileById),
-                    new { scriptVersionId = response.ScriptVersionId }, response);
+                return CreatedAtAction(
+                    nameof(GetScriptVersionFileById),
+                    new { scriptVersionId = response.ScriptVersionId },
+                    response
+                );
             }
             catch
             {
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
-
 
         [HttpDelete("version/{scriptVersionId:int}")]
         [Authorize]

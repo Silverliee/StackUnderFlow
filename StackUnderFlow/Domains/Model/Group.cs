@@ -13,7 +13,6 @@ public class Group
 
     [ForeignKey("CreatorUserID")]
     public User Creator { get; set; }
-    
-    public ICollection<GroupRequest> GroupRequests { get; set; }
 
+    public ICollection<GroupRequest> GroupRequests { get; set; }
 }

@@ -23,7 +23,9 @@ public class UserRepository(MySqlDbContext context) : IUserRepository
 
     public async Task<User?> CreateUser(User user)
     {
-        var userExists = await context.Users.FirstOrDefaultAsync(u => u != null && (u.Email == user.Email || u.Username == user.Username));
+        var userExists = await context.Users.FirstOrDefaultAsync(u =>
+            u != null && (u.Email == user.Email || u.Username == user.Username)
+        );
         if (userExists != null)
         {
             return null;

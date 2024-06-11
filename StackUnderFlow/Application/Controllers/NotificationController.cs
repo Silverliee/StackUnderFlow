@@ -1,12 +1,9 @@
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Mvc;
 
 namespace StackUnderFlow.Application.Controllers;
 
 [ApiController]
-[Route("[controller]")] 
+[Route("[controller]")]
 [EnableCors("AllowAll")]
-public class NotificationController : ControllerBase
-{
-    
-}
+public class NotificationController : ControllerBase { }

@@ -12,6 +12,7 @@ public class Like
 
     [ForeignKey("UserId")]
     public User User { get; set; }
+
     [ForeignKey("ScriptId")]
     public Script Script { get; set; }
 }

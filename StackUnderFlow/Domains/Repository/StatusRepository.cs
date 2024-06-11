@@ -11,27 +11,27 @@ public class StatusRepository(MySqlDbContext context) : IStatusRepository
     {
         return await context.Statuses.ToListAsync();
     }
-    
+
     //get status by id
     public async Task<Status?> GetStatusById(int id)
     {
         return await context.Statuses.FirstOrDefaultAsync(x => x.StatusId == id);
     }
-    
+
     //add status
     public async Task AddStatus(Status? status)
     {
         await context.Statuses.AddAsync(status);
         await context.SaveChangesAsync();
     }
-    
+
     //update status
     public async Task UpdateStatus(Status? status)
     {
         context.Statuses.Update(status);
         await context.SaveChangesAsync();
     }
-    
+
     //delete status
     public async Task DeleteStatus(int id)
     {
@@ -39,5 +39,4 @@ public class StatusRepository(MySqlDbContext context) : IStatusRepository
         context.Statuses.Remove(status);
         await context.SaveChangesAsync();
     }
-    
 }

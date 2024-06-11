@@ -10,9 +10,7 @@ namespace StackUnderFlow.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropColumn(
-                name: "coucou",
-                table: "ScriptVersions");
+            migrationBuilder.DropColumn(name: "coucou", table: "ScriptVersions");
         }
 
         /// <inheritdoc />
@@ -23,7 +21,8 @@ namespace StackUnderFlow.Migrations
                 table: "ScriptVersions",
                 type: "int",
                 nullable: false,
-                defaultValue: 0);
+                defaultValue: 0
+            );
         }
     }
 }

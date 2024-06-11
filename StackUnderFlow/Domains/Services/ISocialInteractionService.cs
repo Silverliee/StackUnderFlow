@@ -14,15 +14,15 @@ public interface ISocialInteractionService
     public Task<List<UserResponseDto>> GetFollowsByUserId(int userId);
     public Task RemoveFollow(int userId, int followedId);
     public Task<UserResponseDto?> AddFollow(int userId, int followedId);
-     public Task<List<GroupRequestResponseDto>> GetGroupRequestsByUserId(int userId);
-     public Task<List<GroupRequestResponseDto>> GetGroupRequestsByGroupId(int groupId);
-     public Task<List<GroupResponseDto>> GetGroupsByUserId(int userId);
-     public Task<GroupResponseDto?> GetGroupById(int groupId);
-     public Task<List<UserResponseDto>> GetGroupMembers(int groupId);
-     public Task<GroupResponseDto?> CreateGroup(int userId, GroupRequestDto groupRequestDto);
-     public Task<GroupResponseDto> UpdateGroup(int groupId, GroupRequestDto groupRequestDto);
-     public Task<GroupRequestResponseDto?> CreateGroupRequest(int userId, int groupId);
-     public Task<GroupRequestResponseDto> AcceptGroupRequest(int userId, int groupId);
-     public Task RejectGroupRequest(int userId, int groupId);
-     public Task RemoveGroup(int groupId);
+    public Task<List<GroupRequestResponseDto>> GetGroupRequestsByUserId(int userId);
+    public Task<List<GroupRequestResponseDto>> GetGroupRequestsByGroupId(int groupId);
+    public Task<List<GroupResponseDto>> GetGroupsByUserId(int userId);
+    public Task<GroupResponseDto?> GetGroupById(int groupId);
+    public Task<List<UserResponseDto>> GetGroupMembers(int groupId);
+    public Task<GroupResponseDto?> CreateGroup(int userId, GroupRequestDto groupRequestDto);
+    public Task<GroupResponseDto> UpdateGroup(int groupId, GroupRequestDto groupRequestDto);
+    public Task<GroupRequestResponseDto?> CreateGroupRequest(int userId, int groupId);
+    public Task<GroupRequestResponseDto> AcceptGroupRequest(int userId, int groupId);
+    public Task RejectGroupRequest(int userId, int groupId);
+    public Task RemoveGroup(int groupId);
 }

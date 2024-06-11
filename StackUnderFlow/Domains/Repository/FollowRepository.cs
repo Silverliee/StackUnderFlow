@@ -18,29 +18,29 @@ public class FollowRepository(MySqlDbContext context) : IFollowRepository
 
     public async Task RemoveFollow(int userId, int followedId)
     {
-        var followed = await context.Follows.FirstOrDefaultAsync(f => f.UserId1 == userId && f.UserId2 == followedId);
+        var followed = await context.Follows.FirstOrDefaultAsync(f =>
+            f.UserId1 == userId && f.UserId2 == followedId
+        );
         if (followed == null)
         {
             return;
         }
-        
+
         context.Follows.Remove(followed);
         await context.SaveChangesAsync();
     }
-    
+
     public async Task<Follow?> AddFollow(int userId, int followedId)
     {
-        var followed = await context.Follows.FirstOrDefaultAsync(f => f.UserId1 == userId && f.UserId2 == followedId);
+        var followed = await context.Follows.FirstOrDefaultAsync(f =>
+            f.UserId1 == userId && f.UserId2 == followedId
+        );
         if (followed != null)
         {
             return null;
         }
-        
-        followed = new Follow
-        {
-            UserId1 = userId,
-            UserId2 = followedId
-        };
+
+        followed = new Follow { UserId1 = userId, UserId2 = followedId };
         await context.Follows.AddAsync(followed);
         await context.SaveChangesAsync();
         return followed;
