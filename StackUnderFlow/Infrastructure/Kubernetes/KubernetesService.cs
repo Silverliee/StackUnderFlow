@@ -11,7 +11,11 @@ public class KubernetesService
         )
     );
 
-    public async Task<string> CreatePythonJob(string namespaceName, string scriptContent)
+    public async Task<string> ExecutePythonScript(
+        string namespaceName,
+        string scriptContent,
+        Action<string> notifyCallback
+    )
     {
         var jobName = Guid.NewGuid().ToString();
         try
@@ -47,6 +51,7 @@ public class KubernetesService
                 }
             };
 
+            notifyCallback("Creating job...");
             var createdJob = await _client.BatchV1.CreateNamespacedJobAsync(job, namespaceName);
             if (createdJob == null)
             {
@@ -57,6 +62,7 @@ public class KubernetesService
 
             await Task.Delay(5000);
 
+            notifyCallback("Job created. Retrieving pod name...");
             var podName = await GetJobPodNameAsync(namespaceName, jobName);
             if (podName == null)
             {
@@ -64,6 +70,8 @@ public class KubernetesService
                     $"Failed to get pod name for job {jobName} in namespace {namespaceName}"
                 );
             }
+
+            notifyCallback("Retrieving logs...");
             var logs = await GetPodLogsAsync(namespaceName, podName!);
             if (logs == null)
             {
@@ -71,6 +79,8 @@ public class KubernetesService
                     $"Failed to get logs for pod {podName} in namespace {namespaceName}"
                 );
             }
+
+            notifyCallback("Deleting job...");
             DeleteJob(namespaceName, jobName);
             return logs;
         }
@@ -80,7 +90,11 @@ public class KubernetesService
         }
     }
 
-    public async Task<string> CreateCSharpJob(string namespaceName, string scriptContent)
+    public async Task<string> ExecuteCsharpScript(
+        string namespaceName,
+        string scriptContent,
+        Action<string> notifyCallback
+    )
     {
         var jobName = Guid.NewGuid().ToString();
         try
@@ -116,6 +130,7 @@ public class KubernetesService
                 }
             };
 
+            notifyCallback("Creating job...");
             var createdJob = await _client.BatchV1.CreateNamespacedJobAsync(job, namespaceName);
             if (createdJob == null)
             {
@@ -126,6 +141,7 @@ public class KubernetesService
 
             await Task.Delay(5000);
 
+            notifyCallback("Job created. Retrieving pod name...");
             var podName = await GetJobPodNameAsync(namespaceName, jobName);
             if (podName == null)
             {
@@ -133,6 +149,8 @@ public class KubernetesService
                     $"Failed to get pod name for job {jobName} in namespace {namespaceName}"
                 );
             }
+
+            notifyCallback("Retrieving logs...");
             var logs = await GetPodLogsAsync(namespaceName, podName!);
             if (logs == null)
             {
@@ -140,6 +158,8 @@ public class KubernetesService
                     $"Failed to get logs for pod {podName} in namespace {namespaceName}"
                 );
             }
+
+            notifyCallback("Deleting job...");
             DeleteJob(namespaceName, jobName);
             return logs;
         }
@@ -187,6 +207,7 @@ public class KubernetesService
                 $"Failed to get logs for pod {podName} in namespace {namespaceName}"
             );
         }
+
         return result;
     }
 }
