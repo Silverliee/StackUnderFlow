@@ -13,7 +13,6 @@ public class GroupRequest
     // Navigation properties to User and Group entities
     [ForeignKey("UserId")]
     public User User { get; set; }
-
     [ForeignKey("GroupId")]
     public Group Group { get; set; }
 }

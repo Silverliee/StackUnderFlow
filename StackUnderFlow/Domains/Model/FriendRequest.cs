@@ -14,7 +14,6 @@ public class FriendRequest
     // Navigation properties to User entities
     [ForeignKey("UserId1")]
     public User User1 { get; set; }
-
     [ForeignKey("UserId2")]
     public User User2 { get; set; }
 }
