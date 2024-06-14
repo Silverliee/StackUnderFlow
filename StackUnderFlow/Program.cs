@@ -1,4 +1,6 @@
+using System.Collections.Concurrent;
 using System.Diagnostics;
+using System.Net.WebSockets;
 using System.Reflection;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -8,6 +10,8 @@ using Microsoft.OpenApi.Models;
 using StackUnderFlow.Application.Middleware;
 using StackUnderFlow.Domains.Repository;
 using StackUnderFlow.Domains.Services;
+using StackUnderFlow.Domains.Websocket;
+using StackUnderFlow.Infrastructure.Kubernetes;
 using StackUnderFlow.Infrastructure.Settings;
 
 public partial class Program
@@ -18,10 +22,6 @@ public partial class Program
         return FileVersionInfo.GetVersionInfo(assembly.Location);
     }
 
-    private static readonly string Name =
-        Assembly.GetExecutingAssembly().GetName().Name ?? "No name";
-
-    private static readonly string FullVersion = GetAssemblyFileVersion().FileVersion ?? "0.0.0";
     private static readonly string MajorVersionTag = $"v{GetAssemblyFileVersion().FileMajorPart}";
 
     public static void Main(string[] args)
@@ -59,7 +59,6 @@ public partial class Program
         builder.Services.AddScoped<ICommentRepository, CommentRepository>();
         builder.Services.AddScoped<IGroupRepository, GroupRepository>();
         builder.Services.AddScoped<ILikeRepository, LikeRepository>();
-        builder.Services.AddScoped<IPipelineRepository, PipelineRepository>();
         builder.Services.AddScoped<IScriptRepository, ScriptRepository>();
         builder.Services.AddScoped<ISharingRepository, SharingRepository>();
         builder.Services.AddScoped<IStatusRepository, StatusRepository>();
@@ -70,6 +69,9 @@ public partial class Program
         builder.Services.AddScoped<IFollowRepository, FollowRepository>();
 
         builder.Services.AddSingleton<AuthenticationMiddleware>();
+        builder.Services.AddSingleton<KubernetesService>();
+        builder.Services.AddSingleton<PipelineService>();
+        builder.Services.AddSingleton(new ConcurrentDictionary<string, WebSocket>());
 
         builder.Services.AddSwaggerGen(options =>
         {
@@ -129,15 +131,16 @@ public partial class Program
         var app = builder.Build();
 
         app.UseCors("AllowAll");
-        
+
         app.UseSwagger();
         app.UseSwaggerUI();
-        
+
         app.UseHttpsRedirection();
 
         app.UseAuthentication();
         app.UseAuthorization();
 
+        app.UseWebSockets();
         app.MapControllers();
         app.UseCors("AllowAll");
         app.Run();
