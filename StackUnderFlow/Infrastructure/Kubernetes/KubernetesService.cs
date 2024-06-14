@@ -5,9 +5,12 @@ namespace StackUnderFlow.Infrastructure.Kubernetes;
 
 public class KubernetesService
 {
+    private static readonly string ConfigFullPath = AppContext.BaseDirectory + "/Infrastructure/Kubernetes/KubeConfig/config";
+    private static readonly string ConfigRelativePath = ConfigFullPath.Replace(@"\bin\Debug\net8.0\", "");
+    
     private readonly IKubernetes _client = new k8s.Kubernetes(
         KubernetesClientConfiguration.BuildConfigFromConfigFile(
-            Directory.GetCurrentDirectory()+"/Infrastructure/Kubernetes/KubeConfig/config"
+            ConfigRelativePath
         )
     );
 
