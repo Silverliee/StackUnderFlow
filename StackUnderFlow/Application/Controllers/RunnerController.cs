@@ -1,5 +1,6 @@
 using System.Collections.Concurrent;
 using System.Net.WebSockets;
+using Hangfire;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using StackUnderFlow.Domains.Websocket;
@@ -24,6 +25,7 @@ namespace StackUnderFlow.Application.Controllers
         {
             try
             {
+                BackgroundJob.Enqueue(() => Console.WriteLine("Executing script"));
                 if (script == null || script.Length == 0)
                     return BadRequest("No script file uploaded");
 

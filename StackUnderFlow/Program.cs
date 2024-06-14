@@ -4,6 +4,8 @@ using System.Net.WebSockets;
 using System.Reflection;
 using System.Text;
 using Bugsnag.AspNet.Core;
+using Hangfire;
+using Hangfire.MemoryStorage;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -153,6 +155,31 @@ public abstract partial class Program
                     )
                 };
             });
+        // Configuration de hangfire
+        builder.Services.AddHangfire(o =>
+        {
+            o.UseSimpleAssemblyNameTypeSerializer()
+                .UseRecommendedSerializerSettings()
+                .UseFilter(new AutomaticRetryAttribute { Attempts = 0 });
+
+            if (builder.Environment.IsEnvironment("Development"))
+            {
+                o.UseMemoryStorage();
+            }
+            else
+            {
+                o.UseSqlServerStorage(
+                    builder.Configuration["ConnectionStrings:database"],
+                    new Hangfire.SqlServer.SqlServerStorageOptions
+                    {
+                        PrepareSchemaIfNecessary = true,
+                    });
+            }
+        });
+        builder.Services.AddHangfireServer(s =>
+        {
+            s.SchedulePollingInterval = TimeSpan.FromSeconds(1);
+        });
         
 
         var app = builder.Build();
@@ -169,6 +196,14 @@ public abstract partial class Program
         app.MapPrometheusScrapingEndpoint();
         // configure websocket
         app.UseWebSockets();
+        // configure hangfire
+        app.UseHangfireDashboard(
+            options: new DashboardOptions
+            {
+                DarkModeEnabled = true,
+                DisplayStorageConnectionString = false
+            }
+        );
         // map controllers and run the app
         app.MapControllers();
         app.MapHealthChecks("/health");

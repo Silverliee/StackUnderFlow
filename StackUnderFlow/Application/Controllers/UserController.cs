@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using Hangfire;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
@@ -20,6 +21,7 @@ public class UserController(ILoginService loginService,
     {
         try
         {
+            BackgroundJob.Enqueue(() => Console.WriteLine("Registering user"));
             var result = await loginService.Register(user);
             if (result == null)
             {
@@ -43,6 +45,7 @@ public class UserController(ILoginService loginService,
     {
         try
         {
+            BackgroundJob.Enqueue(() => Console.WriteLine("Logging in user"));
             var result = await loginService.Login(login);
             if (result == null)
             {
@@ -63,6 +66,7 @@ public class UserController(ILoginService loginService,
     {
         try
         {
+            BackgroundJob.Enqueue(() => Console.WriteLine("Getting user by token"));
             var userId = Convert.ToInt32(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
             var user = await loginService.GetUserById(userId);
             if (user == null)

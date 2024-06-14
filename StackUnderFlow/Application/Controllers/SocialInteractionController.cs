@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using Hangfire;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
@@ -24,6 +25,7 @@ public class SocialInteractionController(ISocialInteractionService socialInterac
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> GetFriends()
     {
+        BackgroundJob.Enqueue(() => Console.WriteLine("Getting friends"));
         var userId = Convert.ToInt32(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
         try
         {
@@ -44,6 +46,7 @@ public class SocialInteractionController(ISocialInteractionService socialInterac
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> GetFriendRequests()
     {
+        BackgroundJob.Enqueue(() => Console.WriteLine("Getting friend requests"));
         var userId = Convert.ToInt32(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
         try
         {
@@ -63,6 +66,7 @@ public class SocialInteractionController(ISocialInteractionService socialInterac
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> CreateFriendRequest(int friendId, [FromBody] string message)
     {
+        BackgroundJob.Enqueue(() => Console.WriteLine("Creating friend request"));
         var userId = Convert.ToInt32(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
         try
         {
@@ -92,6 +96,7 @@ public class SocialInteractionController(ISocialInteractionService socialInterac
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> AcceptFriendRequest(int friendId)
     {
+        BackgroundJob.Enqueue(() => Console.WriteLine("Accepting friend request"));
         var userId = Convert.ToInt32(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
         try
         {
@@ -120,6 +125,7 @@ public class SocialInteractionController(ISocialInteractionService socialInterac
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> RemoveFriend(int friendId)
     {
+        BackgroundJob.Enqueue(() => Console.WriteLine("Removing friend"));
         var userId = Convert.ToInt32(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
         try
         {
@@ -143,6 +149,7 @@ public class SocialInteractionController(ISocialInteractionService socialInterac
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> GetFollows()
     {
+        BackgroundJob.Enqueue(() => Console.WriteLine("Getting follows"));
         var userId = Convert.ToInt32(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
         try
         {
@@ -163,6 +170,7 @@ public class SocialInteractionController(ISocialInteractionService socialInterac
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> RemoveFollow(int followId)
     {
+        BackgroundJob.Enqueue(() => Console.WriteLine("Removing follow"));
         var userId = Convert.ToInt32(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
         try
         {
@@ -182,6 +190,7 @@ public class SocialInteractionController(ISocialInteractionService socialInterac
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> AddFollow(int followId)
     {
+        BackgroundJob.Enqueue(() => Console.WriteLine("Adding follow"));
         var userId = Convert.ToInt32(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
         try
         {
@@ -208,6 +217,7 @@ public class SocialInteractionController(ISocialInteractionService socialInterac
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> GetGroupsByUserId()
     {
+        BackgroundJob.Enqueue(() => Console.WriteLine("Getting groups"));
         var userId = Convert.ToInt32(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
         try
         {
@@ -231,6 +241,7 @@ public class SocialInteractionController(ISocialInteractionService socialInterac
     {
         try
         {
+            BackgroundJob.Enqueue(() => Console.WriteLine("Getting group by id"));
             var group = await socialInteractionService.GetGroupById(groupId);
             if (group == null)
             {
@@ -255,6 +266,7 @@ public class SocialInteractionController(ISocialInteractionService socialInterac
     {
         try
         {
+            BackgroundJob.Enqueue(() => Console.WriteLine("Getting group members"));
             var group = await socialInteractionService.GetGroupById(groupId);
             if (group == null)
             {
@@ -280,6 +292,7 @@ public class SocialInteractionController(ISocialInteractionService socialInterac
     {
         try
         {
+            BackgroundJob.Enqueue(() => Console.WriteLine("Getting group requests by group id"));
             var group = await socialInteractionService.GetGroupById(groupId);
             if (group == null)
             {
@@ -302,6 +315,7 @@ public class SocialInteractionController(ISocialInteractionService socialInterac
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> GetGroupRequestsByUserId()
     {
+        BackgroundJob.Enqueue(() => Console.WriteLine("Getting group requests by user id"));
         var userId = Convert.ToInt32(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
         try
         {
@@ -321,6 +335,7 @@ public class SocialInteractionController(ISocialInteractionService socialInterac
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> CreateGroup(GroupRequestDto groupRequestDto)
     {
+        BackgroundJob.Enqueue(() => Console.WriteLine("Creating group"));
         var userId = Convert.ToInt32(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
         try
         {
@@ -349,6 +364,7 @@ public class SocialInteractionController(ISocialInteractionService socialInterac
     {
         try
         {
+            BackgroundJob.Enqueue(() => Console.WriteLine("Updating group"));
             var userId = Convert.ToInt32(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
             var group = await socialInteractionService.GetGroupById(groupId);
             if (group == null)
@@ -382,6 +398,7 @@ public class SocialInteractionController(ISocialInteractionService socialInterac
     {
         try
         {
+            BackgroundJob.Enqueue(() => Console.WriteLine("Creating group request"));
             var userId = Convert.ToInt32(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
 
             var group = await socialInteractionService.GetGroupById(groupId);
@@ -417,6 +434,7 @@ public class SocialInteractionController(ISocialInteractionService socialInterac
     {
         try
         {
+            BackgroundJob.Enqueue(() => Console.WriteLine("Accepting group request"));
             var userId = Convert.ToInt32(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
             var group = await socialInteractionService.GetGroupById(groupId);
             if (group == null)
@@ -442,6 +460,7 @@ public class SocialInteractionController(ISocialInteractionService socialInterac
     {
         try
         {
+            BackgroundJob.Enqueue(() => Console.WriteLine("Rejecting group request"));
             var userId = Convert.ToInt32(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
             var group = await socialInteractionService.GetGroupById(groupId);
             if (group == null)
@@ -467,6 +486,7 @@ public class SocialInteractionController(ISocialInteractionService socialInterac
     {
         try
         {
+            BackgroundJob.Enqueue(() => Console.WriteLine("Removing group member"));
             var userId = Convert.ToInt32(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
             var group = await socialInteractionService.GetGroupById(groupId);
             if (group == null || group.CreatorUserID != userId)
@@ -491,6 +511,7 @@ public class SocialInteractionController(ISocialInteractionService socialInterac
     {
         try
         {
+            BackgroundJob.Enqueue(() => Console.WriteLine("Removing group"));
             var userId = Convert.ToInt32(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
             var group = await socialInteractionService.GetGroupById(groupId);
             if (group == null || group.CreatorUserID != userId)

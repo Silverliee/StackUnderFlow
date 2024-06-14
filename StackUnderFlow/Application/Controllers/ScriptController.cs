@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using Hangfire;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
@@ -24,6 +25,7 @@ namespace StackUnderFlow.Application.Controllers
         {
             try
             {
+                BackgroundJob.Enqueue(() => Console.WriteLine("getting script by id"));
                 var script = await scriptService.GetScriptById(scriptId);
                 if (script == null)
                 {
@@ -47,6 +49,7 @@ namespace StackUnderFlow.Application.Controllers
         {
             try
             {
+                BackgroundJob.Enqueue(() => Console.WriteLine("getting script versions by script id"));
                 var scriptVersions = await scriptService.GetScriptVersionsByScriptId(scriptId);
                 return Ok(scriptVersions);
             }
@@ -71,6 +74,7 @@ namespace StackUnderFlow.Application.Controllers
 
             try
             {
+                BackgroundJob.Enqueue(() => Console.WriteLine("adding script"));
                 var userId = Convert.ToInt32(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
                 scriptUploadRequestDto.UserId = userId;
                 var response = await scriptService.AddScript(scriptUploadRequestDto);
@@ -109,6 +113,7 @@ namespace StackUnderFlow.Application.Controllers
 
             try
             {
+                BackgroundJob.Enqueue(() => Console.WriteLine("updating script"));
                 var result = await scriptService.UpdateScript(scriptUpdateRequestDto);
                 return Ok(result);
             }
@@ -127,6 +132,7 @@ namespace StackUnderFlow.Application.Controllers
         {
             try
             {
+                BackgroundJob.Enqueue(() => Console.WriteLine("deleting script"));
                 await scriptService.DeleteScriptAndVersions(scriptId);
                 return NoContent();
             }
@@ -148,6 +154,7 @@ namespace StackUnderFlow.Application.Controllers
         {
             try
             {
+                BackgroundJob.Enqueue(() => Console.WriteLine("getting scripts by user id"));
                 var userId = Convert.ToInt32(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
                 var scripts = await scriptService.GetScriptsByUserId(userId);
                 return Ok(scripts);
@@ -171,6 +178,7 @@ namespace StackUnderFlow.Application.Controllers
         {
             try
             {
+                BackgroundJob.Enqueue(() => Console.WriteLine("getting script file by script id"));
                 var file = await scriptService.GetScriptFileByScriptId(scriptId);
                 if (file == null)
                 {
@@ -202,6 +210,7 @@ namespace StackUnderFlow.Application.Controllers
         {
             try
             {
+                BackgroundJob.Enqueue(() => Console.WriteLine("getting script version file by id"));
                 var file = await scriptService.GetScriptVersionFileById(scriptVersionId);
                 if (file == null)
                 {
@@ -234,6 +243,7 @@ namespace StackUnderFlow.Application.Controllers
             {
                 return BadRequest();
             }
+            BackgroundJob.Enqueue(() => Console.WriteLine("adding script version"));
             var userId = Convert.ToInt32(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
             scriptVersionUploadRequestDto.CreatorUserId = userId;
             try
@@ -265,6 +275,7 @@ namespace StackUnderFlow.Application.Controllers
         {
             try
             {
+                BackgroundJob.Enqueue(() => Console.WriteLine("deleting script version"));
                 await scriptService.DeleteScriptVersionById(scriptVersionId);
                 return NoContent();
             }
@@ -286,6 +297,7 @@ namespace StackUnderFlow.Application.Controllers
         {
             try
             {
+                BackgroundJob.Enqueue(() => Console.WriteLine("getting scripts by keyword"));
                 var scripts = await scriptService.GetScriptsByKeyWord(keyword);
                 return Ok(scripts);
             }
