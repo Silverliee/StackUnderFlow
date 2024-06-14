@@ -32,9 +32,6 @@
 
     <ItemGroup>
       <Folder Include="Infrastructure\Database\Migrations\" />
-      <Folder Include="Infrastructure\Kubernetes\csharp-scripts\" />
-      <Folder Include="Infrastructure\Kubernetes\output\" />
-      <Folder Include="Infrastructure\Kubernetes\python-scripts\" />
     </ItemGroup>
 
 </Project>

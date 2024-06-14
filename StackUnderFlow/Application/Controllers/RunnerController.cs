@@ -79,57 +79,14 @@ namespace StackUnderFlow.Application.Controllers
 
         private async Task<string> ExecuteSingleScriptInternal(IFormFile? script)
         {
-            var rootPath = Directory.GetCurrentDirectory();
             var output = "";
-
-            string scriptDirectory;
             if (
                 Path.GetExtension(script!.FileName)
-                    .Equals(".py", StringComparison.OrdinalIgnoreCase)
+                .Equals(".py", StringComparison.OrdinalIgnoreCase)
             )
             {
-                scriptDirectory = Path.Combine(
-                    rootPath,
-                    "Infrastructure",
-                    "Kubernetes",
-                    "python-scripts"
-                );
-            }
-            else if (
-                Path.GetExtension(script.FileName).Equals(".cs", StringComparison.OrdinalIgnoreCase)
-            )
-            {
-                scriptDirectory = Path.Combine(
-                    rootPath,
-                    "Infrastructure",
-                    "Kubernetes",
-                    "csharp-scripts"
-                );
-            }
-            else
-            {
-                return "Invalid script file extension";
-            }
-
-            if (!Directory.Exists(scriptDirectory))
-            {
-                Directory.CreateDirectory(scriptDirectory);
-            }
-
-            var uniqueFileName = Guid.NewGuid() + Path.GetExtension(script.FileName);
-            var scriptPath = Path.Combine(scriptDirectory, uniqueFileName);
-            await using (var stream = System.IO.File.Create(scriptPath))
-            {
-                await script.CopyToAsync(stream);
-            }
-
-            if (
-                Path.GetExtension(script.FileName).Equals(".py", StringComparison.OrdinalIgnoreCase)
-            )
-            {
-                var pythonScript = await System.IO.File.ReadAllTextAsync(
-                    Path.Combine(scriptDirectory, uniqueFileName)
-                );
+                using var reader = new StreamReader(script.OpenReadStream());
+                var pythonScript = await reader.ReadToEndAsync();
                 output = await kubernetesService.ExecutePythonScript(
                     "default",
                     pythonScript,
@@ -140,17 +97,19 @@ namespace StackUnderFlow.Application.Controllers
                 Path.GetExtension(script.FileName).Equals(".cs", StringComparison.OrdinalIgnoreCase)
             )
             {
-                var csharpScript = await System.IO.File.ReadAllTextAsync(
-                    Path.Combine(scriptDirectory, uniqueFileName)
-                );
+                using var reader = new StreamReader(script.OpenReadStream());
+                var csharpScript = await reader.ReadToEndAsync();
                 output = await kubernetesService.ExecuteCsharpScript(
                     "default",
                     csharpScript,
                     _ => { }
                 );
             }
+            else
+            {
+                return "Invalid script file extension";
+            }
 
-            System.IO.File.Delete(scriptPath);
             return output;
         }
     }
