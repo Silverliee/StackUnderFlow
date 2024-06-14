@@ -7,7 +7,7 @@ public class KubernetesService
 {
     private readonly IKubernetes _client = new k8s.Kubernetes(
         KubernetesClientConfiguration.BuildConfigFromConfigFile(
-            "Infrastructure/Kubernetes/kubeconfig/config"
+            Directory.GetCurrentDirectory()+"/Infrastructure/Kubernetes/kubeconfig/config"
         )
     );
 
