@@ -13,7 +13,7 @@ public class ScriptRunnerController() : ControllerBase
     private readonly KubernetesService _kubernetesService = new();
 
     [HttpPost]
-    [Authorize]
+   
     public async Task<IActionResult> ExecuteScript(IFormFile? script)
     {
         try
