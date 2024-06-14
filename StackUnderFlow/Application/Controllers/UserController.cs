@@ -12,17 +12,27 @@ namespace StackUnderFlow.Application.Controllers;
 [ApiController]
 [Route("[controller]")]
 [EnableCors("AllowAll")]
-public class UserController(ILoginService loginService) : ControllerBase
+public class UserController(ILoginService loginService,
+    Bugsnag.IClient _bugsnag) : ControllerBase
 {
     [HttpPost("register")]
     public async Task<IActionResult> Register(RegisterUserDto? user)
     {
-        var result = await loginService.Register(user);
-        if (result == null)
+        try
         {
-            return BadRequest("Username or Email already exists.");
+            var result = await loginService.Register(user);
+            if (result == null)
+            {
+                return BadRequest("Username or Email already exists.");
+            }
+            return Ok(result);
         }
-        return Ok(result);
+        catch (Exception e)
+        {
+            _bugsnag.Notify(e);
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
+        
     }
 
     [HttpPost("login")]
@@ -42,6 +52,7 @@ public class UserController(ILoginService loginService) : ControllerBase
         }
         catch (Exception e)
         {
+            _bugsnag.Notify(e);
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
     }
@@ -50,12 +61,20 @@ public class UserController(ILoginService loginService) : ControllerBase
     [Authorize]
     public async Task<IActionResult> GetUserByToken()
     {
-        var userId = Convert.ToInt32(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
-        var user = await loginService.GetUserById(userId);
-        if (user == null)
+        try
         {
-            return NotFound();
+            var userId = Convert.ToInt32(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+            var user = await loginService.GetUserById(userId);
+            if (user == null)
+            {
+                return NotFound();
+            }
+            return Ok(user);
         }
-        return Ok(user);
+        catch (Exception e)
+        {
+            _bugsnag.Notify(e);
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
     }
 }

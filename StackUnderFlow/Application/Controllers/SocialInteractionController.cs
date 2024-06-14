@@ -10,7 +10,8 @@ namespace StackUnderFlow.Application.Controllers;
 [ApiController]
 [Route("[controller]")]
 [EnableCors("AllowAll")]
-public class SocialInteractionController(ISocialInteractionService socialInteractionService)
+public class SocialInteractionController(ISocialInteractionService socialInteractionService,
+    Bugsnag.IClient _bugsnag)
     : ControllerBase
 {
     #region Friends
@@ -29,8 +30,9 @@ public class SocialInteractionController(ISocialInteractionService socialInterac
             var friends = await socialInteractionService.GetFriendsByUserId(userId);
             return Ok(friends);
         }
-        catch
+        catch(Exception e)
         {
+            _bugsnag.Notify(e);
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
     }
@@ -48,8 +50,9 @@ public class SocialInteractionController(ISocialInteractionService socialInterac
             var requests = await socialInteractionService.GetFriendRequestsByUserId(userId);
             return Ok(requests);
         }
-        catch
+        catch(Exception e)
         {
+            _bugsnag.Notify(e);
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
     }
@@ -74,8 +77,9 @@ public class SocialInteractionController(ISocialInteractionService socialInterac
             }
             return Created("", friend);
         }
-        catch
+        catch(Exception e)
         {
+            _bugsnag.Notify(e);
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
     }
@@ -102,8 +106,9 @@ public class SocialInteractionController(ISocialInteractionService socialInterac
             );
             return Ok(friend);
         }
-        catch
+        catch(Exception e)
         {
+            _bugsnag.Notify(e);
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
     }
@@ -121,8 +126,9 @@ public class SocialInteractionController(ISocialInteractionService socialInterac
             await socialInteractionService.RemoveFriend(userId, friendId);
             return NoContent();
         }
-        catch
+        catch(Exception e)
         {
+            _bugsnag.Notify(e);
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
     }
@@ -143,8 +149,9 @@ public class SocialInteractionController(ISocialInteractionService socialInterac
             var follows = await socialInteractionService.GetFollowsByUserId(userId);
             return Ok(follows);
         }
-        catch
+        catch(Exception e)
         {
+            _bugsnag.Notify(e);
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
     }
@@ -162,8 +169,9 @@ public class SocialInteractionController(ISocialInteractionService socialInterac
             await socialInteractionService.RemoveFollow(userId, followId);
             return NoContent();
         }
-        catch
+        catch(Exception e)
         {
+            _bugsnag.Notify(e);
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
     }
@@ -184,8 +192,9 @@ public class SocialInteractionController(ISocialInteractionService socialInterac
             }
             return Created("", follow);
         }
-        catch
+        catch(Exception e)
         {
+            _bugsnag.Notify(e);
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
     }
@@ -205,8 +214,9 @@ public class SocialInteractionController(ISocialInteractionService socialInterac
             var groups = await socialInteractionService.GetGroupsByUserId(userId);
             return Ok(groups);
         }
-        catch
+        catch(Exception e)
         {
+            _bugsnag.Notify(e);
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
     }
@@ -228,8 +238,9 @@ public class SocialInteractionController(ISocialInteractionService socialInterac
             }
             return Ok(group);
         }
-        catch
+        catch(Exception e)
         {
+            _bugsnag.Notify(e);
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
     }
@@ -252,8 +263,9 @@ public class SocialInteractionController(ISocialInteractionService socialInterac
             var members = await socialInteractionService.GetGroupMembers(groupId);
             return Ok(members);
         }
-        catch
+        catch(Exception e)
         {
+            _bugsnag.Notify(e);
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
     }
@@ -276,8 +288,9 @@ public class SocialInteractionController(ISocialInteractionService socialInterac
             var requests = await socialInteractionService.GetGroupRequestsByGroupId(groupId);
             return Ok(requests);
         }
-        catch
+        catch(Exception e)
         {
+            _bugsnag.Notify(e);
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
     }
@@ -295,8 +308,9 @@ public class SocialInteractionController(ISocialInteractionService socialInterac
             var requests = await socialInteractionService.GetGroupRequestsByUserId(userId);
             return Ok(requests);
         }
-        catch
+        catch(Exception e)
         {
+            _bugsnag.Notify(e);
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
     }
@@ -317,8 +331,9 @@ public class SocialInteractionController(ISocialInteractionService socialInterac
             }
             return Created("", group);
         }
-        catch
+        catch(Exception e)
         {
+            _bugsnag.Notify(e);
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
     }
@@ -349,8 +364,9 @@ public class SocialInteractionController(ISocialInteractionService socialInterac
             var updatedGroup = await socialInteractionService.UpdateGroup(groupId, groupRequestDto);
             return Ok(updatedGroup);
         }
-        catch
+        catch(Exception e)
         {
+            _bugsnag.Notify(e);
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
     }
@@ -384,8 +400,9 @@ public class SocialInteractionController(ISocialInteractionService socialInterac
             }
             return Ok(groupRequest);
         }
-        catch
+        catch(Exception e)
         {
+            _bugsnag.Notify(e);
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
     }
@@ -409,8 +426,9 @@ public class SocialInteractionController(ISocialInteractionService socialInterac
             var groupRequest = await socialInteractionService.AcceptGroupRequest(userId, groupId);
             return Ok(groupRequest);
         }
-        catch
+        catch(Exception e)
         {
+            _bugsnag.Notify(e);
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
     }
@@ -434,8 +452,9 @@ public class SocialInteractionController(ISocialInteractionService socialInterac
             await socialInteractionService.RejectGroupRequest(userId, groupId);
             return NoContent();
         }
-        catch
+        catch(Exception e)
         {
+            _bugsnag.Notify(e);
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
     }
@@ -457,8 +476,9 @@ public class SocialInteractionController(ISocialInteractionService socialInterac
             await socialInteractionService.RejectGroupRequest(groupId, memberId);
             return NoContent();
         }
-        catch
+        catch(Exception e)
         {
+            _bugsnag.Notify(e);
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
     }
@@ -480,8 +500,9 @@ public class SocialInteractionController(ISocialInteractionService socialInterac
             await socialInteractionService.RemoveGroup(groupId);
             return NoContent();
         }
-        catch
+        catch(Exception e)
         {
+            _bugsnag.Notify(e);
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
     }

@@ -3,10 +3,13 @@ using System.Diagnostics;
 using System.Net.WebSockets;
 using System.Reflection;
 using System.Text;
+using Bugsnag.AspNet.Core;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using NSwag;
+using OpenTelemetry.Metrics;
 using StackUnderFlow.Application.Middleware;
 using StackUnderFlow.Domains.Repository;
 using StackUnderFlow.Domains.Services;
@@ -14,7 +17,9 @@ using StackUnderFlow.Domains.Websocket;
 using StackUnderFlow.Infrastructure.Kubernetes;
 using StackUnderFlow.Infrastructure.Settings;
 
-public partial class Program
+namespace StackUnderFlow;
+
+public abstract partial class Program
 {
     private static FileVersionInfo GetAssemblyFileVersion()
     {
@@ -27,29 +32,7 @@ public partial class Program
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
-
-        // Add services to the container.
-
-        builder.Services.AddControllers();
-        var connectionString = builder.Configuration.GetConnectionString("database");
-        builder.Services.AddDbContext<MySqlDbContext>(options =>
-        {
-            options.UseSqlServer(connectionString);
-        });
-
-        builder.Services.AddCors(options =>
-        {
-            options.AddPolicy(
-                "AllowAll",
-                policyBuilder =>
-                {
-                    policyBuilder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
-                }
-            );
-        });
-
-        // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-        builder.Services.AddEndpointsApiExplorer();
+        // Configuration de scope
         builder.Services.AddScoped<ILoginService, LoginService>();
         builder.Services.AddScoped<INotificationService, NotificationService>();
         builder.Services.AddScoped<IProfileService, ProfileService>();
@@ -67,12 +50,56 @@ public partial class Program
         builder.Services.AddScoped<IScriptVersionRepository, ScriptVersionRepository>();
         builder.Services.AddScoped<IFriendRepository, FriendRepository>();
         builder.Services.AddScoped<IFollowRepository, FollowRepository>();
-
+        // Configuration de singleton
         builder.Services.AddSingleton<AuthenticationMiddleware>();
         builder.Services.AddSingleton<KubernetesService>();
         builder.Services.AddSingleton<PipelineService>();
         builder.Services.AddSingleton(new ConcurrentDictionary<string, WebSocket>());
-
+        // Configuration des controllers/endpoints
+        builder.Services.AddEndpointsApiExplorer();
+        builder.Services.AddControllers();
+        // Configuration de metrics
+        builder.Services.AddOpenTelemetry().WithMetrics(x =>
+        {
+            x.AddPrometheusExporter();
+            x.AddMeter("Microsoft.AspNetCore.Hosting","Microsoft.AspNetCore.Server.Kestrel");
+            x.AddView("Requests-duration", new ExplicitBucketHistogramConfiguration{Boundaries = new []{0,0.005,0.01,0.025,0.05,0.075,0.1,0.25,0.5,0.75,1,2,5,10,30,60}});
+        });
+        // Configuration du health check
+        builder.Services.AddHealthChecks();
+        // Configuration de la base de données
+        builder.Services.AddDbContext<MySqlDbContext>(options =>
+        {
+            options.UseSqlServer(builder.Configuration.GetConnectionString("database"));
+        });
+        // Configuration de bugsnag
+        if (builder.Environment.IsDevelopment())
+        {
+            builder.Services.AddBugsnag(configuration => {
+                configuration.ApiKey = "ed4a17461033eee3aba33a045f4a5022";
+                configuration.ReleaseStage = "development";
+            });
+        }
+        else
+        {
+            builder.Services.AddBugsnag(configuration => {
+                configuration.ApiKey = "ed4a17461033eee3aba33a045f4a5022";
+                configuration.ReleaseStage = "production";
+            }); 
+        }
+        
+        // Configuration de CORS
+        builder.Services.AddCors(options =>
+        {
+            options.AddPolicy(
+                "AllowAll",
+                policyBuilder =>
+                {
+                    policyBuilder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+                }
+            );
+        });
+        // Configuration de swagger
         builder.Services.AddSwaggerGen(options =>
         {
             options.SwaggerDoc(
@@ -104,7 +131,6 @@ public partial class Program
                 }
             );
         });
-
         // Configuration de JWT
         builder
             .Services.AddAuthentication(options =>
@@ -127,27 +153,30 @@ public partial class Program
                     )
                 };
             });
+        
 
         var app = builder.Build();
-
+        // Configure the HTTP request pipeline.
         app.UseCors("AllowAll");
-
+        app.UseHttpsRedirection();
+        // configure swagger
         app.UseSwagger();
         app.UseSwaggerUI();
-
-        app.UseHttpsRedirection();
-
+        // configure authentication
         app.UseAuthentication();
         app.UseAuthorization();
-
+        // configure metrics
+        app.MapPrometheusScrapingEndpoint();
+        // configure websocket
         app.UseWebSockets();
+        // map controllers and run the app
         app.MapControllers();
-        app.UseCors("AllowAll");
+        app.MapHealthChecks("/health");
         app.Run();
     }
 }
 
-public partial class Program
+public abstract partial class Program
 {
     protected Program() { }
 }

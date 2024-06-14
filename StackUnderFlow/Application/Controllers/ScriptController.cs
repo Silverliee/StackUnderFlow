@@ -10,7 +10,8 @@ namespace StackUnderFlow.Application.Controllers
     [ApiController]
     [Route("[controller]")]
     [EnableCors("AllowAll")]
-    public class ScriptController(IScriptService scriptService) : ControllerBase
+    public class ScriptController(IScriptService scriptService,
+        Bugsnag.IClient _bugsnag) : ControllerBase
     {
         #region Script
 
@@ -31,8 +32,9 @@ namespace StackUnderFlow.Application.Controllers
 
                 return Ok(script);
             }
-            catch
+            catch(Exception e)
             {
+                _bugsnag.Notify(e);
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
@@ -48,8 +50,9 @@ namespace StackUnderFlow.Application.Controllers
                 var scriptVersions = await scriptService.GetScriptVersionsByScriptId(scriptId);
                 return Ok(scriptVersions);
             }
-            catch
+            catch(Exception e)
             {
+                _bugsnag.Notify(e);
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
@@ -82,8 +85,9 @@ namespace StackUnderFlow.Application.Controllers
                     response
                 );
             }
-            catch
+            catch(Exception e)
             {
+                _bugsnag.Notify(e);
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
@@ -108,8 +112,9 @@ namespace StackUnderFlow.Application.Controllers
                 var result = await scriptService.UpdateScript(scriptUpdateRequestDto);
                 return Ok(result);
             }
-            catch
+            catch(Exception e)
             {
+                _bugsnag.Notify(e);
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
@@ -125,8 +130,9 @@ namespace StackUnderFlow.Application.Controllers
                 await scriptService.DeleteScriptAndVersions(scriptId);
                 return NoContent();
             }
-            catch
+            catch(Exception e)
             {
+                _bugsnag.Notify(e);
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
@@ -146,8 +152,9 @@ namespace StackUnderFlow.Application.Controllers
                 var scripts = await scriptService.GetScriptsByUserId(userId);
                 return Ok(scripts);
             }
-            catch
+            catch(Exception e)
             {
+                _bugsnag.Notify(e);
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
@@ -176,8 +183,9 @@ namespace StackUnderFlow.Application.Controllers
                 );
                 return File(file.File, "application/octet-stream");
             }
-            catch
+            catch(Exception e)
             {
+                _bugsnag.Notify(e);
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
@@ -206,8 +214,9 @@ namespace StackUnderFlow.Application.Controllers
                 );
                 return File(file.File, "application/octet-stream");
             }
-            catch
+            catch(Exception e)
             {
+                _bugsnag.Notify(e);
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
@@ -241,8 +250,9 @@ namespace StackUnderFlow.Application.Controllers
                     response
                 );
             }
-            catch
+            catch(Exception e)
             {
+                _bugsnag.Notify(e);
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
@@ -258,8 +268,9 @@ namespace StackUnderFlow.Application.Controllers
                 await scriptService.DeleteScriptVersionById(scriptVersionId);
                 return NoContent();
             }
-            catch
+            catch(Exception e)
             {
+                _bugsnag.Notify(e);
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
@@ -278,8 +289,9 @@ namespace StackUnderFlow.Application.Controllers
                 var scripts = await scriptService.GetScriptsByKeyWord(keyword);
                 return Ok(scripts);
             }
-            catch
+            catch(Exception e)
             {
+                _bugsnag.Notify(e);
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }

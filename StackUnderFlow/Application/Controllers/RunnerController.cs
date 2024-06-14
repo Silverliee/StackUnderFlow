@@ -1,9 +1,7 @@
 using System.Collections.Concurrent;
 using System.Net.WebSockets;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
-using NSwag.Annotations;
 using StackUnderFlow.Domains.Websocket;
 using StackUnderFlow.Infrastructure.Kubernetes;
 
@@ -14,7 +12,8 @@ namespace StackUnderFlow.Application.Controllers
     [EnableCors("AllowAll")]
     public class RunnerController(
         PipelineService pipelineService,
-        KubernetesService kubernetesService
+        KubernetesService kubernetesService,
+        Bugsnag.IClient _bugsnag
     ) : ControllerBase
     {
         private static readonly ConcurrentDictionary<string, WebSocket> Sockets = new();
@@ -32,6 +31,7 @@ namespace StackUnderFlow.Application.Controllers
             }
             catch (Exception e)
             {
+                _bugsnag.Notify(e);
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
