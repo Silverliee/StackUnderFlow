@@ -1,6 +1,7 @@
 using System.Collections.Concurrent;
 using System.Net.WebSockets;
 using Hangfire;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using StackUnderFlow.Domains.Websocket;
@@ -20,7 +21,7 @@ namespace StackUnderFlow.Application.Controllers
         private static readonly ConcurrentDictionary<string, WebSocket> Sockets = new();
 
         [HttpPost]
-        //[Authorize]
+        [Authorize]
         public async Task<IActionResult> ExecuteSingleScript(IFormFile? script)
         {
             try
@@ -39,7 +40,7 @@ namespace StackUnderFlow.Application.Controllers
         }
 
         [HttpPost("execute-pipeline")]
-        //[Authorize]
+        [Authorize]
         public IActionResult ExecutePipeline(List<IFormFile> scripts)
         {
             var pipelineId = Guid.NewGuid().ToString();

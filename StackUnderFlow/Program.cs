@@ -10,7 +10,6 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using NSwag;
 using OpenTelemetry.Metrics;
 using StackUnderFlow.Application.Middleware;
 using StackUnderFlow.Domains.Repository;
@@ -125,13 +124,28 @@ public abstract partial class Program
                 "JWT-BEARER-TOKEN",
                 new OpenApiSecurityScheme
                 {
-                    Description = "Tu peux mettre ton token ici ;)",
+                    Description = "Tu peux mettre ton token ici ;) PS: ajoute Bearer suivie d'un espace avant le token",
                     Name = "Authorization",
                     In = ParameterLocation.Header,
                     Type = SecuritySchemeType.ApiKey,
                     Scheme = "Bearer"
                 }
             );
+            
+            options.AddSecurityRequirement(new OpenApiSecurityRequirement
+            {
+                {
+                    new OpenApiSecurityScheme
+                    {
+                        Reference = new OpenApiReference
+                        {
+                            Type = ReferenceType.SecurityScheme,
+                            Id = "JWT-BEARER-TOKEN"
+                        }
+                    },
+                    new string[] {}
+                }
+            });
         });
         // Configuration de JWT
         builder
