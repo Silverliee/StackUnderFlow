@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Text;
 using Bugsnag.AspNet.Core;
 using Hangfire;
+using Hangfire.Console;
 using Hangfire.MemoryStorage;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -63,8 +64,12 @@ public abstract partial class Program
         builder.Services.AddOpenTelemetry().WithMetrics(x =>
         {
             x.AddPrometheusExporter();
-            x.AddMeter("Microsoft.AspNetCore.Hosting","Microsoft.AspNetCore.Server.Kestrel");
-            x.AddView("Requests-duration", new ExplicitBucketHistogramConfiguration{Boundaries = new []{0,0.005,0.01,0.025,0.05,0.075,0.1,0.25,0.5,0.75,1,2,5,10,30,60}});
+            x.AddMeter("Microsoft.AspNetCore.Hosting", "Microsoft.AspNetCore.Server.Kestrel");
+            x.AddView("Requests-duration",
+                new ExplicitBucketHistogramConfiguration
+                {
+                    Boundaries = [0, 0.005, 0.01, 0.025, 0.05, 0.075, 0.1, 0.25, 0.5, 0.75, 1, 2, 5, 10, 30, 60]
+                });
         });
         // Configuration du health check
         builder.Services.AddHealthChecks();
@@ -76,28 +81,27 @@ public abstract partial class Program
         // Configuration de bugsnag
         if (builder.Environment.IsDevelopment())
         {
-            builder.Services.AddBugsnag(configuration => {
+            builder.Services.AddBugsnag(configuration =>
+            {
                 configuration.ApiKey = "ed4a17461033eee3aba33a045f4a5022";
                 configuration.ReleaseStage = "development";
             });
         }
         else
         {
-            builder.Services.AddBugsnag(configuration => {
+            builder.Services.AddBugsnag(configuration =>
+            {
                 configuration.ApiKey = "ed4a17461033eee3aba33a045f4a5022";
                 configuration.ReleaseStage = "production";
-            }); 
+            });
         }
-        
+
         // Configuration de CORS
         builder.Services.AddCors(options =>
         {
             options.AddPolicy(
                 "AllowAll",
-                policyBuilder =>
-                {
-                    policyBuilder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
-                }
+                policyBuilder => { policyBuilder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader(); }
             );
         });
         // Configuration de swagger
@@ -131,7 +135,7 @@ public abstract partial class Program
                     Scheme = "Bearer"
                 }
             );
-            
+
             options.AddSecurityRequirement(new OpenApiSecurityRequirement
             {
                 {
@@ -143,7 +147,7 @@ public abstract partial class Program
                             Id = "JWT-BEARER-TOKEN"
                         }
                     },
-                    new string[] {}
+                    new string[] { }
                 }
             });
         });
@@ -175,26 +179,11 @@ public abstract partial class Program
             o.UseSimpleAssemblyNameTypeSerializer()
                 .UseRecommendedSerializerSettings()
                 .UseFilter(new AutomaticRetryAttribute { Attempts = 0 });
+            o.UseMemoryStorage();
+            o.UseConsole();
+        });
+        builder.Services.AddHangfireServer(s => { s.SchedulePollingInterval = TimeSpan.FromSeconds(1); });
 
-            if (builder.Environment.IsEnvironment("Development"))
-            {
-                o.UseMemoryStorage();
-            }
-            else
-            {
-                o.UseSqlServerStorage(
-                    builder.Configuration["ConnectionStrings:database"],
-                    new Hangfire.SqlServer.SqlServerStorageOptions
-                    {
-                        PrepareSchemaIfNecessary = true,
-                    });
-            }
-        });
-        builder.Services.AddHangfireServer(s =>
-        {
-            s.SchedulePollingInterval = TimeSpan.FromSeconds(1);
-        });
-        
 
         var app = builder.Build();
         // Configure the HTTP request pipeline.
@@ -214,6 +203,7 @@ public abstract partial class Program
         app.UseHangfireDashboard(
             options: new DashboardOptions
             {
+                Authorization = new[] { new HangfireAuthorizationMiddleware() },
                 DarkModeEnabled = true,
                 DisplayStorageConnectionString = false
             }
@@ -227,5 +217,7 @@ public abstract partial class Program
 
 public abstract partial class Program
 {
-    protected Program() { }
+    protected Program()
+    {
+    }
 }

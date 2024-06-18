@@ -117,7 +117,7 @@ public class KubernetesService
             }
 
             notifyCallback("Retrieving logs...");
-            var logs = await GetPodLogsAsync(namespaceName, podName!);
+            var logs = await GetPodLogsAsync(namespaceName, podName);
             if (logs == null)
             {
                 throw new Exception(
@@ -166,7 +166,7 @@ public class KubernetesService
                                         "bash",
                                         "-c",
                                         $"echo '{scriptContent}' > script.cs && mcs script.cs && mono script.exe"
-                                    },
+                                    }
                                 }
                             },
                             RestartPolicy = "Never",
@@ -196,7 +196,7 @@ public class KubernetesService
             }
 
             notifyCallback("Retrieving logs...");
-            var logs = await GetPodLogsAsync(namespaceName, podName!);
+            var logs = await GetPodLogsAsync(namespaceName, podName);
             if (logs == null)
             {
                 throw new Exception(

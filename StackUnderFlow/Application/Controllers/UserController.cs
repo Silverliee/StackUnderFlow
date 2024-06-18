@@ -4,8 +4,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using StackUnderFlow.Application.DataTransferObject.Request;
-using StackUnderFlow.Application.DataTransferObject.Response;
-using StackUnderFlow.Application.Middleware;
 using StackUnderFlow.Domains.Services;
 
 namespace StackUnderFlow.Application.Controllers;
@@ -14,7 +12,7 @@ namespace StackUnderFlow.Application.Controllers;
 [Route("[controller]")]
 [EnableCors("AllowAll")]
 public class UserController(ILoginService loginService,
-    Bugsnag.IClient _bugsnag) : ControllerBase
+    Bugsnag.IClient bugsnag) : ControllerBase
 {
     [HttpPost("register")]
     public async Task<IActionResult> Register(RegisterUserDto? user)
@@ -31,7 +29,7 @@ public class UserController(ILoginService loginService,
         }
         catch (Exception e)
         {
-            _bugsnag.Notify(e);
+            bugsnag.Notify(e);
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
         
@@ -55,7 +53,7 @@ public class UserController(ILoginService loginService,
         }
         catch (Exception e)
         {
-            _bugsnag.Notify(e);
+            bugsnag.Notify(e);
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
     }
@@ -77,7 +75,7 @@ public class UserController(ILoginService loginService,
         }
         catch (Exception e)
         {
-            _bugsnag.Notify(e);
+            bugsnag.Notify(e);
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
     }
