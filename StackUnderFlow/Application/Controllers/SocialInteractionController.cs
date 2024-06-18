@@ -12,7 +12,7 @@ namespace StackUnderFlow.Application.Controllers;
 [Route("[controller]")]
 [EnableCors("AllowAll")]
 public class SocialInteractionController(ISocialInteractionService socialInteractionService,
-    Bugsnag.IClient _bugsnag)
+    Bugsnag.IClient bugsnag)
     : ControllerBase
 {
     #region Friends
@@ -34,7 +34,7 @@ public class SocialInteractionController(ISocialInteractionService socialInterac
         }
         catch(Exception e)
         {
-            _bugsnag.Notify(e);
+            bugsnag.Notify(e);
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
     }
@@ -55,7 +55,7 @@ public class SocialInteractionController(ISocialInteractionService socialInterac
         }
         catch(Exception e)
         {
-            _bugsnag.Notify(e);
+            bugsnag.Notify(e);
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
     }
@@ -83,7 +83,7 @@ public class SocialInteractionController(ISocialInteractionService socialInterac
         }
         catch(Exception e)
         {
-            _bugsnag.Notify(e);
+            bugsnag.Notify(e);
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
     }
@@ -113,7 +113,7 @@ public class SocialInteractionController(ISocialInteractionService socialInterac
         }
         catch(Exception e)
         {
-            _bugsnag.Notify(e);
+            bugsnag.Notify(e);
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
     }
@@ -134,7 +134,7 @@ public class SocialInteractionController(ISocialInteractionService socialInterac
         }
         catch(Exception e)
         {
-            _bugsnag.Notify(e);
+            bugsnag.Notify(e);
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
     }
@@ -158,7 +158,7 @@ public class SocialInteractionController(ISocialInteractionService socialInterac
         }
         catch(Exception e)
         {
-            _bugsnag.Notify(e);
+            bugsnag.Notify(e);
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
     }
@@ -179,7 +179,7 @@ public class SocialInteractionController(ISocialInteractionService socialInterac
         }
         catch(Exception e)
         {
-            _bugsnag.Notify(e);
+            bugsnag.Notify(e);
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
     }
@@ -203,7 +203,7 @@ public class SocialInteractionController(ISocialInteractionService socialInterac
         }
         catch(Exception e)
         {
-            _bugsnag.Notify(e);
+            bugsnag.Notify(e);
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
     }
@@ -226,7 +226,7 @@ public class SocialInteractionController(ISocialInteractionService socialInterac
         }
         catch(Exception e)
         {
-            _bugsnag.Notify(e);
+            bugsnag.Notify(e);
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
     }
@@ -251,7 +251,7 @@ public class SocialInteractionController(ISocialInteractionService socialInterac
         }
         catch(Exception e)
         {
-            _bugsnag.Notify(e);
+            bugsnag.Notify(e);
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
     }
@@ -277,7 +277,7 @@ public class SocialInteractionController(ISocialInteractionService socialInterac
         }
         catch(Exception e)
         {
-            _bugsnag.Notify(e);
+            bugsnag.Notify(e);
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
     }
@@ -303,7 +303,7 @@ public class SocialInteractionController(ISocialInteractionService socialInterac
         }
         catch(Exception e)
         {
-            _bugsnag.Notify(e);
+            bugsnag.Notify(e);
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
     }
@@ -324,7 +324,7 @@ public class SocialInteractionController(ISocialInteractionService socialInterac
         }
         catch(Exception e)
         {
-            _bugsnag.Notify(e);
+            bugsnag.Notify(e);
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
     }
@@ -348,7 +348,7 @@ public class SocialInteractionController(ISocialInteractionService socialInterac
         }
         catch(Exception e)
         {
-            _bugsnag.Notify(e);
+            bugsnag.Notify(e);
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
     }
@@ -382,7 +382,7 @@ public class SocialInteractionController(ISocialInteractionService socialInterac
         }
         catch(Exception e)
         {
-            _bugsnag.Notify(e);
+            bugsnag.Notify(e);
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
     }
@@ -419,7 +419,7 @@ public class SocialInteractionController(ISocialInteractionService socialInterac
         }
         catch(Exception e)
         {
-            _bugsnag.Notify(e);
+            bugsnag.Notify(e);
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
     }
@@ -446,7 +446,7 @@ public class SocialInteractionController(ISocialInteractionService socialInterac
         }
         catch(Exception e)
         {
-            _bugsnag.Notify(e);
+            bugsnag.Notify(e);
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
     }
@@ -473,7 +473,7 @@ public class SocialInteractionController(ISocialInteractionService socialInterac
         }
         catch(Exception e)
         {
-            _bugsnag.Notify(e);
+            bugsnag.Notify(e);
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
     }
@@ -498,7 +498,7 @@ public class SocialInteractionController(ISocialInteractionService socialInterac
         }
         catch(Exception e)
         {
-            _bugsnag.Notify(e);
+            bugsnag.Notify(e);
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
     }
@@ -523,7 +523,7 @@ public class SocialInteractionController(ISocialInteractionService socialInterac
         }
         catch(Exception e)
         {
-            _bugsnag.Notify(e);
+            bugsnag.Notify(e);
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
     }

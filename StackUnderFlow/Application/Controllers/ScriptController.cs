@@ -12,7 +12,7 @@ namespace StackUnderFlow.Application.Controllers
     [Route("[controller]")]
     [EnableCors("AllowAll")]
     public class ScriptController(IScriptService scriptService,
-        Bugsnag.IClient _bugsnag) : ControllerBase
+        Bugsnag.IClient bugsnag) : ControllerBase
     {
         #region Script
 
@@ -36,7 +36,7 @@ namespace StackUnderFlow.Application.Controllers
             }
             catch(Exception e)
             {
-                _bugsnag.Notify(e);
+                bugsnag.Notify(e);
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
@@ -55,7 +55,7 @@ namespace StackUnderFlow.Application.Controllers
             }
             catch(Exception e)
             {
-                _bugsnag.Notify(e);
+                bugsnag.Notify(e);
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
@@ -91,7 +91,7 @@ namespace StackUnderFlow.Application.Controllers
             }
             catch(Exception e)
             {
-                _bugsnag.Notify(e);
+                bugsnag.Notify(e);
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
@@ -119,7 +119,7 @@ namespace StackUnderFlow.Application.Controllers
             }
             catch(Exception e)
             {
-                _bugsnag.Notify(e);
+                bugsnag.Notify(e);
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
@@ -138,7 +138,7 @@ namespace StackUnderFlow.Application.Controllers
             }
             catch(Exception e)
             {
-                _bugsnag.Notify(e);
+                bugsnag.Notify(e);
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
@@ -161,7 +161,7 @@ namespace StackUnderFlow.Application.Controllers
             }
             catch(Exception e)
             {
-                _bugsnag.Notify(e);
+                bugsnag.Notify(e);
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
@@ -193,7 +193,7 @@ namespace StackUnderFlow.Application.Controllers
             }
             catch(Exception e)
             {
-                _bugsnag.Notify(e);
+                bugsnag.Notify(e);
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
@@ -225,7 +225,7 @@ namespace StackUnderFlow.Application.Controllers
             }
             catch(Exception e)
             {
-                _bugsnag.Notify(e);
+                bugsnag.Notify(e);
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
@@ -262,7 +262,7 @@ namespace StackUnderFlow.Application.Controllers
             }
             catch(Exception e)
             {
-                _bugsnag.Notify(e);
+                bugsnag.Notify(e);
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
@@ -281,7 +281,7 @@ namespace StackUnderFlow.Application.Controllers
             }
             catch(Exception e)
             {
-                _bugsnag.Notify(e);
+                bugsnag.Notify(e);
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
@@ -303,7 +303,7 @@ namespace StackUnderFlow.Application.Controllers
             }
             catch(Exception e)
             {
-                _bugsnag.Notify(e);
+                bugsnag.Notify(e);
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }

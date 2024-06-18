@@ -15,7 +15,7 @@ namespace StackUnderFlow.Application.Controllers
     public class RunnerController(
         PipelineService pipelineService,
         KubernetesService kubernetesService,
-        Bugsnag.IClient _bugsnag
+        Bugsnag.IClient bugsnag
     ) : ControllerBase
     {
         private static readonly ConcurrentDictionary<string, WebSocket> Sockets = new();
@@ -34,7 +34,7 @@ namespace StackUnderFlow.Application.Controllers
             }
             catch (Exception e)
             {
-                _bugsnag.Notify(e);
+                bugsnag.Notify(e);
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
@@ -82,7 +82,7 @@ namespace StackUnderFlow.Application.Controllers
 
         private async Task<string> ExecuteSingleScriptInternal(IFormFile? script)
         {
-            var output = "";
+            string output;
             if (
                 Path.GetExtension(script!.FileName)
                 .Equals(".py", StringComparison.OrdinalIgnoreCase)
