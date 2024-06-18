@@ -13,8 +13,9 @@ public class KubernetesService
 
     private readonly HttpClient _httpClient = new(Handler);
     
-    private readonly K8SConfiguration _configuration = new()
-    {
+    private readonly IKubernetes _client = new k8s.Kubernetes(
+        KubernetesClientConfiguration.BuildConfigFromConfigObject(new K8SConfiguration
+        {
             ApiVersion = "v1",
             Clusters = new[]
             {
@@ -49,17 +50,11 @@ public class KubernetesService
                 {
                     Name = "clusterAdmin_StackUnderflow_HERMES",
                     UserCredentials = new UserCredentials
-                    {
-                        ClientCertificateData =
-                            "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUZIakNDQXdhZ0F3SUJBZ0lSQUpvZXp6WElJT1dhTTV1Q3RlLy9RMFF3RFFZSktvWklodmNOQVFFTEJRQXcKRFRFTE1Ba0dBMVVFQXhNQ1kyRXdIaGNOTWpRd05qRTBNRGN6TnpRMVdoY05Nall3TmpFME1EYzBOelExV2pBdwpNUmN3RlFZRFZRUUtFdzV6ZVhOMFpXMDZiV0Z6ZEdWeWN6RVZNQk1HQTFVRUF4TU1iV0Z6ZEdWeVkyeHBaVzUwCk1JSUNJakFOQmdrcWhraUc5dzBCQVFFRkFBT0NBZzhBTUlJQ0NnS0NBZ0VBL0Rqc2pNZEg1dEw3QXg2VWRvM1oKY24ybWdYbGdjdDRpeTBzL0NRUnlidXBxU091UlhEV1FYN2FzOGc0S1ZmeXp3dDRVYzF6bWd2WWJHUjdpVmpOTQpOelBDUlU0SnZQM1YrbFM2QjkzaDNpRmNOQ3NXaHRaczhwL3FtNnJzeG13MlZObUh6NTFoVTFrbXZGRXBJSUZUCmJjdkszS3A4ZXBQbzZNTTZTUFk5S1U1b0NwV1lTS1ZXOHVxVUZOeXZFR3d2RUx6R2lyV0cyL3FSd0FHd0t2RVAKdFlud2xFZHk5M3p2aVpsbjhEeHFjOUxTRmh4cjRJQ21STC9XQ1Y0aUFZMVdyRmZvdUhyMmFRcXdlUmtTbDBvaQo0aEZ2Ny8vdU1KcVJGdDNkZVVNdnZBNjVIVjRLTW5HdDZBUmxsVEZLR3l2MG96dS80TU50Qm15bDBrU1JVcko4CnEyU2ZtQmJISml3dlRTZGxqRHJjTDBMeDJBeEhXazdnbFcwUCt0QzBtMUp1RFJiYm9uVnpBVnN4MW1xY3hPM00Kd1k2L1ZwU2FDUWE0S2Q5TmpVakEvcHlZVEl2VFJnbU1yMlhtUnRiOVh0QjRoajBOYmJBZlIrL1NlWkdxRDhFTApYSmJmUDRkeUkzdWdZS1VaYkFXRmdQVnRGYUkxN283cVI3M1BTQUtNS1QvRTQxZ2hPOCtVdVRLSjExZC82UFozCkcydUdxSUxCc3N2SFFvY0h0Q3YvUk40UmY1NkJXM0J0UElaV2JvblYraFBYMllWaUZ1OUZseDNqYXFVdFZDdGgKdWFvN29zekgxdW9vS1lFTEJ1SHM5eDgvNDc5LzVaUGZJNEN6Zi9SYUpkNDUrLzBZV1lIUGhPL1ZONWx4MmFrYgpKeHJhcmRWQzd4R0ZvTDM0dUhDYjJZc0NBd0VBQWFOV01GUXdEZ1lEVlIwUEFRSC9CQVFEQWdXZ01CTUdBMVVkCkpRUU1NQW9HQ0NzR0FRVUZCd01DTUF3R0ExVWRFd0VCL3dRQ01BQXdId1lEVlIwakJCZ3dGb0FVaDlTYk0rbUIKN0FmOGkySnJTTE5BbFA3aFpMa3dEUVlKS29aSWh2Y05BUUVMQlFBRGdnSUJBSVU2RWxVMTBYUWhRWGMreDhxQgo4RHM2NTAyRHhjdllzeCtINEtDTzVTNWh2MHdrWkhQbVUrQzVBRkcxU2VQdUxYSG1mazhxVDI5K0c5SzM4ajJKCmhGNzlUN2hhekp0bTA2aGJTanRWcVlCckFWWmlpVFpGOUpmbHJkQ3FHc1NXK2ZJUXdRc2dhOExOSm9WOFl6N2UKYVhRaDZmZnBLRFlyYVhIbGd2RkhJOEdBL1V0Zml5eTJCZmV6TFhqcWhzSFdFTVRSNzdkZzJwZFowYkpkK0JzbAo3WUlOS1lhckVJVWFEaFB6V2dseTkrMWRuQ0hlUmEyL0Zucmgya1lYbkFWNDZCRzVQWHdEUDB4SUJsa1h3N3ZSCit3YlNXM3RiYkJPanZiT2QvWlBuYWxEek5DUFF1YXRUbk5rczgvaU1rbnRmQ1BsdUtSOENvR2toekJLWkE3NkkKZndiZGQvRnZ6MjRsdit5ZG5zV0l4cVVZcWlIR3k4N0UyRVl5ZFJsSXFQNmNjYmNyTXNLeHFHcmFRRHdhRWIyOAo5eEwrL0RmbDJuWjRSTjg2MlVYeE5GcGErRDBOSGJGR1ovOHFDTENwbUJkK2FGYnRUOEdSVWtMNXNHN3Q4VXdnCktLQk1KZ1IxbGdKZ215cm94MXA4Z0RWVjdDUGUrOFlreTV5UFFwMHZHei9jazN1UVRjWC95dWJCQXRvN3RRN08KMHZoMCsremRzWTY4OUNyMWsyZkRsWTlQbit4RFlxNkNvQVhhZ3NzUmJCQ3JDWld6QXBvRzJhQTRmTUZMZ0NQVQpUbTUwV0VGejJJNkY5SFh2V1JlM0dMQk1WRUhyRUdrRUlPZDRBQVNtM0JERC9zWHhIVFM2M2ExWXBjY2xWQ1BmCjZ0RVZFZVJab0htM3c0ZWt2alYrTHp0VgotLS0tLUVORCBDRVJUSUZJQ0FURS0tLS0tCg==",
-                        ClientKeyData =
-                            "LS0tLS1CRUdJTiBSU0EgUFJJVkFURSBLRVktLS0tLQpNSUlKS0FJQkFBS0NBZ0VBL0Rqc2pNZEg1dEw3QXg2VWRvM1pjbjJtZ1hsZ2N0NGl5MHMvQ1FSeWJ1cHFTT3VSClhEV1FYN2FzOGc0S1ZmeXp3dDRVYzF6bWd2WWJHUjdpVmpOTU56UENSVTRKdlAzVitsUzZCOTNoM2lGY05Dc1cKaHRaczhwL3FtNnJzeG13MlZObUh6NTFoVTFrbXZGRXBJSUZUYmN2SzNLcDhlcFBvNk1NNlNQWTlLVTVvQ3BXWQpTS1ZXOHVxVUZOeXZFR3d2RUx6R2lyV0cyL3FSd0FHd0t2RVB0WW53bEVkeTkzenZpWmxuOER4cWM5TFNGaHhyCjRJQ21STC9XQ1Y0aUFZMVdyRmZvdUhyMmFRcXdlUmtTbDBvaTRoRnY3Ly91TUpxUkZ0M2RlVU12dkE2NUhWNEsKTW5HdDZBUmxsVEZLR3l2MG96dS80TU50Qm15bDBrU1JVcko4cTJTZm1CYkhKaXd2VFNkbGpEcmNMMEx4MkF4SApXazdnbFcwUCt0QzBtMUp1RFJiYm9uVnpBVnN4MW1xY3hPM013WTYvVnBTYUNRYTRLZDlOalVqQS9weVlUSXZUClJnbU1yMlhtUnRiOVh0QjRoajBOYmJBZlIrL1NlWkdxRDhFTFhKYmZQNGR5STN1Z1lLVVpiQVdGZ1BWdEZhSTEKN283cVI3M1BTQUtNS1QvRTQxZ2hPOCtVdVRLSjExZC82UFozRzJ1R3FJTEJzc3ZIUW9jSHRDdi9STjRSZjU2QgpXM0J0UElaV2JvblYraFBYMllWaUZ1OUZseDNqYXFVdFZDdGh1YW83b3N6SDF1b29LWUVMQnVIczl4OC80NzkvCjVaUGZJNEN6Zi9SYUpkNDUrLzBZV1lIUGhPL1ZONWx4MmFrYkp4cmFyZFZDN3hHRm9MMzR1SENiMllzQ0F3RUEKQVFLQ0FnQjVKUVpKWC9aaklmYzZ1bGRvMGgwZFpzaXc2NUd0MnBBdndRYVgyREQyb1ZWSGpRNFdrZ3UwVFZPbwpONkl6UnRzNHY5NW13cnBkTU1RM1BxUkw3dnV1a0FmQnJnZnpaS0NBU20zSUZZVEZZcFNjNGcxQjJvQWQwVDJvClkyS3lzNHN0R2dhbmE5b3haR0s4bE9jQ0c5dnNvclBmWld2QW5JYUVOakVxbGtzdUtlRERKTE11UVd3UDVTZ1gKRlNCbzdPMTJScFcrVGc1bVhtWGZLWEJxVDdyUjRWMVNlemIzTkdVQlhGT1dDZzYvYndWRlpZVlRJYmU2MGNHRwpZbFpIRkpJSzJYYUlGVmVCZ0liZXczSXdoSVZZdkROZHZUbTAwcWpacU5zVndYV09DQ3hWdExPRkl5RDZqaElVCnBNWUpZd1Z2MmVVQm1od2x0ODIxdndWbUNTRGpaYW1VTUNiMXZNMTlRMTVrQURLK2tVcTh3bTMvUlkxSHFGL1oKckJJQXJmTldYU0xtSWF5dDlXbC92amgzSG0xQ2Eya3VDNEdnRE80YWZOR0JXNzdMbE1GeG5XWW1aZVFSR1N6Ngp4UHY1dFdnRDc0aVkxSnRvVUpQNDV5VWJMMm12eXVBNndGNkZJT281MGI1TXhyUHhidTZWQkN0OGNyL2kvNzF2CjE0UFJvUEVXNVpaa01zcjBGMUErN0FNcUpLM3dXSFpDL0dWR1RSaGxMNzFMZzh4RERYdVIxZXlyaWJ4ejllaVgKQUVkUUFkM0NyRXlVSjNyR1F2UDI5YlI4SVVxdWVUbU0xTGE5cUhQSnk4UnRZNG9MbUdnS3lCVE04YmRQZmpnZAo2NVE2TXl1dHFiNkE2b2xTd0tNNHczTUhCZkR5R3FUUTFwQWlTc0lRUmFyeDBYR2lNUUtDQVFFQS9ncFFLSXlUCkNvUlRyMjZXWDZkVnVrZ1RMRTJIMnEveFp1NXNjc0hGa3dsNkRjcnpESmNoaU8wazZtcU1aYmhNejJzS29EN1MKcjJQRFhpbnhMRUQ5OTA5WXZXLzBvQk5CVC9GWGlWcWNRL1ZTTWcwR0YwbnhENGp1aTgvdXlmUE42SzYyaHNrMgpQcFBSeWVDSmNncEt3TTRhUFJlcjZ5RXA3cE15Yko1eTU3RjVjdSt3RXpmRTFkUWczYlZsK3BuT0VBMUx3UUJWCnJzYTk3TjRMSFNPRGoxRnh4SVlYSEFleDdSd2I4SlZTeTlKaC9JZGpKRlBUK09EREZsTHAweW1UYmF3cXFuMFQKdHBELys0UjZJTFUwcUIrL3IwbXFXcitraVZlZ0g4N0lmaEg1emw0YkFBWldpQ1ZJMW1reEVzMEZ2WE9rd3REdApkb3pmK2NPVnFSMytsd0tDQVFFQS9pc0ZVNFVhZGdLSHZBV0tDMzM5R3hiY05NYnlVa0dML0pJeGNaMnlOVkQ5CkJEVTA4WHNsdXA5NkhwNW9LbHNqWmlaVjFwZnJCelNYRk54aDY0cEZlL0pKcGRMN0xFT2R3LzdDYlhIWUw5R1QKTXVWbXVhTjZoNk9QUWs5cVZYaitQVitETU9SNmFPd0JVTkhPdFQ0RlBXTk9FTWRFci9NSXcrVHIvTXNTK0FvYwpkNEdHTWluYm92MVR2andmcTBUalFWMEFCZHNyejJEU25BL1dUSjZqckp6RGpqclI1bGh6UldoNTY5QVVLd25XCmdlSHZ5NG5rM1dSdEZqdnBQNTZiU0ZwRDBwQVpQRU92dnliZUpaQXZXNmdITE5OeGsrR3BYN0FZVnFaSklWTUcKQnAycEhpUjcvYSt4ak1wb1JDSU5DVm9mL3JVa2dPVStFNk0xSDViUExRS0NBUUFnWmVSUEo0NWhHdnNwTm10TApDNll0T1ovb1dJTG82dU5ZZ3pPbGR2emhnYVhsT0dyQ3drdHVrUC9TUFlCbVFKamJJd1daNWlrc1lRYTdiWkhxCldPZUtzTDNhZXZxeHA0TCsxUUthNjhsZUNWMVFNTVVFRjFQODdUT3U5UGU1SGJTMjVnRTFNMWdOcHdCc1JJeUMKMUxrdjJaa1REWC9KWHROZ0w3bVFqS3lPeTkxM1FRWXRqVUUzRy9TTkVlTk5rR3Z0TkNUakdrM1RHbG1DYWRiMQpBbUIyMktZdnNBSW1ldnpBQm9PeHJQbUFNUFo2SkRJS29mNDRrVUdRQ1ViMHZTcW1JL3pVL1ZxVVArM0ZmK0dyClpqQ3UrRTJUNTBzb2c2UlNON0NlSGRzSDZQYjQwSnVVNXpvRjV1dGhITTA3WHBaSzBRTEVMYXo3SDRBNDlDNlUKQU5WRkFvSUJBQlRvVnd6U3d5VjMrZEJtcUQ5ZndzVktzUnlLVFA2bE02MjRIT2Nhc01FZ0EyQW9QRTJzOHFLUwpZY3BJLzRxVWFxb0pkMEFxeVFPVHVPWFhaeHFvQ2lVeS9nbnMvQXBkR1lvNDE2ZUhHT0IrSGR5dThDOVBHbEkwCkN5SEtSSlg1V1BpVmRjWTgxVER5VVAxajlOd0YyUXArczdvL21nL2JMeHBtSjE5cEdRdGNVWkVuRDNIcTdZMVAKeDJhN3JXTTZUSE5oQWhKNVAvWlVJWjhDMG44RkFiTytSWHZhck0rRThSNkJoSjM0Uk9CeGM3ckZhaU5WR1lWNApzRnlHMng0SG53QnBwSENhdCtpMExLM050YkpqVlBIMk5YampmOUZKVzlScU9PWlAwVzR6VlNpUUtZdzROaGJkCkwvN0QyNlhYSXpsa3Q0TU5SWTV3elJWeWRIay92NVVDZ2dFQkFQQjNMcUNvZzdSdlhCQTdvbFJSa0s0VVJJQ0kKb2tjN3k0Q3p5ekJ1azg2M2xhb0dRU1l4TytuU2FYWStFQk9JNjNWYzFyT29SVmVMUFhSMGtJOFV4QjdmbTRkMQpkK2djb2t3SG1tSDg2aURFcGtqSVhkbWhYRmgremwrVm9rb3d1YUxpdnFoMWtZUk1ia0VaSVRieC9Ib3pVaHhXCnlDS2UyekZHZkFpY1J6MHR0aDhJR1NINVVqaDBCNTd0K2U2dTB4UHphVVM0WjI0NDg0MDY5TzlrTG1INTJ6THMKZ0g2akNwVTdSZGRIUlBSekxDT2VpZDlxOFlkcVFPSGJoUjBnaXRuNVRKRWRYMTVCNW9CcHFKVk50cTlpYUxNQwo2YVIrL3JiRjJxTGEvU01uOUZWVmVFOHIvdGZqN014YkNSWXU0KzNPUktqRkZFbEc0eU1OdW1PVmdkZz0KLS0tLS1FTkQgUlNBIFBSSVZBVEUgS0VZLS0tLS0K",
-                        Token =
-                            "7uy51kcjn7pxv35iodk4czk97ouc0yx06a8bx4r9b9jezpcafdpdvz2tasxrcj6ens314oerj798skw95zd357u9bh0icwhuxe6jby8gsxdbvonkrd92nyiq3f60cbfh"
-                    }
+                    { Token = "7uy51kcjn7pxv35iodk4czk97ouc0yx06a8bx4r9b9jezpcafdpdvz2tasxrcj6ens314oerj798skw95zd357u9bh0icwhuxe6jby8gsxdbvonkrd92nyiq3f60cbfh" }
                 }
             }
-        };
+        })
+    );
 
     public async Task<string> ExecutePythonScript(
         string namespaceName,
@@ -67,9 +62,6 @@ public class KubernetesService
         Action<string> notifyCallback
     )
     {
-        var kubernetesConfiguration = KubernetesClientConfiguration.BuildConfigFromConfigObject(_configuration);
-        kubernetesConfiguration.SkipTlsVerify = true;
-        var client = new k8s.Kubernetes(kubernetesConfiguration);
         var jobName = Guid.NewGuid().ToString();
         try
         {
@@ -105,7 +97,7 @@ public class KubernetesService
             };
 
             notifyCallback("Creating job...");
-            var createdJob = await client.BatchV1.CreateNamespacedJobAsync(job, namespaceName);
+            var createdJob = await _client.BatchV1.CreateNamespacedJobAsync(job, namespaceName);
             if (createdJob == null)
             {
                 throw new Exception(
@@ -149,9 +141,6 @@ public class KubernetesService
         Action<string> notifyCallback
     )
     {
-        var kubernetesConfiguration = KubernetesClientConfiguration.BuildConfigFromConfigObject(_configuration);
-        kubernetesConfiguration.SkipTlsVerify = true;
-        var client = new k8s.Kubernetes(kubernetesConfiguration);
         var jobName = Guid.NewGuid().ToString();
         try
         {
@@ -187,7 +176,7 @@ public class KubernetesService
             };
 
             notifyCallback("Creating job...");
-            var createdJob = await client.BatchV1.CreateNamespacedJobAsync(job, namespaceName);
+            var createdJob = await _client.BatchV1.CreateNamespacedJobAsync(job, namespaceName);
             if (createdJob == null)
             {
                 throw new Exception(
@@ -227,10 +216,7 @@ public class KubernetesService
 
     private async void DeleteJob(string namespaceName, string jobName)
     {
-        var kubernetesConfiguration = KubernetesClientConfiguration.BuildConfigFromConfigObject(_configuration);
-        kubernetesConfiguration.SkipTlsVerify = true;
-        var client = new k8s.Kubernetes(kubernetesConfiguration);
-        var deletedJob = await client.BatchV1.DeleteNamespacedJobAsync(
+        var deletedJob = await _client.BatchV1.DeleteNamespacedJobAsync(
             jobName,
             namespaceName,
             new V1DeleteOptions { PropagationPolicy = "Foreground" }
@@ -245,10 +231,7 @@ public class KubernetesService
 
     private async Task<string?> GetJobPodNameAsync(string namespaceName, string jobName)
     {
-        var kubernetesConfiguration = KubernetesClientConfiguration.BuildConfigFromConfigObject(_configuration);
-        kubernetesConfiguration.SkipTlsVerify = true;
-        var client = new k8s.Kubernetes(kubernetesConfiguration);
-        var pods = await client.CoreV1.ListNamespacedPodAsync(
+        var pods = await _client.CoreV1.ListNamespacedPodAsync(
             namespaceName,
             labelSelector: $"job-name={jobName}"
         );
@@ -257,10 +240,7 @@ public class KubernetesService
 
     private async Task<string> GetPodLogsAsync(string namespaceName, string podName)
     {
-        var kubernetesConfiguration = KubernetesClientConfiguration.BuildConfigFromConfigObject(_configuration);
-        kubernetesConfiguration.SkipTlsVerify = true;
-        var client = new k8s.Kubernetes(kubernetesConfiguration);
-        await using var logs = await client.CoreV1.ReadNamespacedPodLogAsync(
+        await using var logs = await _client.CoreV1.ReadNamespacedPodLogAsync(
             podName,
             namespaceName
         );
