@@ -1,0 +1,144 @@
+﻿### Environment Variables
+@baseUrl =https://stackunderflowbackend.azurewebsites.net
+@apiKey =Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiIxMSIsIm5iZiI6MTcxODcxOTkzMywiZXhwIjoxNzE4ODA2MzMzLCJpYXQiOjE3MTg3MTk5MzMsImlzcyI6Imlzc3VlciIsImF1ZCI6ImF1ZGllbmNlIn0._gHMSxxCqJ3b5b7DZeRtWa41W5rzkI5OmXkRhkPJwDI
+@pipelineId =1
+@scriptId =1
+@scriptVersionId =1
+@keyword =1
+@groupId =1
+### Runner
+# @name /Runner/subscribe/:pipelineId
+GET {{baseUrl}}/Runner/subscribe/{{pipelineId}}
+Authorization: {{apiKey}}
+
+<> ./StackUnderFlow API_responses/ok.200.txt
+
+### Script
+# @name /Script/:scriptId/versions
+GET {{baseUrl}}/Script/{{scriptId}}/versions
+Authorization: {{apiKey}}
+
+<> ./StackUnderFlow API_responses/ok.200.txt
+<> ./StackUnderFlow API_responses/internal_server_error.500.txt
+###
+# @name /Script/:scriptId/file
+GET {{baseUrl}}/Script/{{scriptId}}/file
+Authorization: {{apiKey}}
+Accept: text/plain
+
+<> ./StackUnderFlow API_responses/ok.200.txt
+<> ./StackUnderFlow API_responses/not_found.404.json
+<> ./StackUnderFlow API_responses/internal_server_error.500.txt
+###
+# @name /Script/:scriptId
+GET {{baseUrl}}/Script/{{scriptId}}
+Authorization: {{apiKey}}
+Accept: text/plain
+
+<> ./StackUnderFlow API_responses/ok.200.txt
+<> ./StackUnderFlow API_responses/not_found.404.json
+<> ./StackUnderFlow API_responses/internal_server_error.500.txt
+###
+# @name /Script/user
+GET {{baseUrl}}/Script/user
+Authorization: {{apiKey}}
+
+<> ./StackUnderFlow API_responses/ok.200.txt
+<> ./StackUnderFlow API_responses/internal_server_error.500.txt
+###
+# @name /Script/version/:scriptVersionId/file
+GET {{baseUrl}}/Script/version/{{scriptVersionId}}/file
+Authorization: {{apiKey}}
+Accept: text/plain
+
+<> ./StackUnderFlow API_responses/ok.200.txt
+<> ./StackUnderFlow API_responses/not_found.404.json
+<> ./StackUnderFlow API_responses/internal_server_error.500.txt
+###
+# @name /Script/search/:keyword
+GET {{baseUrl}}/Script/search/{{keyword}}
+Authorization: {{apiKey}}
+
+<> ./StackUnderFlow API_responses/ok.200.txt
+<> ./StackUnderFlow API_responses/internal_server_error.500.txt
+###
+# @name /SocialInteraction/friends/requests
+GET {{baseUrl}}/SocialInteraction/friends/requests
+Authorization: {{apiKey}}
+Accept: text/plain
+
+<> ./StackUnderFlow API_responses/ok.200.txt
+<> ./StackUnderFlow API_responses/bad_request.400.json
+<> ./StackUnderFlow API_responses/internal_server_error.500.txt
+###
+# @name /SocialInteraction/friends
+GET {{baseUrl}}/SocialInteraction/friends
+Authorization: {{apiKey}}
+Accept: text/plain
+
+<> ./StackUnderFlow API_responses/ok.200.txt
+<> ./StackUnderFlow API_responses/bad_request.400.json
+<> ./StackUnderFlow API_responses/internal_server_error.500.txt
+###
+# @name /SocialInteraction/follows
+GET {{baseUrl}}/SocialInteraction/follows
+Authorization: {{apiKey}}
+Accept: text/plain
+
+<> ./StackUnderFlow API_responses/ok.200.txt
+<> ./StackUnderFlow API_responses/bad_request.400.json
+<> ./StackUnderFlow API_responses/internal_server_error.500.txt
+###
+# @name /SocialInteraction/groups/:groupId/members
+GET {{baseUrl}}/SocialInteraction/groups/{{groupId}}/members
+Authorization: {{apiKey}}
+Accept: text/plain
+
+<> ./StackUnderFlow API_responses/ok.200.txt
+<> ./StackUnderFlow API_responses/bad_request.400.json
+<> ./StackUnderFlow API_responses/not_found.404.json
+<> ./StackUnderFlow API_responses/internal_server_error.500.txt
+###
+# @name /SocialInteraction/groups/:groupId/requests
+GET {{baseUrl}}/SocialInteraction/groups/{{groupId}}/requests
+Authorization: {{apiKey}}
+Accept: text/plain
+
+<> ./StackUnderFlow API_responses/ok.200.txt
+<> ./StackUnderFlow API_responses/bad_request.400.json
+<> ./StackUnderFlow API_responses/not_found.404.json
+<> ./StackUnderFlow API_responses/internal_server_error.500.txt
+###
+# @name /SocialInteraction/groups/:groupId
+GET {{baseUrl}}/SocialInteraction/groups/{{groupId}}
+Authorization: {{apiKey}}
+Accept: text/plain
+
+<> ./StackUnderFlow API_responses/ok.200.txt
+<> ./StackUnderFlow API_responses/bad_request.400.json
+<> ./StackUnderFlow API_responses/not_found.404.json
+<> ./StackUnderFlow API_responses/internal_server_error.500.txt
+###
+# @name /SocialInteraction/groups/requests
+GET {{baseUrl}}/SocialInteraction/groups/requests
+Authorization: {{apiKey}}
+Accept: text/plain
+
+<> ./StackUnderFlow API_responses/ok.200.txt
+<> ./StackUnderFlow API_responses/bad_request.400.json
+<> ./StackUnderFlow API_responses/internal_server_error.500.txt
+###
+# @name /SocialInteraction/groups
+GET {{baseUrl}}/SocialInteraction/groups
+Authorization: {{apiKey}}
+Accept: text/plain
+
+<> ./StackUnderFlow API_responses/ok.200.txt
+<> ./StackUnderFlow API_responses/bad_request.400.json
+<> ./StackUnderFlow API_responses/internal_server_error.500.txt
+###
+# @name /User
+GET {{baseUrl}}/User
+Authorization: {{apiKey}}
+
+<> ./StackUnderFlow API_responses/ok.200.txt

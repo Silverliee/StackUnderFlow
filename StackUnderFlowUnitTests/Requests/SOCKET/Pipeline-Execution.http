@@ -1,0 +1,14 @@
+﻿### Environment Variables
+@baseUrl =https://stackunderflowbackend.azurewebsites.net
+@apiKey =Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiIxMSIsIm5iZiI6MTcxODcxOTkzMywiZXhwIjoxNzE4ODA2MzMzLCJpYXQiOjE3MTg3MTk5MzMsImlzcyI6Imlzc3VlciIsImF1ZCI6ImF1ZGllbmNlIn0._gHMSxxCqJ3b5b7DZeRtWa41W5rzkI5OmXkRhkPJwDI
+
+###
+# Create a new pipeline
+# @name /Runner/execute-pipeline
+POST {{baseUrl}}/Runner/execute-pipeline
+Authorization: {{apiKey}}
+Content-Type: multipart/form-data
+
+< TestFiles/test.py
+< TestFiles/test.py
+< TestFiles/test.py

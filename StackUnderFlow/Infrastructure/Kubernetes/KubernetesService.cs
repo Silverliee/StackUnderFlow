@@ -6,9 +6,15 @@ namespace StackUnderFlow.Infrastructure.Kubernetes;
 
 public class KubernetesService
 {
-    private readonly IKubernetes _client = new k8s.Kubernetes(
-        KubernetesClientConfiguration.BuildConfigFromConfigObject(new K8SConfiguration
-        {
+    private static readonly HttpClientHandler Handler = new()
+    {
+        ServerCertificateCustomValidationCallback = (_, _, _, _) => true
+    };
+
+    private readonly HttpClient _httpClient = new(Handler);
+    
+    private readonly K8SConfiguration _configuration = new()
+    {
             ApiVersion = "v1",
             Clusters = new[]
             {
@@ -53,8 +59,7 @@ public class KubernetesService
                     }
                 }
             }
-        })
-    );
+        };
 
     public async Task<string> ExecutePythonScript(
         string namespaceName,
@@ -62,6 +67,9 @@ public class KubernetesService
         Action<string> notifyCallback
     )
     {
+        var kubernetesConfiguration = KubernetesClientConfiguration.BuildConfigFromConfigObject(_configuration);
+        kubernetesConfiguration.SkipTlsVerify = true;
+        var client = new k8s.Kubernetes(kubernetesConfiguration);
         var jobName = Guid.NewGuid().ToString();
         try
         {
@@ -97,7 +105,7 @@ public class KubernetesService
             };
 
             notifyCallback("Creating job...");
-            var createdJob = await _client.BatchV1.CreateNamespacedJobAsync(job, namespaceName);
+            var createdJob = await client.BatchV1.CreateNamespacedJobAsync(job, namespaceName);
             if (createdJob == null)
             {
                 throw new Exception(
@@ -141,6 +149,9 @@ public class KubernetesService
         Action<string> notifyCallback
     )
     {
+        var kubernetesConfiguration = KubernetesClientConfiguration.BuildConfigFromConfigObject(_configuration);
+        kubernetesConfiguration.SkipTlsVerify = true;
+        var client = new k8s.Kubernetes(kubernetesConfiguration);
         var jobName = Guid.NewGuid().ToString();
         try
         {
@@ -176,7 +187,7 @@ public class KubernetesService
             };
 
             notifyCallback("Creating job...");
-            var createdJob = await _client.BatchV1.CreateNamespacedJobAsync(job, namespaceName);
+            var createdJob = await client.BatchV1.CreateNamespacedJobAsync(job, namespaceName);
             if (createdJob == null)
             {
                 throw new Exception(
@@ -216,7 +227,10 @@ public class KubernetesService
 
     private async void DeleteJob(string namespaceName, string jobName)
     {
-        var deletedJob = await _client.BatchV1.DeleteNamespacedJobAsync(
+        var kubernetesConfiguration = KubernetesClientConfiguration.BuildConfigFromConfigObject(_configuration);
+        kubernetesConfiguration.SkipTlsVerify = true;
+        var client = new k8s.Kubernetes(kubernetesConfiguration);
+        var deletedJob = await client.BatchV1.DeleteNamespacedJobAsync(
             jobName,
             namespaceName,
             new V1DeleteOptions { PropagationPolicy = "Foreground" }
@@ -231,7 +245,10 @@ public class KubernetesService
 
     private async Task<string?> GetJobPodNameAsync(string namespaceName, string jobName)
     {
-        var pods = await _client.CoreV1.ListNamespacedPodAsync(
+        var kubernetesConfiguration = KubernetesClientConfiguration.BuildConfigFromConfigObject(_configuration);
+        kubernetesConfiguration.SkipTlsVerify = true;
+        var client = new k8s.Kubernetes(kubernetesConfiguration);
+        var pods = await client.CoreV1.ListNamespacedPodAsync(
             namespaceName,
             labelSelector: $"job-name={jobName}"
         );
@@ -240,7 +257,10 @@ public class KubernetesService
 
     private async Task<string> GetPodLogsAsync(string namespaceName, string podName)
     {
-        await using var logs = await _client.CoreV1.ReadNamespacedPodLogAsync(
+        var kubernetesConfiguration = KubernetesClientConfiguration.BuildConfigFromConfigObject(_configuration);
+        kubernetesConfiguration.SkipTlsVerify = true;
+        var client = new k8s.Kubernetes(kubernetesConfiguration);
+        await using var logs = await client.CoreV1.ReadNamespacedPodLogAsync(
             podName,
             namespaceName
         );
