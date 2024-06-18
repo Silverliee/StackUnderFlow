@@ -1,0 +1,22 @@
+﻿### Environment Variables
+@baseUrl =https://stackunderflowbackend.azurewebsites.net
+@apiKey =Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiIxMSIsIm5iZiI6MTcxODcxOTkzMywiZXhwIjoxNzE4ODA2MzMzLCJpYXQiOjE3MTg3MTk5MzMsImlzcyI6Imlzc3VlciIsImF1ZCI6ImF1ZGlieW5jZSJ9._gHMSxxCqJ3b5b7DZeRtWa41W5rzkI5OmXkRhkPJwDI
+@groupId = variable value
+
+### User / delete
+# @name /User/delete
+DELETE {{baseUrl}}/User/delete
+Authorization: {{apiKey}}
+
+<> ./StackUnderFlow API_responses/ok.200.txt
+<> ./StackUnderFlow API_responses/not_found.404.json
+<> ./StackUnderFlow API_responses/internal_server_error.500.txt
+
+### SocialInteraction / groups/:groupId
+# @name /SocialInteraction/groups/:groupId
+DELETE {{baseUrl}}/SocialInteraction/groups/{{groupId}}
+Authorization: {{apiKey}}
+
+<> ./StackUnderFlow API_responses/ok.200.txt
+<> ./StackUnderFlow API_responses/not_found.404.json
+<> ./StackUnderFlow API_responses/internal_server_error.500.txt
