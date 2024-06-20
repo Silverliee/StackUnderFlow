@@ -7,34 +7,120 @@ import { TiArrowBack } from "react-icons/ti";
 import { useNavigate } from "react-router-dom";
 import ListSearchResults from "./ListSearchResults";
 import UnstyledInputIntroduction from "../components/UnstyledInputIntroduction";
+import UnstyledSelectIntroduction from "../components/UnstyledSelectIntroduction";
+
 import { Button } from "@mui/material";
+import { Typography } from "@mui/material";
+import { Accordion, AccordionDetails, AccordionSummary } from "@mui/material";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import MyScriptsList from "../components/MyScriptsList";
 
 function ScriptListPage() {
 	const [search, setSearch] = React.useState("");
+	const [selectedLanguage, setSelectedLanguage] = useState("");
 	const [display, setDisplay] = React.useState("none");
 	const [scriptsFound, setScriptsFound] = React.useState([]);
-	const [open, setOpen] = React.useState(false);
-	const [selectedLanguage, setSelectedLanguage] = useState("Any language");
+	const [myFriends, setMyFriends] = React.useState([]);
+	const [myFriendsScripts, setMyFriendsScripts] = React.useState([]);
+	const [myGroups, setMyGroups] = React.useState([]);
+	const [myGroupsScripts, setMyGroupsScripts] = React.useState([]);
+	const [groupMembers, setGroupMembers] = useState([]);
+	const [following, setFollowing] = React.useState([]);
+	const [myFollowingScripts, setMyFollowingScripts] = React.useState([]);
+
 	const [selectedScripts, setSelectedScripts] = useState([]);
-	const [scriptsFoundPaginated, setScriptsFoundPaginated] = useState([]);
+
 	const [scriptsFoundFiltered, setScriptsFoundFiltered] = useState([]);
-	const [page, setPage] = React.useState(0);
-	const [rowsPerPage, setRowsPerPage] = React.useState(5);
+	const [friendsScriptsFiltered, setFriendsScriptsFiltered] = useState([]);
+	const [groupsScriptsFiltered, setGroupsScriptsFiltered] = useState([]);
+	const [followingScriptsFiltered, setFollowingScriptsFiltered] = useState([]);
+
+	const [open, setOpen] = React.useState(false);
 	const userId = useAuth().authData?.userId;
 	useEffect(() => {
 		const fetchScripts = async () => {
+			//Get my scripts
 			const scriptsLoaded = await AxiosRq.getInstance().getScripts();
 			setScriptsFound(scriptsLoaded);
-			setScriptsFoundFiltered(
-				scriptsFound?.filter((script) => {
-					if (selectedLanguage === "Any language") return true;
-					return script.programmingLanguage === selectedLanguage;
-				})
-			);
+
+			//Get my friends
+			const friends = await AxiosRq.getInstance().getFriends(userId);
+			setMyFriends(friends);
+
+			//Get my friends scripts
+			friends.forEach(async (friend) => {
+				const friendScripts =
+					await AxiosRq.getInstance().getScriptByUserIdAndVisiblity(
+						friend.userId,
+						"Friend"
+					);
+				setMyFriendsScripts((oldScripts) => [...oldScripts, ...friendScripts]);
+			});
+
+			//Get my groups
+			const groups = await AxiosRq.getInstance().getGroups();
+			setMyGroups(groups);
+			//Get my groups and its members
+			const groupMembersByGroupId = await fetchGroupsAndMembers(groups);
+
+			//Get my groups scripts
+			groups.forEach(async (group) => {
+				const groupMembers = groupMembersByGroupId[group.groupId];
+				groupMembers.forEach(async (member) => {
+					const scripts =
+						await AxiosRq.getInstance().getScriptByUserIdAndVisiblity(
+							member.userId,
+							"Group",
+							group.groupId
+						);
+					setMyGroupsScripts((oldScripts) => [...oldScripts, ...scripts]);
+				});
+			});
+
+			//Get people I follow
+			const following = await AxiosRq.getInstance().getFollows(userId);
+			setFollowing(following);
+
+			//Get people I follow scripts
+			following.forEach(async (follow) => {
+				const scripts =
+					await AxiosRq.getInstance().getScriptByUserIdAndVisiblity(
+						follow.userId,
+						"Follow"
+					);
+				setMyFollowingScripts((oldScripts) => [...oldScripts, ...scripts]);
+			});
+
+			setSelectedLanguage("Any language");
 			setDisplay("block");
 		};
 		fetchScripts();
 	}, [userId]);
+
+	const fetchGroupsAndMembers = async (groups) => {
+		try {
+			// Fetch members for each group
+			const memberPromises = groups.map(async (group) => {
+				const members = await AxiosRq.getInstance().getGroupMembers(
+					group.groupId
+				);
+				return {
+					groupId: group.groupId,
+					members: members.map((m) => ({
+						userId: m.userId,
+						username: m.username,
+					})),
+				};
+			});
+
+			const membersResults = await Promise.all(memberPromises);
+			setGroupMembers(membersResults);
+			return membersResults;
+		} catch (error) {
+			console.error("Failed to fetch groups or group members", error);
+		}
+	};
+
 	useEffect(() => {
 		setScriptsFoundFiltered(
 			scriptsFound?.filter((script) => {
@@ -42,21 +128,32 @@ function ScriptListPage() {
 				return script.programmingLanguage === selectedLanguage;
 			})
 		);
-	}, [scriptsFound, selectedLanguage]);
-	useEffect(() => {
-		setScriptsFoundPaginated(
-			scriptsFoundFiltered.slice(page * rowsPerPage, (page + 1) * rowsPerPage)
+		setFriendsScriptsFiltered(
+			myFriendsScripts?.filter((script) => {
+				if (selectedLanguage === "Any language") return true;
+				return script.programmingLanguage === selectedLanguage;
+			})
 		);
-	}, [rowsPerPage, page, scriptsFoundFiltered]);
+		setGroupsScriptsFiltered(
+			myGroupsScripts?.filter((script) => {
+				if (selectedLanguage === "Any language") return true;
+				return script.programmingLanguage === selectedLanguage;
+			})
+		);
+		setFollowingScriptsFiltered(
+			myFollowingScripts?.filter((script) => {
+				if (selectedLanguage === "Any language") return true;
+				return script.programmingLanguage === selectedLanguage;
+			})
+		);
+	}, [
+		scriptsFound,
+		myFriendsScripts,
+		myGroupsScripts,
+		myFollowingScripts,
+		selectedLanguage,
+	]);
 
-	const handleChangePage = (event, newPage) => {
-		setPage(newPage);
-	};
-
-	const handleChangeRowsPerPage = (event) => {
-		setRowsPerPage(parseInt(event.target.value, 10));
-		setPage(0);
-	};
 	const handleDelete = async (scriptId) => {
 		if (
 			confirm(
@@ -91,20 +188,12 @@ function ScriptListPage() {
 	const handleSelectChange = (event) => {
 		const value = event?.target?.innerHTML; // Get the selected value
 		setSelectedLanguage(value);
-		setScriptsFoundFiltered(
-			scriptsFound?.filter((script) => {
-				if (value === "Any language") return true;
-				return script.programmingLanguage === value;
-			})
-		);
 	};
-
 	const handleKeyDown = async (event) => {
 		if (event.key === "Enter") {
 			handleSearch();
 		}
 	};
-
 	const handleReset = () => {
 		setSearch("");
 		setOpen(false);
@@ -115,15 +204,12 @@ function ScriptListPage() {
 		setRowsPerPage(5);
 		setSelectedScripts([]);
 	};
-
 	const handleOpenAdvancedOptions = () => {
 		setOpen(!open);
 	};
 	useEffect(() => {
 		handleSearch();
 	}, [search, selectedLanguage]);
-
-	//to rework
 	const handleSearch = async () => {
 		setScriptsFoundFiltered(
 			scriptsFound
@@ -137,17 +223,43 @@ function ScriptListPage() {
 						?.includes(search.toLowerCase());
 				})
 		);
+		setFriendsScriptsFiltered(
+			myFriendsScripts
+				?.filter((script) => {
+					if (selectedLanguage === "Any language") return true;
+					return script.programmingLanguage === selectedLanguage;
+				})
+				?.filter((script) => {
+					return script.scriptName
+						.toLowerCase()
+						?.includes(search.toLowerCase());
+				})
+		);
+		setGroupsScriptsFiltered(
+			myGroupsScripts
+				?.filter((script) => {
+					if (selectedLanguage === "Any language") return true;
+					return script.programmingLanguage === selectedLanguage;
+				})
+				?.filter((script) => {
+					return script.scriptName
+						.toLowerCase()
+						?.includes(search.toLowerCase());
+				})
+		);
+		setFollowingScriptsFiltered(
+			myFollowingScripts
+				?.filter((script) => {
+					if (selectedLanguage === "Any language") return true;
+					return script.programmingLanguage === selectedLanguage;
+				})
+				?.filter((script) => {
+					return script.scriptName
+						.toLowerCase()
+						?.includes(search.toLowerCase());
+				})
+		);
 		setDisplay("block");
-	};
-
-	const handleItemSelected = (event) => {
-		if (event.target.checked) {
-			setSelectedScripts([...selectedScripts, event.target.id]);
-		} else {
-			setSelectedScripts(
-				selectedScripts?.filter((script) => script !== event.target.id)
-			);
-		}
 	};
 
 	return (
@@ -175,28 +287,97 @@ function ScriptListPage() {
 			<div>
 				<Button onClick={handleOpenAdvancedOptions}>Advanced Options</Button>
 			</div>
-			<ListSearchResults
-				handleSelectChange={handleSelectChange}
-				selectedLanguage={selectedLanguage}
-				display={display}
-				search={search}
-				scriptsFoundFiltered={scriptsFoundFiltered}
-				scriptsFoundPaginated={scriptsFoundPaginated}
-				handleItemSelected={handleItemSelected}
-				handleDelete={handleDelete}
-				userId={userId}
-				page={page}
-				rowsPerPage={rowsPerPage}
-				handleChangePage={handleChangePage}
-				handleChangeRowsPerPage={handleChangeRowsPerPage}
-				open={open}
-				selectedScripts={selectedScripts}
-			/>
+			<div id="advanced-options" style={{ display: open ? "block" : "none" }}>
+				<UnstyledSelectIntroduction
+					options={["Python", "Csharp"]}
+					handleSelectChange={handleSelectChange}
+					selectedValue={selectedLanguage}
+					label="Programming Language"
+					defaultValue="Any"
+				/>
+			</div>
+			<Accordion defaultExpanded>
+				<AccordionSummary
+					expandIcon={<ExpandMoreIcon />}
+					aria-controls="panel1-content"
+					id="panel1-header"
+				>
+					<Typography>My Scripts</Typography>
+				</AccordionSummary>
+				<AccordionDetails>
+					<MyScriptsList
+						myScripts={true}
+						display={display}
+						search={search}
+						scriptsFoundFiltered={scriptsFoundFiltered}
+						handleDelete={handleDelete}
+						userId={userId}
+						selectedScripts={selectedScripts}
+					/>
+				</AccordionDetails>
+			</Accordion>
+			<Accordion>
+				<AccordionSummary
+					expandIcon={<ExpandMoreIcon />}
+					aria-controls="panel1-content"
+					id="panel1-header"
+				>
+					<Typography>My Friends script</Typography>
+				</AccordionSummary>
+				<AccordionDetails>
+					<MyScriptsList
+						myScripts={false}
+						display={display}
+						search={search}
+						scriptsFoundFiltered={friendsScriptsFiltered}
+						handleDelete={handleDelete}
+						userId={userId}
+						selectedScripts={selectedScripts}
+					/>
+				</AccordionDetails>
+			</Accordion>
+			<Accordion>
+				<AccordionSummary
+					expandIcon={<ExpandMoreIcon />}
+					aria-controls="panel1-content"
+					id="panel1-header"
+				>
+					<Typography>My Groups scripts</Typography>
+				</AccordionSummary>
+				<AccordionDetails>
+					<MyScriptsList
+						myScripts={false}
+						display={display}
+						search={search}
+						scriptsFoundFiltered={groupsScriptsFiltered}
+						handleDelete={handleDelete}
+						userId={userId}
+						selectedScripts={selectedScripts}
+					/>
+				</AccordionDetails>
+			</Accordion>
+			<Accordion>
+				<AccordionSummary
+					expandIcon={<ExpandMoreIcon />}
+					aria-controls="panel1-content"
+					id="panel1-header"
+				>
+					<Typography>Scripts from people I follow</Typography>
+				</AccordionSummary>
+				<AccordionDetails>
+					<MyScriptsList
+						myScripts={false}
+						display={display}
+						search={search}
+						scriptsFoundFiltered={followingScriptsFiltered}
+						handleDelete={handleDelete}
+						userId={userId}
+						selectedScripts={selectedScripts}
+					/>
+				</AccordionDetails>
+			</Accordion>
 		</>
 	);
 }
 
-// <Container>
-// 	<ScriptsList scripts={scripts} handleDelete={handleDelete} />
-// </Container>
 export default ScriptListPage;

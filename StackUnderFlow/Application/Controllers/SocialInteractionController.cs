@@ -64,7 +64,7 @@ public class SocialInteractionController(ISocialInteractionService socialInterac
     [Authorize]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> CreateFriendRequest(int friendId, [FromBody] string message)
+    public async Task<IActionResult> CreateFriendRequest(int friendId, [FromBody] FriendRequestCreationRequestDto friendRequestCreationRequestDto)
     {
         BackgroundJob.Enqueue(() => Console.WriteLine("Creating friend request"));
         var userId = Convert.ToInt32(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
@@ -73,7 +73,7 @@ public class SocialInteractionController(ISocialInteractionService socialInterac
             var friend = await socialInteractionService.CreateFriendRequest(
                 userId,
                 friendId,
-                message
+                friendRequestCreationRequestDto.Message
             );
             if (friend == null)
             {
@@ -442,6 +442,10 @@ public class SocialInteractionController(ISocialInteractionService socialInterac
                 return NotFound();
             }
             var groupRequest = await socialInteractionService.AcceptGroupRequest(userId, groupId);
+            if (groupRequest == null)
+            {
+                StatusCode(StatusCodes.Status500InternalServerError);
+            }
             return Ok(groupRequest);
         }
         catch(Exception e)

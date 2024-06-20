@@ -9,7 +9,8 @@ namespace StackUnderFlow.Domains.Services;
 public class SocialInteractionService(
     IFriendRepository friendRepository,
     IFollowRepository followRepository,
-    IGroupRepository groupRepository
+    IGroupRepository groupRepository,
+    IUserRepository userRepository
 ) : ISocialInteractionService
 {
     public async Task<List<UserResponseDto>> GetFriendsByUserId(int userId)
@@ -19,14 +20,25 @@ public class SocialInteractionService(
         {
             return [];
         }
-        return friends
-            .Select(f => new UserResponseDto
+        var friendIds = friends.Select(fr => fr.UserId1 == userId ? fr.UserId2 : fr.UserId1).ToList();
+    
+        // Récupérez tous les amis en une seule fois
+        var friendsData = await userRepository.GetUsersByIds(friendIds);
+
+        // Créez la liste de réponse
+        var friendsListResponse = new List<UserResponseDto>();
+        foreach (var friend in friendsData)
+        {
+            var friendRequestToAdd = new UserResponseDto
             {
-                UserId = f.UserId2,
-                Username = f.User2.Username,
-                Email = f.User2.Email
-            })
-            .ToList();
+                UserId = friend.UserId,
+                Username = friend.Username,
+                Email = friend.Email
+            };
+            friendsListResponse.Add(friendRequestToAdd);
+        }
+
+        return friendsListResponse;
     }
 
     public async Task<List<FriendRequestResponseDto>> GetFriendRequestsByUserId(int userId)
@@ -34,40 +46,57 @@ public class SocialInteractionService(
         var friendRequests = await friendRepository.GetFriendRequestsByUserId(userId);
         if (friendRequests.Count == 0)
         {
-            return [];
+            return new List<FriendRequestResponseDto>();
         }
-        return friendRequests
-            .Select(f => new FriendRequestResponseDto
+
+        // Récupérez tous les userIds à l'avance
+        var userIds = friendRequests.Select(fr => fr.UserId1).ToList();
+    
+        // Récupérez toutes les informations des utilisateurs en une seule fois
+        var users = await userRepository.GetUsersByIds(userIds);
+
+        // Créez la liste de réponse
+        var response = friendRequests.Select(fr =>
+        {
+            var sender = users.FirstOrDefault(u => u.UserId == fr.UserId1);
+            return new FriendRequestResponseDto
             {
-                UserId = f.UserId1,
-                FriendId = f.UserId2,
-                Status = f.Status,
-                Message = f.Message
-            })
-            .ToList();
+                UserId = fr.UserId1,
+                FriendId = fr.UserId2,
+                FriendName = sender?.Username,
+                Status = fr.Status,
+                Message = fr.Message
+            };
+        }).ToList();
+
+        return response;
     }
+
 
     public async Task RemoveFriend(int userId, int friendId)
     {
         await friendRepository.RemoveFriend(userId, friendId);
     }
 
-    public async Task<UserResponseDto?> CreateFriendRequest(
+    public async Task<FriendRequestResponseDto> CreateFriendRequest(
         int userId,
         int friendId,
         string message
     )
     {
-        var user = await friendRepository.CreateFriendRequest(userId, friendId, message);
-        if (user == null)
+        var friendRequest = await friendRepository.CreateFriendRequest(userId, friendId, message);
+        if (friendRequest == null)
         {
             return null;
         }
-        return new UserResponseDto
+        var friend = await userRepository.GetUserById(friendId);
+        return new FriendRequestResponseDto
         {
-            UserId = user.UserId2,
-            Username = user.User2.Username,
-            Email = user.User2.Email
+            UserId = friendRequest.UserId1,
+            FriendId = friendRequest.UserId2,
+            FriendName = friend.Username,
+            Message = friendRequest.Message,
+            Status = friendRequest.Status
         };
     }
 
@@ -78,10 +107,13 @@ public class SocialInteractionService(
         {
             return null;
         }
+
+        var friend = await userRepository.GetUserById(friendRequest.UserId2);
         return new FriendRequestResponseDto
         {
             UserId = friendRequest.UserId1,
             FriendId = friendRequest.UserId2,
+            FriendName = friend.Username,
             Status = friendRequest.Status,
             Message = friendRequest.Message
         };
@@ -100,11 +132,13 @@ public class SocialInteractionService(
             friendRequest.Status = "Accepted";
             await friendRepository.AcceptFriendRequest(friendRequest);
         }
+        var user = await userRepository.GetUserById(friendRequest.UserId1);
+        //We return the id of the user that sent the friend request to the one that accepted it
         return new UserResponseDto
         {
-            UserId = friendRequest.UserId2,
-            Username = friendRequest.User2.Username,
-            Email = friendRequest.User2.Email
+            UserId = friendRequest.UserId1,
+            Username = user.Username,
+            Email = user.Email
         };
     }
 
@@ -147,22 +181,37 @@ public class SocialInteractionService(
 
     public async Task<List<GroupRequestResponseDto>> GetGroupRequestsByUserId(int userId)
     {
-        var result = await groupRepository.GetGroupRequestsByUserId(userId);
-        if (result.Count == 0)
+        var groupRequests = new List<GroupRequest>();
+        try
+        {
+            groupRequests = await groupRepository.GetGroupRequestsByUserId(userId);
+        }catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return [];
+        }
+        
+        if (groupRequests.Count == 0 )
         {
             return [];
         }
 
-        return result
-            .Select(request => new GroupRequestResponseDto
-            {
-                GroupId = request.GroupId,
-                GroupName = request.Group.GroupName,
-                UserId = request.UserId,
-                Username = request.User.Username,
-                Status = request.Status
-            })
-            .ToList();
+        var result = new List<GroupRequestResponseDto>();
+        foreach (var request in groupRequests)
+        {
+            var group = await groupRepository.GetGroupById(request.GroupId);
+            var user = await userRepository.GetUserById(request.UserId);
+            result.Add(
+                new GroupRequestResponseDto
+                {
+                    GroupId = request.GroupId,
+                    GroupName = group.GroupName,
+                    UserId = request.UserId,
+                    Username = user.Username,
+                    Status = request.Status
+                });
+        }
+        return result;
     }
 
     public async Task<List<GroupResponseDto>> GetGroupsByUserId(int userId)
@@ -250,6 +299,18 @@ public class SocialInteractionService(
         {
             return null;
         }
+        var groupRequest = new GroupRequest
+        {
+            GroupId = result.GroupId,
+            UserId = userId,
+            Status = "Accepted"
+        };
+        var groupRequestCreated = await groupRepository.CreateGroupRequest(groupRequest);
+        if (groupRequestCreated == null)
+        {
+            await groupRepository.DeleteGroup(result);
+            return null;
+        }
         return new GroupResponseDto
         {
             GroupId = result.GroupId,
@@ -319,12 +380,14 @@ public class SocialInteractionService(
             groupRequest.Status = "Accepted";
             await groupRepository.AcceptGroupRequest(groupRequest);
         }
+        var user = await userRepository.GetUserById(groupRequest.UserId);
+        var group = await groupRepository.GetGroupById(groupRequest.GroupId);
         return new GroupRequestResponseDto
         {
             GroupId = groupRequest.GroupId,
-            GroupName = groupRequest.Group.GroupName,
+            GroupName = group.GroupName,
             UserId = groupRequest.UserId,
-            Username = groupRequest.User.Username,
+            Username = user.Username,
             Status = groupRequest.Status
         };
     }

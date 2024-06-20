@@ -60,6 +60,9 @@ public class UserController(ILoginService loginService,
 
     [HttpGet]
     [Authorize]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> GetUserByToken()
     {
         try
@@ -78,5 +81,14 @@ public class UserController(ILoginService loginService,
             bugsnag.Notify(e);
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
+    }
+    [HttpGet("{keyword}")]
+    [Authorize]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> SearchUsersByKeyword(string keyword)
+    {
+        var users = await loginService.SearchUsersByKeyword(keyword);
+        return Ok(users);
     }
 }

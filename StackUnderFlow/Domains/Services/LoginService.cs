@@ -49,4 +49,19 @@ public class LoginService(
             Email = user.Email
         };
     }
+    
+    public async Task<List<UserResponseDto>> SearchUsersByKeyword(string keyword)
+    {
+        var user = await userRepository.GetUsersByKeyword(keyword);
+        if (user.Count == 0)
+        {
+            return [];
+        }
+        return user.Select(u => new UserResponseDto
+        {
+            UserId = u.UserId,
+            Username = u.Username,
+            Email = u.Email
+        }).ToList();
+    }
 }

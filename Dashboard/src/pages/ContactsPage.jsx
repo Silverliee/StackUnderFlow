@@ -1,10 +1,10 @@
 import React from "react";
-import CustomTabPanel from "../components/CustomTabPanel";
+import ContactTabPanel from "../components/ContactTabPanel";
 
 function ContactsPage() {
 	return (
 		<>
-			<CustomTabPanel />
+			<ContactTabPanel />
 		</>
 	);
 }

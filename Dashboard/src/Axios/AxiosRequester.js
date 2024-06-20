@@ -1,9 +1,10 @@
 import axios from "axios";
 import { getBase64 } from "../utils/utils";
+import { Visibility } from "@mui/icons-material";
 
 class AxiosRequester {
 	token = null;
-	baseUrl = "http://localhost:5008/";
+	baseUrl = "https://localhost:5008/";
 	_instance = null;
 
 	constructor() {}
@@ -117,7 +118,7 @@ class AxiosRequester {
 		try {
 			const response = await axios.post(apiUrl, data, this.getConfig());
 			console.log("Réponse de l'API :", { response: response.data });
-			return "success";
+			return response.data;
 		} catch (error) {
 			console.error("Erreur lors de la requête :", error);
 		}
@@ -343,7 +344,7 @@ class AxiosRequester {
 		}
 	};
 
-	rejectFriendRequest = async (userId) => {
+	declineFriendRequest = async (userId) => {
 		const apiUrl = this.baseUrl + `SocialInteraction/friends/${userId}`;
 		try {
 			const response = await axios.delete(apiUrl, this.getConfig());
@@ -448,7 +449,10 @@ class AxiosRequester {
 		try {
 			const response = await axios.get(apiUrl, this.getConfig());
 			console.log("Réponse de l'API :", { response: response });
+			console.log("GetGroupRequests", response);
+
 			if (response.status === 200) {
+				console.log("GetGroupRequests", response.data);
 				return response.data;
 			} else {
 				return null;
@@ -536,9 +540,9 @@ class AxiosRequester {
 		}
 	};
 
-	rejectGroupInvitation = async (groupId) => {
+	declineGroupInvitation = async (groupId) => {
 		const apiUrl =
-			this.baseUrl + `SocialInteraction/requests/groups/${groupId}`;
+			this.baseUrl + `SocialInteraction/groups/requests/${groupId}`;
 		try {
 			const response = await axios.delete(apiUrl, this.getConfig());
 			console.log("Réponse de l'API :", { response: response });
@@ -549,7 +553,7 @@ class AxiosRequester {
 
 	//same as rejectGroupInvitation
 	leaveGroup = async (groupId) => {
-		this.rejectGroupInvitation(groupId);
+		this.declineGroupInvitation(groupId);
 	};
 
 	//same as removeUserFromGroup (only admin can add and remove users)
@@ -573,6 +577,65 @@ class AxiosRequester {
 		try {
 			const response = await axios.delete(apiUrl, this.getConfig());
 			console.log("Réponse de l'API :", { response: response });
+		} catch (error) {
+			console.error("Erreur lors de la requête :", error);
+		}
+	};
+
+	executeScript = async (formData) => {
+		const apiUrl = this.baseUrl + `Runner`;
+		try {
+			console.log({ formData });
+			const response = await axios.post(apiUrl, formData, {
+				headers: {
+					"Content-Type": "multipart/form-data",
+					Authorization: `Bearer ${this.token}`,
+					accept: "*/*",
+				},
+			});
+			console.log("Réponse de l'API :", { response: response });
+			if (response.status === 200) {
+				console.log(response);
+				return response.data;
+			}
+		} catch (error) {
+			console.error("Erreur lors de la requête :", error);
+		}
+	};
+
+	searchUsersByKeyword = async (keyword) => {
+		const apiUrl = this.baseUrl + `User/${keyword}`;
+		try {
+			const response = await axios.get(apiUrl, this.getConfig());
+			console.log("Réponse de l'API :", { response: response });
+			if (response.status === 200) {
+				return response.data;
+			}
+		} catch (error) {
+			console.error("Erreur lors de la requête :", error);
+		}
+	};
+
+	getScriptByUserIdAndVisiblity = async (
+		userId,
+		visibility,
+		groupId = null
+	) => {
+		const apiUrl = this.baseUrl + `Script/byVisibility`;
+		try {
+			const response = await axios.post(
+				apiUrl,
+				{
+					Visibility: visibility,
+					UserId: userId,
+					...(groupId && { GroupId: groupId }),
+				},
+				this.getConfig()
+			);
+			console.log("Réponse de l'API :", { response: response });
+			if (response.status === 200) {
+				return response.data;
+			}
 		} catch (error) {
 			console.error("Erreur lors de la requête :", error);
 		}

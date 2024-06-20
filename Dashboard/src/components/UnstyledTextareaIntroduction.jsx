@@ -2,12 +2,16 @@ import * as React from "react";
 import { TextareaAutosize as BaseTextareaAutosize } from "@mui/base/TextareaAutosize";
 import { styled } from "@mui/system";
 
-export default function UnstyledTextareaIntroduction({ handleInput, value }) {
+export default function UnstyledTextareaIntroduction({
+	handleInput,
+	value,
+	placeholder,
+}) {
 	return (
 		<TextareaAutosize
 			onChange={handleInput}
 			aria-label="empty textarea"
-			placeholder="Empty"
+			placeholder={placeholder ? placeholder : "Empty"}
 			value={value}
 		/>
 	);

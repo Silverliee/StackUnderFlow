@@ -9,7 +9,7 @@ public interface ISocialInteractionService
     public Task RemoveFriend(int userId, int friendId);
     public Task<FriendRequestResponseDto?> GetFriendRequest(int userId, int friendId);
     public Task<List<FriendRequestResponseDto>> GetFriendRequestsByUserId(int userId);
-    public Task<UserResponseDto?> CreateFriendRequest(int userId, int friendId, string message);
+    public Task<FriendRequestResponseDto> CreateFriendRequest(int userId, int friendId, string message);
     public Task<UserResponseDto?> AcceptFriendRequest(int userId, int friendId);
     public Task<List<UserResponseDto>> GetFollowsByUserId(int userId);
     public Task RemoveFollow(int userId, int followedId);

@@ -23,7 +23,17 @@ public class GroupRepository(MySqlDbContext context) : IGroupRepository
 
     public async Task<List<Group>> GetGroupsByUserId(int userId)
     {
-        return await context.Groups.Where(g => g.CreatorUserID == userId).ToListAsync();
+        var groupRequests = await context.GroupRequests.Where(g => g.UserId == userId).ToListAsync();
+        var groups = new List<Group>();
+        foreach (var groupRequest in groupRequests)
+        {
+            var group = await context.Groups.FirstOrDefaultAsync(g => g.GroupId == groupRequest.GroupId);
+            if (group != null)
+            {
+                groups.Add(group);
+            }
+        }
+        return groups;
     }
 
     // public async Task<Group?> AddUserToGroup(int userId, int groupId)
@@ -54,10 +64,15 @@ public class GroupRepository(MySqlDbContext context) : IGroupRepository
 
     public async Task<List<User>> GetGroupMembers(int groupId)
     {
-        var groupRequests = await context
+        var groupRequests = new List<GroupRequest>();
+        try{
+             groupRequests = await context
             .GroupRequests.Where(g => g.GroupId == groupId && g.Status == "Accepted")
-            .Include(gr => gr.User)
-            .ToListAsync();
+            .Include(groupRequest => groupRequest.User).ToListAsync();
+        } catch (Exception e) {
+            Console.WriteLine(e);
+            return [];
+        }
         return groupRequests.Count == 0 ? [] : groupRequests.Select(gr => gr.User).ToList();
     }
 
@@ -95,7 +110,7 @@ public class GroupRepository(MySqlDbContext context) : IGroupRepository
 
     public async Task<List<GroupRequest>> GetGroupRequestsByUserId(int userId)
     {
-        return await context.GroupRequests.Where(gr => gr.UserId == userId).ToListAsync();
+        return await context.GroupRequests.Where(gr => gr.UserId == userId && gr.Status == "Pending").ToListAsync();
     }
 
     public async Task<GroupRequest> CreateGroupRequest(GroupRequest groupRequest)

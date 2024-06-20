@@ -11,6 +11,7 @@ function EditorFrame({
 	scriptName,
 	scriptId,
 	setOpenEditor,
+	handleCloseAndSaveAndAddVersionFromEditor,
 }) {
 	const [fileName, setFileName] = useState("");
 	const [versionNumber, setVersionNumber] = useState("");
@@ -92,13 +93,7 @@ function EditorFrame({
 			SourceScriptBinary: newFileValue,
 			Comment: comment,
 		};
-		let result = await AxiosRq.getInstance().postScriptVersion(data);
-		console.log(result);
-		if (result) {
-			alert("Script version uploaded successfully");
-		} else {
-			alert("Error uploading script version");
-		}
+		handleCloseAndSaveAndAddVersionFromEditor(data);
 	};
 
 	function clearModal() {

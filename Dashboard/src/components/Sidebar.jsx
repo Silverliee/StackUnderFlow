@@ -31,7 +31,7 @@ const Sidebar = () => {
 		navigate("/" + path);
 	};
 
-	useEffect(() => {}, [open]);
+	useEffect(() => {}, [open, activeIcon]);
 
 	return (
 		<>
