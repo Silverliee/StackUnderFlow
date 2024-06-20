@@ -4,6 +4,7 @@ public class FriendRequestResponseDto
 {
     public int UserId { get; set; }
     public int FriendId { get; set; }
+    public string FriendName { get; set; }
     public string Status { get; set; }
     public string Message { get; set; }
 }

@@ -20,7 +20,7 @@ const ScriptsList = ({ scripts, handleDelete }) => {
 		<>
 			<div>My scripts</div>
 			<List id="scriptsList">
-				{scripts.length > 0 &&
+				{scripts?.length > 0 &&
 					scripts
 						?.filter((item) => item.userId == userId)
 						?.map((script) => (
@@ -35,7 +35,7 @@ const ScriptsList = ({ scripts, handleDelete }) => {
 			</List>
 			<div>My friends' scripts</div>
 			<List id="scriptsList">
-				{scripts.length > 0 &&
+				{scripts?.length > 0 &&
 					scripts
 						?.filter((item) => item.userId != userId)
 						?.map((script) => (

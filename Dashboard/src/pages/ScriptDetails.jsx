@@ -20,6 +20,7 @@ import Button from "@mui/material/Button";
 import UnstyledTextareaIntroduction from "../components/UnstyledTextareaIntroduction";
 import UnstyledInputIntroduction from "../components/UnstyledInputIntroduction";
 import UnstyledSelectIntroduction from "../components/UnstyledSelectIntroduction";
+import ScriptVersionsList from "../components/ScriptVersionsList";
 
 const ScriptDetails = () => {
 	const { scriptId } = useParams();
@@ -128,6 +129,7 @@ const ScriptDetails = () => {
 		console.log(result);
 		if (result) {
 			alert("Script version uploaded successfully");
+			setScriptVersions([...scriptVersions, result]);
 		} else {
 			alert("Error uploading script version");
 		}
@@ -164,6 +166,17 @@ const ScriptDetails = () => {
 		setFile(selectedFile);
 		console.log(selectedFile);
 	}
+
+	const handleCloseAndSaveAndAddVersionFromEditor = async (data) => {
+		let result = await AxiosRq.getInstance().postScriptVersion(data);
+		console.log(result);
+		if (result) {
+			alert("Script version uploaded successfully");
+			setScriptVersions([...scriptVersions, result]);
+		} else {
+			alert("Error uploading script version");
+		}
+	};
 
 	const handleDownload = async (scriptVersion) => {
 		const data = await AxiosRq.getInstance().getScriptVersionBlob(
@@ -237,22 +250,19 @@ const ScriptDetails = () => {
 						<p>Author: {script.creatorName}</p>
 						<p>Programming Language: {script.programmingLanguage}</p>
 						<p>Description: {script.description}</p>
+						<p>Visibility: {script.visibility}</p>
 
 						<Typography sx={{ mt: 4, mb: 2 }} variant="h6" component="div">
 							Script versions
 						</Typography>
-						<List dense={dense}>
-							{scriptVersions?.map((sv) => (
-								<ScriptVersionItem
-									key={sv.scriptVersionId}
-									sv={sv}
-									userId={userId}
-									handleDelete={handleDelete}
-									handleEditOnline={handleEditOnline}
-									handleDownload={handleDownload}
-								></ScriptVersionItem>
-							))}
-						</List>
+						<ScriptVersionsList
+							dense={dense}
+							userId={userId}
+							handleDelete={handleDelete}
+							handleEditOnline={handleEditOnline}
+							handleDownload={handleDownload}
+							scriptVersions={scriptVersions}
+						/>
 					</div>
 				)}
 			</Grid>
@@ -262,6 +272,9 @@ const ScriptDetails = () => {
 					scriptName={script.scriptName}
 					scriptId={scriptId}
 					setOpenEditor={setOpenEditor}
+					handleCloseAndSaveAndAddVersionFromEditor={
+						handleCloseAndSaveAndAddVersionFromEditor
+					}
 				/>
 			)}
 			<Modal

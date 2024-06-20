@@ -165,6 +165,24 @@ namespace StackUnderFlow.Application.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
+        
+        [HttpPost("byVisibility")]
+        [Authorize]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetOtherUsersScriptsByIdAndVisibility(ScriptRequestForOtherUserDto scriptRequest)
+        {
+            try
+            {
+                var userId = Convert.ToInt32(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+                var scripts = await scriptService.GetScriptsByUserIdAndVisibility(userId,scriptRequest);
+                return Ok(scripts);
+            }
+            catch
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
 
         #endregion"
         #region File

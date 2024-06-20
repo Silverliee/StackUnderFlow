@@ -3,10 +3,12 @@ import PropTypes from "prop-types";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Box from "@mui/material/Box";
-import ContactList from "./ContactList";
+import SearchContactPage from "../pages/SearchContactPage";
+import FriendListPage from "../pages/FriendListPage";
 import AxiosRq from "../Axios/AxiosRequester";
+import GroupListPage from "../pages/GroupListPage";
 
-function CustomTabPanel(props) {
+function ContactTabPanel(props) {
 	const { children, value, index, ...other } = props;
 
 	return (
@@ -22,7 +24,7 @@ function CustomTabPanel(props) {
 	);
 }
 
-CustomTabPanel.propTypes = {
+ContactTabPanel.propTypes = {
 	children: PropTypes.node,
 	index: PropTypes.number.isRequired,
 	value: PropTypes.number.isRequired,
@@ -37,7 +39,7 @@ function a11yProps(index) {
 
 export default function BasicTabs() {
 	const [value, setValue] = useState(0);
-	const [friends, setFriends] = useState([]);
+	const [friendsId, setFriendsId] = useState([]);
 
 	useEffect(() => {
 		fetchFriends();
@@ -45,19 +47,12 @@ export default function BasicTabs() {
 
 	const fetchFriends = async () => {
 		const result = await AxiosRq.getInstance().getFriends();
-		setFriends(result);
+		setFriendsId(result.map((friend) => friend.userId));
 	};
 
 	const handleChange = (event, newValue) => {
 		setValue(newValue);
 	};
-	const handleDeleteFriend = (userId) => {
-		if (confirm("Are you sure you want to delete this friend?")) {
-			AxiosRq.getInstance().deleteFriend(userId);
-			setFriends(friends.filter((friend) => friend.id !== userId));
-		}
-	};
-	const handleItemSelected = (userId) => {};
 
 	return (
 		<Box sx={{ width: "100%" }}>
@@ -67,24 +62,24 @@ export default function BasicTabs() {
 					onChange={handleChange}
 					aria-label="basic tabs example"
 				>
-					<Tab label="Friends" {...a11yProps(0)} />
-					<Tab label="Groups" {...a11yProps(1)} />
-					<Tab label="Follows" {...a11yProps(2)} />
+					<Tab label="Search" {...a11yProps(0)} />
+					<Tab label="Friends" {...a11yProps(1)} />
+					<Tab label="Groups" {...a11yProps(2)} />
+					<Tab label="Follows" {...a11yProps(3)} />
 				</Tabs>
 			</Box>
-			<CustomTabPanel value={value} index={0}>
-				<ContactList
-					contacts={friends}
-					handleDelete={handleDeleteFriend}
-					handleItemSelected={handleItemSelected}
-				/>
-			</CustomTabPanel>
-			<CustomTabPanel value={value} index={1}>
-				List of Groups
-			</CustomTabPanel>
-			<CustomTabPanel value={value} index={2}>
+			<ContactTabPanel value={value} index={0}>
+				<SearchContactPage friendsId={friendsId} />
+			</ContactTabPanel>
+			<ContactTabPanel value={value} index={1}>
+				<FriendListPage />
+			</ContactTabPanel>
+			<ContactTabPanel value={value} index={2}>
+				<GroupListPage />
+			</ContactTabPanel>
+			<ContactTabPanel value={value} index={3}>
 				List of Follows
-			</CustomTabPanel>
+			</ContactTabPanel>
 		</Box>
 	);
 }

@@ -18,4 +18,5 @@ public interface IScriptService
         ScriptVersionUploadRequestDto? scriptVersionUploadRequestDto
     );
     public Task<List<ScriptResponseDto>> GetScriptsByKeyWord(string keyword);
+    public Task<List<ScriptResponseDto>> GetScriptsByUserIdAndVisibility(int userId,ScriptRequestForOtherUserDto scriptRequest);
 }

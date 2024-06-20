@@ -21,8 +21,9 @@ import Layout from "./Layout";
 import HomePage from "./pages/HomePage";
 import LocalEditor from "./pages/LocalEditor";
 import EditProfile from "./pages/EditProfile";
-import ShareScript from "./components/ShareScript";
+import ShareScriptPage from "./pages/ShareScriptPage";
 import MessagePage from "./pages/MessagePage";
+import GroupDetails from "./pages/GroupDetails";
 
 const App = () => {
 	return (
@@ -39,7 +40,7 @@ const App = () => {
 								<Route path="/exec" element={<ScriptExecutionPage />} />
 								<Route path="/contacts" element={<ContactsPage />} />
 								<Route path="/profile" element={<Profile />} />
-								<Route path="/share" element={<ShareScript />} />
+								<Route path="/share" element={<ShareScriptPage />} />
 								<Route exact path="/edit" element={<LocalEditor />} />
 								<Route path="/editProfile" element={<EditProfile />} />
 								<Route path="/message" element={<MessagePage />} />
@@ -49,6 +50,7 @@ const App = () => {
 								/>
 								<Route path="/script/:scriptId" element={<ScriptDetails />} />
 								<Route path="/script" element={<ScriptListPage />} />
+								<Route path="/group/:groupId" element={<GroupDetails />} />
 							</Route>
 						</Route>
 						<Route path="*" element={<Navigate to="/" />} />

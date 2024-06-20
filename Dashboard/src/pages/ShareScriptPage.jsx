@@ -3,12 +3,12 @@ import { Modal, Box } from "@mui/material";
 import Button from "@mui/material/Button";
 import { styled } from "@mui/material/styles";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
-import UnstyledTextareaIntroduction from "./UnstyledTextareaIntroduction";
-import UnstyledInputIntroduction from "./UnstyledInputIntroduction";
+import UnstyledTextareaIntroduction from "../components/UnstyledTextareaIntroduction";
+import UnstyledInputIntroduction from "../components/UnstyledInputIntroduction";
 import AxiosRq from "../Axios/AxiosRequester";
-import UnstyledSelectIntroduction from "./UnstyledSelectIntroduction";
+import UnstyledSelectIntroduction from "../components/UnstyledSelectIntroduction";
 
-const ShareScript = ({ script }) => {
+const ShareScriptPage = ({ script }) => {
 	const [open, setOpen] = useState(false);
 	const [file, setFile] = useState(null);
 	const [scriptName, setScriptName] = useState("");
@@ -191,7 +191,9 @@ const ShareScript = ({ script }) => {
 							name="visibility"
 							options={["Public", "Friend", "Group", "Private"]}
 							value={visibility}
-							handleInput={(event) => setVisibility(event.target.value)}
+							handleSelectChange={(event) =>
+								setVisibility(event.target.innerHTML)
+							}
 							defaultValue={visibility}
 						/>
 					</div>
@@ -219,4 +221,4 @@ const ShareScript = ({ script }) => {
 	);
 };
 
-export default ShareScript;
+export default ShareScriptPage;

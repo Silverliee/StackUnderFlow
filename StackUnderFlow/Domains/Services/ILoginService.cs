@@ -9,4 +9,5 @@ public interface ILoginService
     public Task<RegisterUserDto?> Register(RegisterUserDto? user);
     public Task<LoginUserResponseDto?> Login(LoginUserDto loginUserDto);
     public Task<UserResponseDto?> GetUserById(int userId);
+    public Task<List<UserResponseDto>> SearchUsersByKeyword(string keyword);
 }

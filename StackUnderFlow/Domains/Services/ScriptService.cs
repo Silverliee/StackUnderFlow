@@ -8,7 +8,9 @@ namespace StackUnderFlow.Domains.Services;
 public class ScriptService(
     IScriptRepository scriptRepository,
     IUserRepository userRepository,
-    IScriptVersionRepository scriptVersionRepository
+    IScriptVersionRepository scriptVersionRepository,
+    IFriendRepository friendRepository,
+    IGroupRepository groupRepository
 ) : IScriptService
 {
     public async Task<ScriptResponseDto?> GetScriptById(int scriptId)
@@ -287,5 +289,105 @@ public class ScriptService(
                 CreatorName = script.CreatorName
             })
             .ToList();
+    }
+
+    public async Task<List<ScriptResponseDto>> GetScriptsByUserIdAndVisibility(int userId, ScriptRequestForOtherUserDto scriptRequest)
+    {
+        var visibility = scriptRequest.Visibility;
+        var creatorId = scriptRequest.UserId;
+        var scripts = new List<ScriptResponseDto>();
+        try
+        {
+            
+        switch (visibility)
+        {
+            case "Public":
+                var  r = await scriptRepository.GetScriptsByUserId(creatorId);
+                r.ForEach((script) =>
+                {
+                    if (script.Visibility == "Public")
+                    {
+                        scripts.Add(new ScriptResponseDto
+                        {
+                            ScriptId = script.ScriptId,
+                            ScriptName = script.ScriptName,
+                            Description = script.Description,
+                            InputScriptType = script.InputScriptType,
+                            UserId = script.UserId,
+                            OutputScriptType = script.OutputScriptType,
+                            ProgrammingLanguage = script.ProgrammingLanguage,
+                            Visibility = script.Visibility,
+                            CreatorName = script.CreatorName
+                        });
+                    }
+                });
+                break;
+            case "Private":
+                //never provide private scripts
+                break;
+            case "Friend":
+                //check if userId is friend with creatorId
+                var friendRequest = await friendRepository.GetFriendRequest(userId, creatorId);
+                if (friendRequest is { Status: "Accepted" })
+                {
+                    var r2 = await scriptRepository.GetScriptsByUserId(creatorId);
+                    r2.ForEach((script) =>
+                    {
+                        if (script.Visibility is "Friend" or "Public")
+                        {
+                            scripts.Add(new ScriptResponseDto
+                            {
+                                ScriptId = script.ScriptId,
+                                ScriptName = script.ScriptName,
+                                Description = script.Description,
+                                InputScriptType = script.InputScriptType,
+                                UserId = script.UserId,
+                                OutputScriptType = script.OutputScriptType,
+                                ProgrammingLanguage = script.ProgrammingLanguage,
+                                Visibility = script.Visibility,
+                                CreatorName = script.CreatorName
+                            });
+                        }
+                    });
+                }
+                break;
+            case "Group":
+                //check if userId is in the same group as creatorId
+                var groupId = scriptRequest.GroupId;
+                var group = await groupRepository.GetGroupById(groupId);
+                if (group == null)
+                {
+                    break;
+                }
+                var groupRequest = await groupRepository.GetGroupMembers(groupId);
+                if (groupRequest != null && groupRequest.Any(x => x.UserId == userId) && groupRequest.Any(x => x.UserId == creatorId))
+                {
+                    var r3 = await scriptRepository.GetScriptsByUserId(creatorId);
+                    r3.ForEach((script) =>
+                    {
+                        if (script.Visibility is "Group" or "Public")
+                        {
+                            scripts.Add(new ScriptResponseDto
+                            {
+                                ScriptId = script.ScriptId,
+                                ScriptName = script.ScriptName,
+                                Description = script.Description,
+                                InputScriptType = script.InputScriptType,
+                                UserId = script.UserId,
+                                OutputScriptType = script.OutputScriptType,
+                                ProgrammingLanguage = script.ProgrammingLanguage,
+                                Visibility = script.Visibility,
+                                CreatorName = script.CreatorName
+                            });
+                        }
+                    });
+                }
+                break;
+        }
+        } catch (Exception e)
+        {
+            Console.WriteLine(e);
+        }
+        return scripts;
     }
 }

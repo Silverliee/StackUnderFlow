@@ -13,7 +13,7 @@ public class UserRepository(MySqlDbContext context) : IUserRepository
 
     public async Task<User?> GetUserById(int id)
     {
-        return await context.Users.FirstOrDefaultAsync(u => u != null && u.UserId == id);
+        return await context.Users.FirstOrDefaultAsync(u => u.UserId == id);
     }
 
     public async Task<User?> GetUserByEmail(string email)
@@ -55,4 +55,15 @@ public class UserRepository(MySqlDbContext context) : IUserRepository
         await context.SaveChangesAsync();
         return user;
     }
+    
+    public async Task<List<User>> GetUsersByKeyword(string keyword)
+    {
+        return await context.Users.Where(u => u.Username.Contains(keyword)).ToListAsync();
+    }
+    
+    public async Task<List<User>> GetUsersByIds(List<int> userIds)
+    {
+        return await context.Users.Where(u => userIds.Contains(u.UserId)).ToListAsync();
+    }
+
 }
