@@ -7,7 +7,7 @@ import { styled } from "@mui/material/styles";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import Button from "@mui/material/Button";
 
-function ScriptExecutionPage() {
+function ExecutionPage() {
 	const [file, setFile] = useState(null);
 
 	const acceptedFiles = [".py", ".cs"];
@@ -89,4 +89,4 @@ function ScriptExecutionPage() {
 	);
 }
 
-export default ScriptExecutionPage;
+export default ExecutionPage;

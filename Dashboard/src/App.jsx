@@ -7,12 +7,12 @@ import {
 	Routes,
 	Navigate,
 } from "react-router-dom";
-import WelcomePage from "./pages/WelcomePage";
+import Login from "./pages/Login.jsx";
 import AuthProvider from "./hooks/AuthProvider";
 import PrivateRoute from "./router/PrivateRoute";
 import Profile from "./components/Profile";
-import Register from "./pages/Register";
-import ScriptExecutionPage from "./pages/ScriptExecutionPage";
+import Register from "./components/Register.jsx";
+import ExecutionPage from "./pages/ExecutionPage.jsx";
 import ContactsPage from "./pages/ContactsPage";
 import ScriptListPage from "./pages/ScriptListPage";
 import ScriptDetails from "./pages/ScriptDetails";
@@ -20,29 +20,33 @@ import ScriptVersionPage from "./pages/ScriptVersionPage";
 import Layout from "./Layout";
 import HomePage from "./pages/HomePage";
 import LocalEditor from "./pages/LocalEditor";
-import EditProfile from "./pages/EditProfile";
-import ShareScriptPage from "./pages/ShareScriptPage";
+import ProfilePage from "./pages/ProfilePage.jsx";
+import SharingPage from "./pages/SharingPage.jsx";
 import MessagePage from "./pages/MessagePage";
 import GroupDetails from "./pages/GroupDetails";
+import RelationsProvider from "./hooks/RelationsProvider.jsx";
+import ScriptsProvider from "./hooks/ScriptsProvider.jsx";
 
 const App = () => {
 	return (
 		<div className="App">
 			<Router>
 				<AuthProvider>
-					<Routes>
-						<Route exact path="/" element={<WelcomePage />} />
-						<Route exact path="/login" element={<WelcomePage />} />
+					<RelationsProvider>
+						<ScriptsProvider>
+						<Routes>
+						<Route exact path="/" element={<Login />} />
+						<Route exact path="/login" element={<Login />} />
 						<Route exact path="/register" element={<Register />} />
 						<Route element={<Layout />}>
 							<Route element={<PrivateRoute />}>
 								<Route path="/home" element={<HomePage />} />
-								<Route path="/exec" element={<ScriptExecutionPage />} />
+								<Route path="/exec" element={<ExecutionPage />} />
 								<Route path="/contacts" element={<ContactsPage />} />
 								<Route path="/profile" element={<Profile />} />
-								<Route path="/share" element={<ShareScriptPage />} />
+								<Route path="/share" element={<SharingPage />} />
 								<Route exact path="/edit" element={<LocalEditor />} />
-								<Route path="/editProfile" element={<EditProfile />} />
+								<Route path="/editProfile" element={<ProfilePage />} />
 								<Route path="/message" element={<MessagePage />} />
 								<Route
 									path="/script/:scriptId/version"
@@ -55,6 +59,8 @@ const App = () => {
 						</Route>
 						<Route path="*" element={<Navigate to="/" />} />
 					</Routes>
+						</ScriptsProvider>
+					</RelationsProvider>
 				</AuthProvider>
 			</Router>
 		</div>

@@ -1,11 +1,8 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import AxiosRq from "../Axios/AxiosRequester";
 import { useAuth } from "../hooks/AuthProvider";
-import ScriptsList from "../components/ScriptsList";
-import { Container } from "@mui/material";
-import { TiArrowBack } from "react-icons/ti";
-import { useNavigate } from "react-router-dom";
-import ListSearchResults from "./ListSearchResults";
+import { useRelations } from "../hooks/RelationsProvider.jsx";
+import { useScripts} from "../hooks/ScriptsProvider.jsx";
 import UnstyledInputIntroduction from "../components/UnstyledInputIntroduction";
 import UnstyledSelectIntroduction from "../components/UnstyledSelectIntroduction";
 
@@ -16,17 +13,17 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import MyScriptsList from "../components/MyScriptsList";
 
 function ScriptListPage() {
-	const [search, setSearch] = React.useState("");
+	const [search, setSearch] = useState("");
 	const [selectedLanguage, setSelectedLanguage] = useState("");
-	const [display, setDisplay] = React.useState("none");
-	const [scriptsFound, setScriptsFound] = React.useState([]);
-	const [myFriends, setMyFriends] = React.useState([]);
-	const [myFriendsScripts, setMyFriendsScripts] = React.useState([]);
-	const [myGroups, setMyGroups] = React.useState([]);
-	const [myGroupsScripts, setMyGroupsScripts] = React.useState([]);
+	const [display, setDisplay] = useState("none");
+	const [scriptsFound, setScriptsFound] = useState([]);
+	const [myFriends, setMyFriends] = useState([]);
+	const [myFriendsScripts, setMyFriendsScripts] = useState([]);
+	const [myGroups, setMyGroups] = useState([]);
+	const [myGroupsScripts, setMyGroupsScripts] = useState([]);
 	const [groupMembers, setGroupMembers] = useState([]);
-	const [following, setFollowing] = React.useState([]);
-	const [myFollowingScripts, setMyFollowingScripts] = React.useState([]);
+	const [myFollows, setMyFollows] = useState([]);
+	const [myFollowingScripts, setMyFollowingScripts] = useState([]);
 
 	const [selectedScripts, setSelectedScripts] = useState([]);
 
@@ -35,91 +32,28 @@ function ScriptListPage() {
 	const [groupsScriptsFiltered, setGroupsScriptsFiltered] = useState([]);
 	const [followingScriptsFiltered, setFollowingScriptsFiltered] = useState([]);
 
-	const [open, setOpen] = React.useState(false);
+	const [open, setOpen] = useState(false);
 	const userId = useAuth().authData?.userId;
+
+	const { myFriends:friends, myGroups:groups, myFollows:follows } = useRelations();
+	const { state, dispatch } = useScripts();
 	useEffect(() => {
-		const fetchScripts = async () => {
-			//Get my scripts
-			const scriptsLoaded = await AxiosRq.getInstance().getScripts();
-			setScriptsFound(scriptsLoaded);
-
-			//Get my friends
-			const friends = await AxiosRq.getInstance().getFriends(userId);
-			setMyFriends(friends);
-
-			//Get my friends scripts
-			friends.forEach(async (friend) => {
-				const friendScripts =
-					await AxiosRq.getInstance().getScriptByUserIdAndVisiblity(
-						friend.userId,
-						"Friend"
-					);
-				setMyFriendsScripts((oldScripts) => [...oldScripts, ...friendScripts]);
-			});
-
-			//Get my groups
-			const groups = await AxiosRq.getInstance().getGroups();
-			setMyGroups(groups);
-			//Get my groups and its members
-			const groupMembersByGroupId = await fetchGroupsAndMembers(groups);
-
-			//Get my groups scripts
-			groups.forEach(async (group) => {
-				const groupMembers = groupMembersByGroupId[group.groupId];
-				groupMembers.forEach(async (member) => {
-					const scripts =
-						await AxiosRq.getInstance().getScriptByUserIdAndVisiblity(
-							member.userId,
-							"Group",
-							group.groupId
-						);
-					setMyGroupsScripts((oldScripts) => [...oldScripts, ...scripts]);
-				});
-			});
-
-			//Get people I follow
-			const following = await AxiosRq.getInstance().getFollows(userId);
-			setFollowing(following);
-
-			//Get people I follow scripts
-			following.forEach(async (follow) => {
-				const scripts =
-					await AxiosRq.getInstance().getScriptByUserIdAndVisiblity(
-						follow.userId,
-						"Follow"
-					);
-				setMyFollowingScripts((oldScripts) => [...oldScripts, ...scripts]);
-			});
-
-			setSelectedLanguage("Any language");
-			setDisplay("block");
-		};
-		fetchScripts();
+		setScriptsFound(state.scriptsFound);
+		setMyFriends(friends);
+		setMyFriendsScripts(state.myFriendsScripts);
+		setMyGroups(groups);
+		setGroupMembers(state.groupMembers);
+		const uniqueScripts = state.myGroupsScripts.filter((script, index, self) =>
+				index === self.findIndex((s) => (
+					s.scriptId === script.scriptId
+				))
+		);
+		setMyGroupsScripts(uniqueScripts);
+		setMyFollows(follows);
+		setMyFollowingScripts(state.myFollowingScripts);
+		setSelectedLanguage("Any language");
+		setDisplay("block");
 	}, [userId]);
-
-	const fetchGroupsAndMembers = async (groups) => {
-		try {
-			// Fetch members for each group
-			const memberPromises = groups.map(async (group) => {
-				const members = await AxiosRq.getInstance().getGroupMembers(
-					group.groupId
-				);
-				return {
-					groupId: group.groupId,
-					members: members.map((m) => ({
-						userId: m.userId,
-						username: m.username,
-					})),
-				};
-			});
-
-			const membersResults = await Promise.all(memberPromises);
-			setGroupMembers(membersResults);
-			return membersResults;
-		} catch (error) {
-			console.error("Failed to fetch groups or group members", error);
-		}
-	};
 
 	useEffect(() => {
 		setScriptsFoundFiltered(
@@ -164,7 +98,9 @@ function ScriptListPage() {
 			var scriptsFiltered = scriptsFound?.filter(
 				(script) => script.scriptId !== scriptId
 			);
+			dispatch({ type: 'SET_SCRIPTS_FOUND', payload: scriptsFiltered });
 			setScriptsFound(scriptsFiltered);
+
 		}
 	};
 	const handleDeleteSelection = async () => {
@@ -182,6 +118,8 @@ function ScriptListPage() {
 			});
 			console.log({ scriptsWithoutDeletedScripts, scriptsFound });
 			setScriptsFound(scriptsWithoutDeletedScripts);
+			dispatch({ type: 'SET_SCRIPTS_FOUND', payload: scriptsWithoutDeletedScripts });
+
 			setSelectedScripts([]);
 		}
 	};
@@ -306,6 +244,7 @@ function ScriptListPage() {
 				</AccordionSummary>
 				<AccordionDetails>
 					<MyScriptsList
+						item={"my"}
 						myScripts={true}
 						display={display}
 						search={search}
@@ -313,6 +252,7 @@ function ScriptListPage() {
 						handleDelete={handleDelete}
 						userId={userId}
 						selectedScripts={selectedScripts}
+						setSelectedScripts={setSelectedScripts}
 					/>
 				</AccordionDetails>
 			</Accordion>
@@ -326,6 +266,7 @@ function ScriptListPage() {
 				</AccordionSummary>
 				<AccordionDetails>
 					<MyScriptsList
+						item={"friend"}
 						myScripts={false}
 						display={display}
 						search={search}
@@ -333,6 +274,7 @@ function ScriptListPage() {
 						handleDelete={handleDelete}
 						userId={userId}
 						selectedScripts={selectedScripts}
+						setSelectedScripts={setSelectedScripts}
 					/>
 				</AccordionDetails>
 			</Accordion>
@@ -346,6 +288,7 @@ function ScriptListPage() {
 				</AccordionSummary>
 				<AccordionDetails>
 					<MyScriptsList
+						item={"group"}
 						myScripts={false}
 						display={display}
 						search={search}
@@ -353,6 +296,7 @@ function ScriptListPage() {
 						handleDelete={handleDelete}
 						userId={userId}
 						selectedScripts={selectedScripts}
+						setSelectedScripts={setSelectedScripts}
 					/>
 				</AccordionDetails>
 			</Accordion>
@@ -366,6 +310,7 @@ function ScriptListPage() {
 				</AccordionSummary>
 				<AccordionDetails>
 					<MyScriptsList
+						item={"follow"}
 						myScripts={false}
 						display={display}
 						search={search}

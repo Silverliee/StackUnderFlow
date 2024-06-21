@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useAuth } from "../hooks/AuthProvider";
+import { useAuth } from "../hooks/AuthProvider.jsx";
 import { TiArrowBack } from "react-icons/ti";
 import { useNavigate } from "react-router-dom";
 

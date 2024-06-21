@@ -29,7 +29,7 @@ function GroupList({
 						/>
 					))}
 			</List>
-			{groups.length > 0 && (
+			{groups?.length > 0 && (
 				<UnstyledPaginationIntroduction
 					numberOfResults={groups.length}
 					handleChangePage={handleChangePage}

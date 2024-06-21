@@ -8,7 +8,7 @@ import UnstyledInputIntroduction from "../components/UnstyledInputIntroduction";
 import AxiosRq from "../Axios/AxiosRequester";
 import UnstyledSelectIntroduction from "../components/UnstyledSelectIntroduction";
 
-const ShareScriptPage = ({ script }) => {
+const SharingPage = ({ script }) => {
 	const [open, setOpen] = useState(false);
 	const [file, setFile] = useState(null);
 	const [scriptName, setScriptName] = useState("");
@@ -221,4 +221,4 @@ const ShareScriptPage = ({ script }) => {
 	);
 };
 
-export default ShareScriptPage;
+export default SharingPage;

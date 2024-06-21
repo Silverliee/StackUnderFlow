@@ -4,7 +4,7 @@ import { Visibility } from "@mui/icons-material";
 
 class AxiosRequester {
 	token = null;
-	baseUrl = "https://localhost:5008/";
+	baseUrl = "http://localhost:5008/";
 	_instance = null;
 
 	constructor() {}
@@ -43,7 +43,7 @@ class AxiosRequester {
 		const apiUrl = this.baseUrl + "User/login";
 		try {
 			const response = await axios.post(apiUrl, data, this.getConfig());
-			console.log("Réponse de l'API :", { response: response.data });
+			//console.log("Réponse de l'API :", { response: response.data });
 			return response.data;
 		} catch (error) {
 			console.error("Erreur lors de la requête :", error);
@@ -60,7 +60,7 @@ class AxiosRequester {
 		const apiUrl = this.baseUrl + "User/register";
 		try {
 			const response = await axios.post(apiUrl, data, this.getConfig());
-			console.log("Réponse de l'API :", { response: response.data });
+			//console.log("Réponse de l'API :", { response: response.data });
 			return response.data;
 		} catch (error) {
 			console.error("Erreur lors de la requête :", error);
@@ -81,13 +81,13 @@ class AxiosRequester {
 	postScript = async (data) => {
 		const apiUrl = this.baseUrl + "Script";
 		const dataUpdated = data;
-		// console.log(data.SourceScriptBinary);
+		// //console.log(data.SourceScriptBinary);
 		const fileAsBase64 = await getBase64(data.SourceScriptBinary);
 		dataUpdated.SourceScriptBinary = fileAsBase64;
-		// console.log(dataUpdated);
+		// //console.log(dataUpdated);
 		try {
 			const response = await axios.post(apiUrl, data, this.getConfig());
-			console.log("Réponse de l'API :", { response: response.data });
+			//console.log("Réponse de l'API :", { response: response.data });
 			return response.data;
 		} catch (error) {
 			console.error("Erreur lors de la requête :", error);
@@ -114,10 +114,10 @@ class AxiosRequester {
 			fileAsBase64 = await getBase64(data.SourceScriptBinary);
 		}
 		dataUpdated.SourceScriptBinary = fileAsBase64;
-		// console.log(dataUpdated);
+		// //console.log(dataUpdated);
 		try {
 			const response = await axios.post(apiUrl, data, this.getConfig());
-			console.log("Réponse de l'API :", { response: response.data });
+			//console.log("Réponse de l'API :", { response: response.data });
 			return response.data;
 		} catch (error) {
 			console.error("Erreur lors de la requête :", error);
@@ -131,7 +131,7 @@ class AxiosRequester {
 		const apiUrl = this.baseUrl + `Script/${scriptId}`;
 		try {
 			const response = await axios.get(apiUrl, this.getConfig());
-			console.log("Réponse de l'API :", { response: response.data });
+			//console.log("Réponse de l'API :", { response: response.data });
 			return response.data;
 		} catch (error) {
 			console.error("Erreur lors de la requête :", error);
@@ -145,7 +145,7 @@ class AxiosRequester {
 		const apiUrl = this.baseUrl + `Script/user`;
 		try {
 			const response = await axios.get(apiUrl, this.getConfig());
-			console.log("Réponse de l'API :", { response: response.data });
+			//console.log("Réponse de l'API :", { response: response.data });
 			return response.data;
 		} catch (error) {
 			console.error("Erreur lors de la requête :", error);
@@ -159,7 +159,7 @@ class AxiosRequester {
 		const apiUrl = this.baseUrl + `Script/${scriptId}`;
 		try {
 			const response = await axios.delete(apiUrl, this.getConfig());
-			console.log("Réponse de l'API :", { response: response.data });
+			//console.log("Réponse de l'API :", { response: response.data });
 			return response.data;
 		} catch (error) {
 			console.error("Erreur lors de la requête :", error);
@@ -173,7 +173,7 @@ class AxiosRequester {
 		const apiUrl = this.baseUrl + `Script/version/${scriptVersionId}`;
 		try {
 			const response = await axios.delete(apiUrl, this.getConfig());
-			console.log("Réponse de l'API :", { response: response.data });
+			//console.log("Réponse de l'API :", { response: response.data });
 			return response.data;
 		} catch (error) {
 			console.error("Erreur lors de la requête :", error);
@@ -190,7 +190,7 @@ class AxiosRequester {
 		const apiUrl = this.baseUrl + `Script/${scriptId}/file`;
 		try {
 			const response = await axios.get(apiUrl, this.getConfig());
-			console.log("Réponse de l'API :", { response: response.data });
+			//console.log("Réponse de l'API :", { response: response.data });
 			return response.data;
 		} catch (error) {
 			console.error("Erreur lors de la requête :", error);
@@ -207,7 +207,7 @@ class AxiosRequester {
 		const apiUrl = this.baseUrl + `Script/version/${scriptVersionId}/file`;
 		try {
 			const response = await axios.get(apiUrl, this.getConfig());
-			console.log("Réponse de l'API :", { response: response.data });
+			//console.log("Réponse de l'API :", { response: response.data });
 			return response.data;
 		} catch (error) {
 			console.error("Erreur lors de la requête :", error);
@@ -223,7 +223,7 @@ class AxiosRequester {
 		return new Promise((resolve, reject) => {
 			try {
 				return axios.get(apiUrl, this.getConfig()).then((response) => {
-					console.log("Réponse de l'API :", { response: response.data });
+					//console.log("Réponse de l'API :", { response: response.data });
 					return resolve(response.data);
 				});
 			} catch (error) {
@@ -237,7 +237,7 @@ class AxiosRequester {
 		const apiUrl = this.baseUrl + `Script/search/${keyWord}`;
 		try {
 			const response = await axios.get(apiUrl, this.getConfig());
-			console.log("Réponse de l'API :", { response: response.data });
+			//console.log("Réponse de l'API :", { response: response.data });
 			return response.data;
 		} catch (error) {
 			console.error("Erreur lors de la requête :", error);
@@ -248,7 +248,7 @@ class AxiosRequester {
 		const apiUrl = this.baseUrl + `Script`;
 		try {
 			const response = await axios.put(apiUrl, data, this.getConfig());
-			console.log("Réponse de l'API :", { response });
+			//console.log("Réponse de l'API :", { response });
 			if (response.status === 200) {
 				return data;
 			} else {
@@ -263,7 +263,7 @@ class AxiosRequester {
 		const apiUrl = this.baseUrl + `User`;
 		try {
 			const response = await axios.get(apiUrl, this.getConfig());
-			console.log("Réponse de l'API :", { response: response });
+			//console.log("Réponse de l'API :", { response: response });
 			if (response.status === 200) {
 				return response.data;
 			} else {
@@ -278,7 +278,7 @@ class AxiosRequester {
 		const apiUrl = this.baseUrl + `SocialInteraction/friends`;
 		try {
 			const response = await axios.get(apiUrl, this.getConfig());
-			console.log("Réponse de l'API :", { response: response });
+			//console.log("Réponse de l'API :", { response: response });
 			if (response.status === 200) {
 				return response.data;
 			} else {
@@ -293,7 +293,7 @@ class AxiosRequester {
 		const apiUrl = this.baseUrl + `SocialInteraction/friends/requests`;
 		try {
 			const response = await axios.get(apiUrl, this.getConfig());
-			console.log("Réponse de l'API :", { response: response });
+			//console.log("Réponse de l'API :", { response: response });
 			if (response.status === 200) {
 				return response.data;
 			} else {
@@ -308,7 +308,7 @@ class AxiosRequester {
 		const apiUrl = this.baseUrl + `SocialInteraction/friends/${userId}`;
 		try {
 			const response = await axios.delete(apiUrl, this.getConfig());
-			console.log("Réponse de l'API :", { response: response });
+			//console.log("Réponse de l'API :", { response: response });
 		} catch (error) {
 			console.error("Erreur lors de la requête :", error);
 		}
@@ -322,7 +322,7 @@ class AxiosRequester {
 				{ Message: message },
 				this.getConfig()
 			);
-			console.log("Réponse de l'API :", { response: response });
+			//console.log("Réponse de l'API :", { response: response });
 			if (response.status === 201) {
 				return response.data;
 			}
@@ -335,7 +335,7 @@ class AxiosRequester {
 		const apiUrl = this.baseUrl + `SocialInteraction/friends/${friendId}`;
 		try {
 			const response = await axios.patch(apiUrl, {}, this.getConfig());
-			console.log("Réponse de l'API :", { response: response });
+			//console.log("Réponse de l'API :", { response: response });
 			if (response.status === 201) {
 				return response.data;
 			}
@@ -348,7 +348,7 @@ class AxiosRequester {
 		const apiUrl = this.baseUrl + `SocialInteraction/friends/${userId}`;
 		try {
 			const response = await axios.delete(apiUrl, this.getConfig());
-			console.log("Réponse de l'API :", { response: response });
+			//console.log("Réponse de l'API :", { response: response });
 			if (response.status === 201) {
 				return response.data;
 			}
@@ -361,7 +361,7 @@ class AxiosRequester {
 		const apiUrl = this.baseUrl + `SocialInteraction/follows`;
 		try {
 			const response = await axios.get(apiUrl, this.getConfig());
-			console.log("Réponse de l'API :", { response: response });
+			//console.log("Réponse de l'API :", { response: response });
 			if (response.status === 200) {
 				return response.data;
 			} else {
@@ -376,7 +376,7 @@ class AxiosRequester {
 		const apiUrl = this.baseUrl + `SocialInteraction/follows/${userId}`;
 		try {
 			const response = await axios.delete(apiUrl, this.getConfig());
-			console.log("Réponse de l'API :", { response: response });
+			//console.log("Réponse de l'API :", { response: response });
 		} catch (error) {
 			console.error("Erreur lors de la requête :", error);
 		}
@@ -386,7 +386,7 @@ class AxiosRequester {
 		const apiUrl = this.baseUrl + `SocialInteraction/follows/${userId}`;
 		try {
 			const response = await axios.post(apiUrl, {}, this.getConfig());
-			console.log("Réponse de l'API :", { response: response });
+			//console.log("Réponse de l'API :", { response: response });
 			if (response.status === 201) {
 				return response.data;
 			}
@@ -400,7 +400,7 @@ class AxiosRequester {
 		const apiUrl = this.baseUrl + `SocialInteraction/groups`;
 		try {
 			const response = await axios.get(apiUrl, this.getConfig());
-			console.log("Réponse de l'API :", { response: response });
+			//console.log("Réponse de l'API :", { response: response });
 			if (response.status === 200) {
 				return response.data;
 			} else {
@@ -415,7 +415,7 @@ class AxiosRequester {
 		const apiUrl = this.baseUrl + `SocialInteraction/groups/${groupId}`;
 		try {
 			const response = await axios.get(apiUrl, this.getConfig());
-			console.log("Réponse de l'API :", { response: response });
+			//console.log("Réponse de l'API :", { response: response });
 			if (response.status === 200) {
 				return response.data;
 			} else {
@@ -430,7 +430,7 @@ class AxiosRequester {
 		const apiUrl = this.baseUrl + `SocialInteraction/groups/${groupId}/members`;
 		try {
 			const response = await axios.get(apiUrl, this.getConfig());
-			console.log("Réponse de l'API :", { response: response });
+			//console.log("Réponse de l'API :", { response: response });
 			if (response.status === 200) {
 				return response.data;
 			} else {
@@ -448,11 +448,11 @@ class AxiosRequester {
 		const apiUrl = this.baseUrl + `SocialInteraction/groups/requests`;
 		try {
 			const response = await axios.get(apiUrl, this.getConfig());
-			console.log("Réponse de l'API :", { response: response });
-			console.log("GetGroupRequests", response);
+			//console.log("Réponse de l'API :", { response: response });
+			//console.log("GetGroupRequests", response);
 
 			if (response.status === 200) {
-				console.log("GetGroupRequests", response.data);
+				//console.log("GetGroupRequests", response.data);
 				return response.data;
 			} else {
 				return null;
@@ -467,7 +467,7 @@ class AxiosRequester {
 			const apiUrl =
 				this.baseUrl + `SocialInteraction/groups/${groupId}/requests`;
 			const response = await axios.get(apiUrl, this.getConfig());
-			console.log("Réponse de l'API :", { response: response });
+			//console.log("Réponse de l'API :", { response: response });
 			if (response.status === 200) {
 				return response.data;
 			} else {
@@ -486,7 +486,7 @@ class AxiosRequester {
 		const apiUrl = this.baseUrl + `SocialInteraction/groups`;
 		try {
 			const response = await axios.post(apiUrl, data, this.getConfig());
-			console.log("Réponse de l'API :", { response: response });
+			//console.log("Réponse de l'API :", { response: response });
 			if (response.status === 201) {
 				return response.data;
 			}
@@ -499,7 +499,7 @@ class AxiosRequester {
 		const apiUrl = this.baseUrl + `SocialInteraction/groups`;
 		try {
 			const response = await axios.patch(apiUrl, data, this.getConfig());
-			console.log("Réponse de l'API :", { response: response });
+			//console.log("Réponse de l'API :", { response: response });
 			if (response.status === 200) {
 				return response.data;
 			}
@@ -517,7 +517,7 @@ class AxiosRequester {
 				{ Message: message },
 				this.getConfig()
 			);
-			console.log("Réponse de l'API :", { response: response });
+			//console.log("Réponse de l'API :", { response: response });
 			if (response.status === 201) {
 				return response.data;
 			}
@@ -531,7 +531,7 @@ class AxiosRequester {
 			this.baseUrl + `SocialInteraction/groups/requests/${groupId}`;
 		try {
 			const response = await axios.patch(apiUrl, {}, this.getConfig());
-			console.log("Réponse de l'API :", { response: response });
+			//console.log("Réponse de l'API :", { response: response });
 			if (response.status === 201) {
 				return response.data;
 			}
@@ -545,7 +545,7 @@ class AxiosRequester {
 			this.baseUrl + `SocialInteraction/groups/requests/${groupId}`;
 		try {
 			const response = await axios.delete(apiUrl, this.getConfig());
-			console.log("Réponse de l'API :", { response: response });
+			//console.log("Réponse de l'API :", { response: response });
 		} catch (error) {
 			console.error("Erreur lors de la requête :", error);
 		}
@@ -566,7 +566,7 @@ class AxiosRequester {
 			this.baseUrl + `SocialInteraction/groups/${groupId}/${userId}`;
 		try {
 			const response = await axios.delete(apiUrl, this.getConfig());
-			console.log("Réponse de l'API :", { response: response });
+			//console.log("Réponse de l'API :", { response: response });
 		} catch (error) {
 			console.error("Erreur lors de la requête :", error);
 		}
@@ -576,7 +576,7 @@ class AxiosRequester {
 		const apiUrl = this.baseUrl + `SocialInteraction/groups/${groupId}`;
 		try {
 			const response = await axios.delete(apiUrl, this.getConfig());
-			console.log("Réponse de l'API :", { response: response });
+			//console.log("Réponse de l'API :", { response: response });
 		} catch (error) {
 			console.error("Erreur lors de la requête :", error);
 		}
@@ -585,7 +585,7 @@ class AxiosRequester {
 	executeScript = async (formData) => {
 		const apiUrl = this.baseUrl + `Runner`;
 		try {
-			console.log({ formData });
+			//console.log({ formData });
 			const response = await axios.post(apiUrl, formData, {
 				headers: {
 					"Content-Type": "multipart/form-data",
@@ -593,9 +593,9 @@ class AxiosRequester {
 					accept: "*/*",
 				},
 			});
-			console.log("Réponse de l'API :", { response: response });
+			//console.log("Réponse de l'API :", { response: response });
 			if (response.status === 200) {
-				console.log(response);
+				//console.log(response);
 				return response.data;
 			}
 		} catch (error) {
@@ -607,7 +607,7 @@ class AxiosRequester {
 		const apiUrl = this.baseUrl + `User/${keyword}`;
 		try {
 			const response = await axios.get(apiUrl, this.getConfig());
-			console.log("Réponse de l'API :", { response: response });
+			//console.log("Réponse de l'API :", { response: response });
 			if (response.status === 200) {
 				return response.data;
 			}
@@ -632,7 +632,7 @@ class AxiosRequester {
 				},
 				this.getConfig()
 			);
-			console.log("Réponse de l'API :", { response: response });
+			//console.log("Réponse de l'API :", { response: response });
 			if (response.status === 200) {
 				return response.data;
 			}

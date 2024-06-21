@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import ListSearchResults from "../pages/ListSearchResults";
+import { useEffect, useState } from "react";
+import SearchScripts from "./SearchScripts.jsx";
 
 function MyScriptsList({
 	myScripts,
@@ -10,9 +10,10 @@ function MyScriptsList({
 	selectedScripts,
 	setSelectedScripts,
 	userId,
+	item
 }) {
-	const [page, setPage] = React.useState(0);
-	const [rowsPerPage, setRowsPerPage] = React.useState(5);
+	const [page, setPage] = useState(0);
+	const [rowsPerPage, setRowsPerPage] = useState(5);
 	const [scriptsFoundPaginated, setScriptsFoundPaginated] = useState([]);
 	useEffect(() => {
 		setScriptsFoundPaginated(
@@ -30,6 +31,7 @@ function MyScriptsList({
 	};
 
 	const handleItemSelected = (event) => {
+		console.log({event})
 		if (event.target.checked) {
 			setSelectedScripts([...selectedScripts, event.target.id]);
 		} else {
@@ -40,7 +42,8 @@ function MyScriptsList({
 	};
 	return (
 		<>
-			<ListSearchResults
+			<SearchScripts
+				item={item}
 				myScripts={myScripts}
 				display={display}
 				search={search}

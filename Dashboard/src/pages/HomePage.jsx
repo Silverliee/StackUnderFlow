@@ -5,7 +5,7 @@ import { Button } from "@mui/material";
 
 import { useAuth } from "../hooks/AuthProvider";
 
-import ListSearchResults from "./ListSearchResults";
+import SearchScripts from "../components/SearchScripts.jsx";
 
 function HomePage() {
 	const [search, setSearch] = React.useState("");
@@ -106,7 +106,7 @@ function HomePage() {
 			<div>
 				<Button onClick={handleOpenAdvancedOptions}>Advanced Options</Button>
 			</div>
-			<ListSearchResults
+			<SearchScripts
 				handleSelectChange={handleSelectChange}
 				selectedLanguage={selectedLanguage}
 				display={display}

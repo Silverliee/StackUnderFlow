@@ -1,8 +1,7 @@
-import React, { useEffect } from "react";
-import UnstyledPaginationIntroduction from "../components/UnstyledPaginationIntroduction";
-import ScriptItem from "../components/ScriptItem";
+import Pagination from "./UnstyledPaginationIntroduction.jsx";
+import ScriptItem from "./ScriptItem.jsx";
 
-function ListSearchResults({
+function SearchScripts({
 	display,
 	search,
 	scriptsFoundFiltered,
@@ -15,10 +14,8 @@ function ListSearchResults({
 	handleChangePage,
 	handleChangeRowsPerPage,
 	selectedScripts,
+	item
 }) {
-	useEffect(() => {
-		// console.log("selectedScripts", selectedScripts);
-	});
 	return (
 		<>
 			<div id="search-results" style={{ display: display }}>
@@ -26,7 +23,7 @@ function ListSearchResults({
 				<div>
 					{scriptsFoundPaginated?.map((script) => (
 						<ScriptItem
-							key={script.scriptId}
+							key={item + "-" + script.scriptId}
 							script={script}
 							handleItemSelected={handleItemSelected}
 							handleDelete={handleDelete}
@@ -39,7 +36,7 @@ function ListSearchResults({
 						/>
 					))}
 				</div>
-				<UnstyledPaginationIntroduction
+				<Pagination
 					numberOfResults={scriptsFoundFiltered.length}
 					handleChangePage={handleChangePage}
 					handleChangeRowsPerPage={handleChangeRowsPerPage}
@@ -51,4 +48,4 @@ function ListSearchResults({
 	);
 }
 
-export default ListSearchResults;
+export default SearchScripts;

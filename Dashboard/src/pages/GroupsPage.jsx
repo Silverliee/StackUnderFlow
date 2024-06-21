@@ -4,8 +4,9 @@ import GroupList from "../components/GroupList";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import { Modal, Box, Button } from "@mui/material";
 import UnstyledInputIntroduction from "../components/UnstyledInputIntroduction";
+import {useRelations} from "../hooks/RelationsProvider.jsx";
 
-function GroupListPage() {
+function GroupsPage() {
 	const [groups, setGroups] = useState([]);
 	const [groupsPaginated, setGroupsPaginated] = useState([]);
 	const [page, setPage] = useState(0);
@@ -14,18 +15,15 @@ function GroupListPage() {
 	const [groupName, setGroupName] = useState("");
 	const [description, setDescription] = useState("");
 
-	useEffect(() => {
-		fetchGroups();
-	}, []);
+	const { myGroups } = useRelations();
 
-	const fetchGroups = async () => {
-		const result = await AxiosRq.getInstance().getGroups();
-		setGroups(result);
-	};
+	useEffect( () => {
+		setGroups(myGroups);
+	})
 
 	useEffect(() => {
 		setGroupsPaginated(
-			groups.slice(page * rowsPerPage, (page + 1) * rowsPerPage)
+			groups?.slice(page * rowsPerPage, (page + 1) * rowsPerPage)
 		);
 	}, [rowsPerPage, page, groups]);
 
@@ -135,4 +133,4 @@ function GroupListPage() {
 	);
 }
 
-export default GroupListPage;
+export default GroupsPage;

@@ -16,7 +16,7 @@ import { useAuth } from "../hooks/AuthProvider";
 import { isValidEmail } from "../utils/utils";
 import RegisterModal from "../components/RegisterModal";
 
-export default function WelcomePage() {
+export default function Login() {
 	const [email, setEmail] = React.useState("");
 	const [password, setPassword] = React.useState("");
 	const [open, setOpen] = React.useState(false);
