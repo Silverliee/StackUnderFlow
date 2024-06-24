@@ -1,14 +1,7 @@
 ﻿### Environment Variables
 @baseUrl =https://stackunderflowbackend.azurewebsites.net
-@apiKey =Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiIxMSIsIm5iZiI6MTcxODcxOTkzMywiZXhwIjoxNzE4ODA2MzMzLCJpYXQiOjE3MTg3MTk5MzMsImlzcyI6Imlzc3VlciIsImF1ZCI6ImF1ZGllbmNlIn0._gHMSxxCqJ3b5b7DZeRtWa41W5rzkI5OmXkRhkPJwDI
+@apiKey =Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiIxMSIsIm5iZiI6MTcxODc0ODQ1MSwiZXhwIjoxNzE4ODM0ODUxLCJpYXQiOjE3MTg3NDg0NTEsImlzcyI6Imlzc3VlciIsImF1ZCI6ImF1ZGllbmNlIn0.M6eqzjIwWo_l1CfMlHmOjqn2_s3DotGhfgD91-zL50Y
 
-###
-# Create a new pipeline
-# @name /Runner/execute-pipeline
-POST {{baseUrl}}/Runner/execute-pipeline
-Authorization: {{apiKey}}
-Content-Type: multipart/form-data
-
-< TestFiles/test.py
-< TestFiles/test.py
-< TestFiles/test.py
+### S'abonner à un pipeline via WebSocket
+@pipelineId =feda659f-6460-42d3-b65e-0e3d2aad6d3f
+WEBSOCKET stackunderflowbackend.azurewebsites.net/Runner/subscribe/{{pipelineId}}
