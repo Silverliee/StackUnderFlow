@@ -10,6 +10,7 @@ import android.widget.Toast
 import com.example.stackunderflow.MainActivity
 import com.example.stackunderflow.R
 import com.example.stackunderflow.dto.UserModelDto
+import com.example.stackunderflow.module.injectModuleDependencies
 import com.example.stackunderflow.viewModels.UserViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -20,7 +21,7 @@ class LoginActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
-
+        injectModuleDependencies(this@LoginActivity)
         val emailEditText: EditText = findViewById(R.id.username_input)
         val passwordEditText: EditText = findViewById(R.id.password_input)
         val loginButton: Button = findViewById(R.id.login_button)
