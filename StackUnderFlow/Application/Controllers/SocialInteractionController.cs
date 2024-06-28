@@ -533,4 +533,177 @@ public class SocialInteractionController(ISocialInteractionService socialInterac
     }
 
     #endregion
+    #region Comments
+
+    [HttpGet("comments/{scriptId:int}")]
+    [Authorize]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> GetCommentsByScriptId(int scriptId)
+    {
+        BackgroundJob.Enqueue(() => Console.WriteLine("Getting comments by script id"));
+        try
+        {
+            var comments = await socialInteractionService.GetCommentsByScriptId(scriptId);
+            return Ok(comments);
+        }
+        catch(Exception e)
+        {
+            bugsnag.Notify(e);
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
+    }
+    
+    [HttpPost("comments/{scriptId:int}")]
+    [Authorize]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> CreateComment(int scriptId, CommentRequestDto commentRequestDto)
+    {
+        BackgroundJob.Enqueue(() => Console.WriteLine("Creating comment"));
+        var userId = Convert.ToInt32(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+        try
+        {
+            var comment = await socialInteractionService.CreateComment(userId, scriptId, commentRequestDto);
+            if (comment == null)
+            {
+                return BadRequest();
+            }
+            return Created("", comment);
+        }
+        catch(Exception e)
+        {
+            bugsnag.Notify(e);
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
+    }
+    
+    [HttpPatch("comments/{commentId:int}")]
+    [Authorize]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> UpdateComment(int commentId, CommentPatchRequestDto commentPatchRequestDto)
+    {
+        BackgroundJob.Enqueue(() => Console.WriteLine("Updating comment"));
+        var userId = Convert.ToInt32(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+        try
+        {
+            var comment = await socialInteractionService.GetCommentById(commentId);
+            if (comment == null || comment.userId != userId)
+            {
+                return NotFound();
+            }
+            var updatedComment = await socialInteractionService.UpdateComment(commentId, commentPatchRequestDto);
+            return Ok(updatedComment);
+        }
+        catch(Exception e)
+        {
+            bugsnag.Notify(e);
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
+    }
+    
+    [HttpDelete("comments/{commentId:int}")]
+    [Authorize]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> DeleteComment(int commentId)
+    {
+        BackgroundJob.Enqueue(() => Console.WriteLine("Deleting comment"));
+        var userId = Convert.ToInt32(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+        try
+        {
+            var comment = await socialInteractionService.GetCommentById(commentId);
+            if (comment == null || comment.userId != userId)
+            {
+                return NoContent();
+            }
+            await socialInteractionService.DeleteComment(commentId);
+            return NoContent();
+        }
+        catch(Exception e)
+        {
+            bugsnag.Notify(e);
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
+    }
+    #endregion
+    #region Likes
+    
+    [HttpGet("likes")]
+    [Authorize]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> GetLikes()
+    {
+        BackgroundJob.Enqueue(() => Console.WriteLine("Getting likes"));
+        var userId = Convert.ToInt32(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+        try
+        {
+            var likes = await socialInteractionService.GetLikes();
+            return Ok(likes);
+        }
+        catch(Exception e)
+        {
+            bugsnag.Notify(e);
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
+    }
+    
+    [HttpPost("likes/{scriptId:int}")]
+    [Authorize]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> CreateLike(int scriptId)
+    {
+        BackgroundJob.Enqueue(() => Console.WriteLine("Creating like"));
+        var userId = Convert.ToInt32(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+        try
+        {
+            var likeId = await socialInteractionService.CreateLike(userId, scriptId);
+            if (likeId == null)
+            {
+                return BadRequest();
+            }
+            return Created("", likeId);
+        }
+        catch(Exception e)
+        {
+            bugsnag.Notify(e);
+            Console.WriteLine(e);
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
+    }
+    
+    [HttpDelete("likes/{scriptId:int}")]
+    [Authorize]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> DeleteLike(int scriptId)
+    {
+        BackgroundJob.Enqueue(() => Console.WriteLine("Deleting like"));
+        var userId = Convert.ToInt32(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+        try
+        {
+            await socialInteractionService.DeleteLike(userId,scriptId);
+            return NoContent();
+        }
+        catch(Exception e)
+        {
+            bugsnag.Notify(e);
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
+    }
+    
+    #endregion
+
 }

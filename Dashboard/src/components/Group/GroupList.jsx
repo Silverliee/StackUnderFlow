@@ -1,11 +1,11 @@
 import React, { useState } from "react";
-import Contact from "./Contact";
+import Group from "./Group.jsx";
 import { List } from "@mui/material";
-import UnstyledPaginationIntroduction from "../components/UnstyledPaginationIntroduction";
+import UnstyledPaginationIntroduction from "../Custom/UnstyledPaginationIntroduction.jsx";
 
-function ContactList({
-	contacts,
-	contactsPaginated,
+function GroupList({
+	groups,
+	groupsPaginated,
 	handleDelete,
 	handleItemSelected,
 	handleChangePage,
@@ -17,21 +17,21 @@ function ContactList({
 
 	return (
 		<>
-			<List id="contact-list">
-				{contacts?.length > 0 &&
-					contactsPaginated?.map((user) => (
-						<Contact
-							key={user.userId}
-							user={user}
+			<List id="group-list">
+				{groups?.length > 0 &&
+					groupsPaginated?.map((group) => (
+						<Group
+							key={group.groupId}
+							group={group}
 							check={check}
 							handleDelete={handleDelete}
 							handleItemSelected={handleItemSelected}
 						/>
 					))}
 			</List>
-			{contacts.length > 0 && (
+			{groups?.length > 0 && (
 				<UnstyledPaginationIntroduction
-					numberOfResults={contacts.length}
+					numberOfResults={groups.length}
 					handleChangePage={handleChangePage}
 					handleChangeRowsPerPage={handleChangeRowsPerPage}
 					page={page}
@@ -42,4 +42,4 @@ function ContactList({
 	);
 }
 
-export default ContactList;
+export default GroupList;

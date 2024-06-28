@@ -1,14 +1,25 @@
-using System.Data.Entity;
 using StackUnderFlow.Domains.Model;
 using StackUnderFlow.Infrastructure.Settings;
+using Microsoft.EntityFrameworkCore;
 
 namespace StackUnderFlow.Domains.Repository;
 
 public class LikeRepository(MySqlDbContext context) : ILikeRepository
 {
-    public async Task<IEnumerable<Like?>> GetAllLikes()
+    public async Task<List<int>> GetAllLikes()
     {
-        return await context.Likes.ToListAsync();
+        var likes = new List<Like>();
+        try
+        {
+            likes = await context.Likes.ToListAsync();
+
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+        return likes.Count > 0 ? likes.Select(l => l.LikeId).ToList() : new List<int>();
     }
 
     public async Task<Like?> GetLikeById(int id)
@@ -21,9 +32,15 @@ public class LikeRepository(MySqlDbContext context) : ILikeRepository
         return await context.Likes.Where(l => l.UserId == userId).ToListAsync();
     }
 
-    public async Task<IEnumerable<Like?>> GetLikesByScriptId(int scriptId)
+    public async Task<List<Like>> GetLikesByScriptId(int scriptId)
     {
         return await context.Likes.Where(l => l.ScriptId == scriptId).ToListAsync();
+        // return likes.Count;
+    }
+    
+    public async Task<Like?> GetLikesByUserIdAndScriptId(int userId, int scriptId)
+    {
+       return await context.Likes.FirstOrDefaultAsync(l => l.UserId == userId && l.ScriptId == scriptId);
     }
 
     public async Task<Like?> CreateLike(Like like)

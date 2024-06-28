@@ -3,10 +3,11 @@ import PropTypes from "prop-types";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Box from "@mui/material/Box";
-import SearchContactPage from "../pages/SearchContactPage";
-import FriendListPage from "../pages/FriendListPage";
-import AxiosRq from "../Axios/AxiosRequester";
-import GroupListPage from "../pages/GroupListPage";
+import SearchContactPage from "../../pages/SearchContactPage.jsx";
+import FriendListPage from "../../pages/FriendListPage.jsx";
+import AxiosRq from "../../Axios/AxiosRequester.js";
+import GroupsPage from "../../pages/GroupsPage.jsx";
+import {useRelations} from "../../hooks/RelationsProvider.jsx";
 
 function ContactTabPanel(props) {
 	const { children, value, index, ...other } = props;
@@ -39,16 +40,6 @@ function a11yProps(index) {
 
 export default function BasicTabs() {
 	const [value, setValue] = useState(0);
-	const [friendsId, setFriendsId] = useState([]);
-
-	useEffect(() => {
-		fetchFriends();
-	}, []);
-
-	const fetchFriends = async () => {
-		const result = await AxiosRq.getInstance().getFriends();
-		setFriendsId(result.map((friend) => friend.userId));
-	};
 
 	const handleChange = (event, newValue) => {
 		setValue(newValue);
@@ -69,13 +60,13 @@ export default function BasicTabs() {
 				</Tabs>
 			</Box>
 			<ContactTabPanel value={value} index={0}>
-				<SearchContactPage friendsId={friendsId} />
+				<SearchContactPage />
 			</ContactTabPanel>
 			<ContactTabPanel value={value} index={1}>
 				<FriendListPage />
 			</ContactTabPanel>
 			<ContactTabPanel value={value} index={2}>
-				<GroupListPage />
+				<GroupsPage />
 			</ContactTabPanel>
 			<ContactTabPanel value={value} index={3}>
 				List of Follows

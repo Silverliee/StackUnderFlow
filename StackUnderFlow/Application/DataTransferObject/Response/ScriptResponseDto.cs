@@ -11,6 +11,8 @@ public class ScriptResponseDto
     public string Visibility { get; set; }
     public int UserId { get; set; }
     public string CreatorName { get; set; }
+    public int NumberOfLikes { get; set; }
+    public bool IsLiked { get; set; }
 
     // [ForeignKey("UserId")]
     // public User User { get; set; }

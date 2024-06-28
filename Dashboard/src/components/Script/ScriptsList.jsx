@@ -1,9 +1,9 @@
 import React, { useEffect } from "react";
 import { List } from "@mui/material";
-import "../styles/scriptList.css";
+import "../../styles/scriptList.css";
 
-import { useAuth } from "../hooks/AuthProvider";
-import ScriptItem from "./ScriptItem";
+import { useAuth } from "../../hooks/AuthProvider.jsx";
+import ScriptItem from "./ScriptItem.jsx";
 
 const ScriptsList = ({ scripts, handleDelete }) => {
 	const userId = useAuth().authData?.userId;

@@ -9,7 +9,7 @@ import {
 import DeleteIcon from "@mui/icons-material/Delete";
 import DownloadIcon from "@mui/icons-material/Download";
 import { Link, useLocation } from "react-router-dom";
-import AxiosRq from "../Axios/AxiosRequester";
+import AxiosRq from "../../Axios/AxiosRequester.js";
 
 export const ScriptItem = ({
 	script,

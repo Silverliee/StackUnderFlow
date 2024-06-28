@@ -16,6 +16,26 @@ namespace StackUnderFlow.Application.Controllers
     {
         #region Script
 
+        [HttpGet()]
+        [Authorize]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetScripts([FromQuery] int offset = 0, [FromQuery] int records = 5, [FromQuery] string visibility = "Public")
+        {
+            BackgroundJob.Enqueue(() => Console.WriteLine("getting scripts with filters"));
+            var userId = Convert.ToInt32(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+            try
+            {
+                var scripts = await scriptService.GetScripts(offset, records, visibility,userId);
+                return Ok(scripts);
+            }
+            catch(Exception e)
+            {
+                bugsnag.Notify(e);
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
+        
         [HttpGet("{scriptId:int}")]
         [Authorize]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -23,10 +43,11 @@ namespace StackUnderFlow.Application.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetScriptById(int scriptId)
         {
+            var userId = Convert.ToInt32(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
             try
             {
                 BackgroundJob.Enqueue(() => Console.WriteLine("getting script by id"));
-                var script = await scriptService.GetScriptById(scriptId);
+                var script = await scriptService.GetScriptById(scriptId, userId);
                 if (script == null)
                 {
                     return NotFound();
@@ -156,7 +177,7 @@ namespace StackUnderFlow.Application.Controllers
             {
                 BackgroundJob.Enqueue(() => Console.WriteLine("getting scripts by user id"));
                 var userId = Convert.ToInt32(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
-                var scripts = await scriptService.GetScriptsByUserId(userId);
+                var scripts = await scriptService.GetScriptsByUserId(userId,userId);
                 return Ok(scripts);
             }
             catch(Exception e)
@@ -178,8 +199,9 @@ namespace StackUnderFlow.Application.Controllers
                 var scripts = await scriptService.GetScriptsByUserIdAndVisibility(userId,scriptRequest);
                 return Ok(scripts);
             }
-            catch
+            catch(Exception e)
             {
+                Console.WriteLine(e);
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
@@ -313,10 +335,11 @@ namespace StackUnderFlow.Application.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetScriptsByKeyWord(string keyword)
         {
+            var userId = Convert.ToInt32(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
             try
             {
                 BackgroundJob.Enqueue(() => Console.WriteLine("getting scripts by keyword"));
-                var scripts = await scriptService.GetScriptsByKeyWord(keyword);
+                var scripts = await scriptService.GetScriptsByKeyWord(keyword, userId);
                 return Ok(scripts);
             }
             catch(Exception e)

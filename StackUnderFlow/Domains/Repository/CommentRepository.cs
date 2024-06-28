@@ -6,7 +6,7 @@ namespace StackUnderFlow.Domains.Repository;
 
 public class CommentRepository(MySqlDbContext context) : ICommentRepository
 {
-    public async Task<IEnumerable<Comment?>> GetAllComments()
+    public async Task<List<Comment?>> GetAllComments()
     {
         return await context.Comments.ToListAsync();
     }
@@ -16,12 +16,12 @@ public class CommentRepository(MySqlDbContext context) : ICommentRepository
         return await context.Comments.FirstOrDefaultAsync(c => c.CommentId == id);
     }
 
-    public async Task<IEnumerable<Comment?>> GetCommentsByScriptId(int scriptId)
+    public async Task<List<Comment?>> GetCommentsByScriptId(int scriptId)
     {
         return await context.Comments.Where(c => c.ScriptId == scriptId).ToListAsync();
     }
 
-    public async Task<IEnumerable<Comment?>> GetCommentsByUserId(int userId)
+    public async Task<List<Comment?>> GetCommentsByUserId(int userId)
     {
         return await context.Comments.Where(c => c.UserId == userId).ToListAsync();
     }

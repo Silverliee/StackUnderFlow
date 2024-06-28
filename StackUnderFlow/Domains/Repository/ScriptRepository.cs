@@ -11,6 +11,11 @@ public class ScriptRepository(MySqlDbContext context) : IScriptRepository
     {
         return await context.Scripts.ToListAsync();
     }
+    
+    public async Task<List<Script?>> GetScripts(int offset, int records)
+    {
+        return await context.Scripts.Skip(offset).Take(records).ToListAsync();
+    }
 
     //get script by id
     public async Task<Script?> GetScriptById(int id)

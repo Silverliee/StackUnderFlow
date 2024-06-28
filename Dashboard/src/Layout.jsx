@@ -1,7 +1,7 @@
 import { Outlet } from "react-router-dom";
 import Sidebar from "./components/Sidebar";
 import "./styles/layout.css";
-import ProfileBanner from "./components/ProfileBanner";
+import ProfileBanner from "./components/Profile/ProfileBanner.jsx";
 import { useAuth } from "./hooks/AuthProvider";
 
 const Layout = () => {

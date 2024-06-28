@@ -1,23 +1,24 @@
-import React, { useEffect, useState } from "react";
-import SearchBar from "../components/SearchBar";
+import { useEffect, useState } from "react";
+import SearchBar from "../components/Search/SearchBar.jsx";
 import { useAuth } from "../hooks/AuthProvider";
 import AxiosRq from "../Axios/AxiosRequester";
-import SearchContactList from "../components/SearchContactList";
+import SearchContactList from "../components/Search/SearchContactList.jsx";
 import { Modal, Box, Button } from "@mui/material";
-import UnstyledTextareaIntroduction from "../components/UnstyledTextareaIntroduction";
+import UnstyledTextareaIntroduction from "../components/Custom/UnstyledTextareaIntroduction.jsx";
+import {useRelations} from "../hooks/RelationsProvider.jsx";
 
-function SearchContactPage({ friendsId }) {
-	const [search, setSearch] = React.useState("");
-	const [display, setDisplay] = React.useState("none");
-	const [usersFound, setUsersFound] = React.useState([]);
+function SearchContactPage() {
+	const [search, setSearch] = useState("");
+	const [display, setDisplay] = useState("none");
+	const [usersFound, setUsersFound] = useState([]);
 	const [usersFoundPaginated, setUsersFoundPaginated] = useState([]);
 	const [userToSendFriendRequestTo, setUserToSendFriendRequestTo] =
 		useState(null);
 	const [friendRequestMessage, setFriendRequestMessage] =
 		useState("Let's be friends!");
-	const [open, setOpen] = React.useState(false);
-	const [page, setPage] = React.useState(0);
-	const [rowsPerPage, setRowsPerPage] = React.useState(5);
+	const [open, setOpen] = useState(false);
+	const [page, setPage] = useState(0);
+	const [rowsPerPage, setRowsPerPage] = useState(5);
 	const userId = useAuth().authData?.userId;
 	const handleChangePage = (event, newPage) => {
 		setPage(newPage);
@@ -41,6 +42,12 @@ function SearchContactPage({ friendsId }) {
 		setRowsPerPage(parseInt(event.target.value, 10));
 		setPage(0);
 	};
+
+	const [friendsId, setFriendsId] = useState([]);
+	const {myFriends} = useRelations();
+	useEffect(() => {
+		setFriendsId(myFriends.map((friend) => friend.userId));
+	}, [myFriends]);
 
 	useEffect(() => {
 		setUsersFoundPaginated(

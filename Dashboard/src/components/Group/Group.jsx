@@ -9,35 +9,40 @@ import {
 import DeleteIcon from "@mui/icons-material/Delete";
 import DownloadIcon from "@mui/icons-material/Download";
 import { Link, useLocation } from "react-router-dom";
-import AxiosRq from "../Axios/AxiosRequester";
+import AxiosRq from "../../Axios/AxiosRequester.js";
+import { useAuth } from "../../hooks/AuthProvider.jsx";
 
-export const Contact = ({ user, check, handleItemSelected, handleDelete }) => {
+export const Group = ({ group, check, handleItemSelected, handleDelete }) => {
+	const { authData } = useAuth();
+
 	return (
-		<ListItem key={user.userId} role={undefined} dense button>
+		<ListItem key={group.groupId} role={undefined} dense button>
 			<ListItemIcon>
 				<Checkbox
 					checked={check}
-					key={user.userId}
+					key={group.groupId}
 					edge="start"
 					tabIndex={-1}
 					disableRipple
-					id={`${user.userId}`}
+					id={`${group.groupId}`}
 					onChange={handleItemSelected}
 				/>
 			</ListItemIcon>
 			<ListItemText
-				id={user.userId}
-				primary={user.username}
+				id={group.groupId}
+				primary={group.groupName}
 				// secondary={script.programmingLanguage}
 			/>
 			{/* <ListItemText
 				id={user.userId + "1"}
 				primary={"By " + script.creatorName}
 			/> */}
-			<Link to={""}>See Scripts</Link>
-			<DeleteIcon onClick={() => handleDelete(user.userId)}></DeleteIcon>
+			<Link to={`/group/${group.groupId}`}>See Group details</Link>
+			{group.creatorUserID == authData.userId && (
+				<DeleteIcon onClick={() => handleDelete(group.groupId)}></DeleteIcon>
+			)}
 		</ListItem>
 	);
 };
 
-export default Contact;
+export default Group;

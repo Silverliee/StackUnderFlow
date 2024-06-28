@@ -1,32 +1,34 @@
 import React, { useEffect, useState } from "react";
-import ContactList from "../components/ContactList";
+import ContactList from "../components/Contact/ContactList.jsx";
 import AxiosRq from "../Axios/AxiosRequester";
+import {useRelations} from "../hooks/RelationsProvider.jsx";
 
 function FriendListPage() {
-	const [friends, setFriends] = useState([]);
+	const [friendsList, setFriendsList] = useState([]);
 	const [friendsPaginated, setFriendsPaginated] = useState([]);
 	const [page, setPage] = React.useState(0);
 	const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
-	useEffect(() => {
-		fetchFriends();
-	}, []);
+	const { myFriends, myGroups, myFollows, dispatchFriends } = useRelations();
 
-	const fetchFriends = async () => {
-		const result = await AxiosRq.getInstance().getFriends();
-		setFriends(result);
-	};
+	useEffect(() => {
+		console.log('friendsPage');
+		console.log(myFriends);
+		setFriendsList(myFriends);
+	}, [myFriends]);
 
 	useEffect(() => {
 		setFriendsPaginated(
-			friends.slice(page * rowsPerPage, (page + 1) * rowsPerPage)
+			friendsList.slice(page * rowsPerPage, (page + 1) * rowsPerPage)
 		);
-	}, [rowsPerPage, page, friends]);
+	}, [rowsPerPage, page, friendsList]);
 
 	const handleDeleteFriend = (userId) => {
 		if (confirm("Are you sure you want to delete this friend?")) {
 			AxiosRq.getInstance().deleteFriend(userId);
-			setFriends(friends.filter((friend) => friend.userId !== userId));
+			const friend = friendsList.filter((friend) => friend.userId == userId)[0];
+			dispatchFriends({type: "REMOVE_FRIEND", payload: friend});
+			setFriendsList(friendsList.filter((friend) => friend.userId !== userId));
 		}
 	};
 	const handleItemSelected = (userId) => {};
@@ -42,7 +44,7 @@ function FriendListPage() {
 
 	return (
 		<ContactList
-			contacts={friends}
+			contacts={friendsList}
 			contactsPaginated={friendsPaginated}
 			handleDelete={handleDeleteFriend}
 			handleItemSelected={handleItemSelected}

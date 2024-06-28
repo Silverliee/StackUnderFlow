@@ -3,8 +3,8 @@ import { Modal, Box } from "@mui/material";
 import Button from "@mui/material/Button";
 import { styled } from "@mui/material/styles";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
-import UnstyledTextareaIntroduction from "./UnstyledTextareaIntroduction";
-import UnstyledInputIntroduction from "./UnstyledInputIntroduction";
+import UnstyledTextareaIntroduction from "../Custom/UnstyledTextareaIntroduction.jsx";
+import UnstyledInputIntroduction from "../Custom/UnstyledInputIntroduction.jsx";
 
 const ScriptVersionModal = ({
 	script,

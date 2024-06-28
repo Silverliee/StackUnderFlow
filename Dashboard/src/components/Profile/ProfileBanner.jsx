@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
-import "../styles/profileBanner.css";
+import "../../styles/profileBanner.css";
 import { Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import MarkEmailReadIcon from "@mui/icons-material/MarkEmailRead";
 import MarkEmailUnreadIcon from "@mui/icons-material/MarkEmailUnread";
-import AxiosRq from "../Axios/AxiosRequester";
+import AxiosRq from "../../Axios/AxiosRequester.js";
 import { FaBedPulse } from "react-icons/fa6";
 
 function ProfileBanner({ username }) {

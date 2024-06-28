@@ -25,4 +25,13 @@ public interface ISocialInteractionService
     public Task<GroupRequestResponseDto> AcceptGroupRequest(int userId, int groupId);
     public Task RejectGroupRequest(int userId, int groupId);
     public Task RemoveGroup(int groupId);
+    public Task<List<CommentResponseDto>> GetCommentsByScriptId(int scriptId);
+    public Task<CommentResponseDto?> CreateComment(int userId, int scriptId, CommentRequestDto commentRequestDto);
+    public Task<CommentResponseDto?> UpdateComment(int commentId, CommentPatchRequestDto commentRequestDto);
+    public Task<CommentResponseDto?> GetCommentById(int commentId);
+    public Task DeleteComment(int commentId);
+    public Task<int?> CreateLike(int userId, int scriptId);
+    public Task DeleteLike(int userId, int scriptId);
+    public Task<int?> GetLikeById(int userId,int likeId);
+    public Task<List<int>> GetLikes();
 }

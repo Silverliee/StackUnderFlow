@@ -5,8 +5,9 @@ using StackUnderFlow.Application.DataTransferObject.Response;
 
 public interface IScriptService
 {
-    public Task<ScriptResponseDto?> GetScriptById(int scriptId);
-    public Task<List<ScriptResponseDto>> GetScriptsByUserId(int userId);
+    public Task<List<ScriptResponseDto>> GetScripts(int offset, int records, string visibility, int requesterId);
+    public Task<ScriptResponseDto?> GetScriptById(int scriptId, int requesterId);
+    public Task<List<ScriptResponseDto>> GetScriptsByUserId(int userId, int requesterId);
     public Task<ScriptResponseDto?> AddScript(ScriptUploadRequestDto? scriptUploadRequestDto);
     public Task<ScriptResponseDto?> UpdateScript(ScriptUpdateRequestDto? scriptUpdateRequestDto);
     public Task<ScriptFileResponseDto?> GetScriptFileByScriptId(int scriptId);
@@ -17,6 +18,6 @@ public interface IScriptService
     public Task<ScriptVersionResponseDto?> AddScriptVersion(
         ScriptVersionUploadRequestDto? scriptVersionUploadRequestDto
     );
-    public Task<List<ScriptResponseDto>> GetScriptsByKeyWord(string keyword);
+    public Task<List<ScriptResponseDto>> GetScriptsByKeyWord(string keyword, int requesterId);
     public Task<List<ScriptResponseDto>> GetScriptsByUserIdAndVisibility(int userId,ScriptRequestForOtherUserDto scriptRequest);
 }

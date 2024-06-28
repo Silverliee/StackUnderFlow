@@ -4,7 +4,7 @@ import AxiosRq from "../Axios/AxiosRequester";
 import { TiArrowBack } from "react-icons/ti";
 import { useNavigate } from "react-router-dom";
 import { Grid, Typography } from "@mui/material";
-import ContactList from "../components/ContactList";
+import ContactList from "../components/Contact/ContactList.jsx";
 
 function GroupDetails() {
 	const { groupId } = useParams();

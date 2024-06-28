@@ -10,7 +10,10 @@ public class SocialInteractionService(
     IFriendRepository friendRepository,
     IFollowRepository followRepository,
     IGroupRepository groupRepository,
-    IUserRepository userRepository
+    IUserRepository userRepository,
+    ICommentRepository commentRepository,
+    IScriptRepository scriptRepository,
+    ILikeRepository likeRepository
 ) : ISocialInteractionService
 {
     public async Task<List<UserResponseDto>> GetFriendsByUserId(int userId)
@@ -410,5 +413,154 @@ public class SocialInteractionService(
             return;
         }
         await groupRepository.DeleteGroup(group);
+    }
+
+    public async Task<List<CommentResponseDto>> GetCommentsByScriptId(int scriptId)
+    {
+        var comments = await commentRepository.GetCommentsByScriptId(scriptId);
+        if (comments.Count == 0)
+        {
+            return [];
+        }
+        var commentListResponse = new List<CommentResponseDto>();
+        foreach (var comment in comments)
+        {   
+            var user = await userRepository.GetUserById(comment.UserId);
+            if (user != null)
+            {
+                var commentRequestToAdd = new CommentResponseDto
+                {
+                    commentId = comment.CommentId,
+                    userId = comment.UserId,
+                    userName = user.Username,
+                    scriptId = comment.ScriptId,
+                    description = comment.Description,
+                };
+                commentListResponse.Add(commentRequestToAdd);
+            }
+        }
+
+        return commentListResponse;
+    }
+
+    public async Task<CommentResponseDto?> CreateComment(int userId, int scriptId, CommentRequestDto commentRequestDto)
+    {
+        var script = await scriptRepository.GetScriptById(scriptId);
+        if (script == null)
+        {
+            return null;
+        }
+        var comment = new Comment
+        {
+            UserId = userId,
+            ScriptId = scriptId,
+            Description = commentRequestDto.Description
+        };
+        var response = await commentRepository.CreateComment(comment);
+        if (response == null)
+        {
+            return null;
+        }
+        var user = await userRepository.GetUserById(userId);
+        return new CommentResponseDto
+        {
+            commentId = response.CommentId,
+            userId = response.UserId,
+            userName = user.Username,
+            scriptId = response.ScriptId,
+            description = response.Description
+        };
+        
+    }
+
+    public async Task<CommentResponseDto?> GetCommentById(int commentId)
+    {
+        var comment = await commentRepository.GetCommentById(commentId);
+        if (comment == null)
+        {
+            return null;
+        }
+        var user = await userRepository.GetUserById(comment.UserId);
+        return new CommentResponseDto
+        {
+            commentId = comment.CommentId,
+            userId = comment.UserId,
+            userName = user.Username,
+            scriptId = comment.ScriptId,
+            description = comment.Description
+        };
+    }
+
+    public async Task<CommentResponseDto?> UpdateComment(int commentId, CommentPatchRequestDto commentRequestDto)
+    {
+        var initialComment = await commentRepository.GetCommentById(commentId);
+        if (initialComment == null)
+        {
+            return null;
+        }
+        if (initialComment.Description != commentRequestDto.Description)
+        {
+            initialComment.Description = commentRequestDto.Description;
+        }
+        var response = await commentRepository.UpdateComment(initialComment);
+        if (response == null)
+        {
+            return null;
+        }
+        var user = await userRepository.GetUserById(response.UserId);
+        return new CommentResponseDto
+                {
+                    commentId = response.CommentId,
+                    userId = response.UserId,
+                    userName = user.Username,
+                    scriptId = response.ScriptId,
+                    description = response.Description
+                };
+    }
+    
+    public async Task DeleteComment(int commentId)
+    {
+        await commentRepository.DeleteComment(commentId);
+    }
+    
+    public async Task<int?> CreateLike(int userId, int scriptId)
+    {
+        var likeExists = await likeRepository.GetLikesByUserIdAndScriptId(userId, scriptId);
+        if (likeExists != null)
+        {
+            return null;
+        }
+        var likeToAdd = new Like
+        {
+            ScriptId = scriptId,
+            UserId = userId
+        };
+        var like = await likeRepository.CreateLike(likeToAdd);
+        return like?.LikeId;
+    }
+
+    public async Task<int?> GetLikeById(int userId, int likeId)
+    {
+        var like = await likeRepository.GetLikeById(likeId);
+        if (like == null || like.UserId != userId)
+        {
+            return null;
+        }
+        return like.LikeId;
+    }
+    
+    public async Task DeleteLike(int userId, int scriptId)
+    {
+        var like = await likeRepository.GetLikesByUserIdAndScriptId(userId, scriptId);
+        if (like == null)
+        {
+            return;
+        }
+        await likeRepository.DeleteLike(like.LikeId);
+    }
+
+    public async Task<List<int>> GetLikes()
+    {
+        return await likeRepository.GetAllLikes();
     }
 }
