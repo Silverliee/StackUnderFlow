@@ -9,16 +9,13 @@ import org.koin.core.error.ApplicationAlreadyStartedException
 // that function inject module dependencies using Koin
 fun injectModuleDependencies(context: Context) {
     try {
-        //Start Koin and load modules
         startKoin {
             androidContext(context)
             modules(modules)
         }
     } catch (alreadyStart: ApplicationAlreadyStartedException) {
-        //If Koin is already started, load the modules
         loadKoinModules(modules)
     }
 }
 
-// List of modules to be loaded
-private val modules = mutableListOf(coreModules, remoteModule)
+private val modules = listOf(coreModules, remoteModule)

@@ -63,6 +63,16 @@
             android:text="@string/login"
             android:textColor="@color/black" />
 
+        <Button
+            android:id="@+id/register_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:background="@drawable/login_shape"
+            android:padding="18sp"
+            android:text="@string/register"
+            android:textColor="@color/black" />
+
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

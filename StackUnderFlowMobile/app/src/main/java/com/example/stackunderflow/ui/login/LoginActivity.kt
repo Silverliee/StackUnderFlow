@@ -43,7 +43,7 @@ class LoginActivity : AppCompatActivity() {
 
 
 
-            if (email == "Test@gmail.com" && password == "test") {
+            if (email == "t" && password == "t") {
                 // Save login state
                 getSharedPreferences("APP_PREFS", MODE_PRIVATE)
                     .edit()
