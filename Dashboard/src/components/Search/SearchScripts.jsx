@@ -1,5 +1,5 @@
-import Pagination from "./UnstyledPaginationIntroduction.jsx";
-import ScriptItem from "./ScriptItem.jsx";
+import Pagination from "../Custom/UnstyledPaginationIntroduction.jsx";
+import ScriptItem from "../Script/ScriptItem.jsx";
 
 function SearchScripts({
 	display,

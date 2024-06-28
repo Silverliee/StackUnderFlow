@@ -10,16 +10,53 @@ public class ScriptService(
     IUserRepository userRepository,
     IScriptVersionRepository scriptVersionRepository,
     IFriendRepository friendRepository,
-    IGroupRepository groupRepository
+    IGroupRepository groupRepository,
+    ILikeRepository likeRepository
 ) : IScriptService
 {
-    public async Task<ScriptResponseDto?> GetScriptById(int scriptId)
+    public async Task<List<ScriptResponseDto>> GetScripts(int offset, int records, string visibility, int requesterId)
+    {
+        var scripts = await scriptRepository.GetScripts(offset, records);
+        if (scripts.Count == 0)
+        {
+            return [];
+        }
+
+        var scriptResponseDtos = new List<ScriptResponseDto>();
+
+        foreach (var script in scripts)
+        {
+            var numberOfLikes = await likeRepository.GetLikesByScriptId(script.ScriptId);
+
+            var scriptResponseDto = new ScriptResponseDto
+            {
+                ScriptId = script.ScriptId,
+                ScriptName = script.ScriptName,
+                Description = script.Description,
+                InputScriptType = script.InputScriptType,
+                UserId = script.UserId,
+                OutputScriptType = script.OutputScriptType,
+                ProgrammingLanguage = script.ProgrammingLanguage,
+                Visibility = script.Visibility,
+                CreatorName = script.CreatorName,
+                NumberOfLikes = numberOfLikes.Count,
+                IsLiked = numberOfLikes.Any(x => x.UserId == requesterId)
+            };
+
+            scriptResponseDtos.Add(scriptResponseDto);
+        }
+
+        return scriptResponseDtos;
+    }
+    
+    public async Task<ScriptResponseDto?> GetScriptById(int scriptId, int requesterId)
     {
         var script = await scriptRepository.GetScriptById(scriptId);
         if (script == null)
         {
             return null;
         }
+        var numberOfLikes = await likeRepository.GetLikesByScriptId(scriptId);
         return new ScriptResponseDto
         {
             ScriptId = script.ScriptId,
@@ -30,19 +67,26 @@ public class ScriptService(
             OutputScriptType = script.OutputScriptType,
             ProgrammingLanguage = script.ProgrammingLanguage,
             Visibility = script.Visibility,
-            CreatorName = script.CreatorName
+            CreatorName = script.CreatorName,
+            NumberOfLikes = numberOfLikes.Count,
+            IsLiked = numberOfLikes.Any(x => x.UserId == requesterId)
         };
     }
 
-    public async Task<List<ScriptResponseDto>> GetScriptsByUserId(int userId)
+    public async Task<List<ScriptResponseDto>> GetScriptsByUserId(int userId, int requesterId)
     {
         var scripts = await scriptRepository.GetScriptsByUserId(userId);
         if (scripts.Count == 0)
         {
             return new List<ScriptResponseDto>();
         }
-        return scripts
-            .Select(script => new ScriptResponseDto
+        var scriptResponseDtos = new List<ScriptResponseDto>();
+
+        foreach (var script in scripts)
+        {
+            var numberOfLikes = await likeRepository.GetLikesByScriptId(script.ScriptId);
+
+            var scriptResponseDto = new ScriptResponseDto
             {
                 ScriptId = script.ScriptId,
                 ScriptName = script.ScriptName,
@@ -52,9 +96,15 @@ public class ScriptService(
                 OutputScriptType = script.OutputScriptType,
                 ProgrammingLanguage = script.ProgrammingLanguage,
                 Visibility = script.Visibility,
-                CreatorName = script.CreatorName
-            })
-            .ToList();
+                CreatorName = script.CreatorName,
+                NumberOfLikes = numberOfLikes.Count,
+                IsLiked = numberOfLikes.Any(x => x.UserId == requesterId)
+            };
+
+            scriptResponseDtos.Add(scriptResponseDto);
+        }
+
+        return scriptResponseDtos;
     }
 
     public async Task<ScriptVersionResponseDto?> AddScriptVersion(
@@ -131,6 +181,11 @@ public class ScriptService(
             SourceScriptBinary = blob
         };
         await scriptVersionRepository.AddScriptVersion(scriptVersion);
+        await likeRepository.CreateLike(new Like
+        {
+            UserId = script.UserId,
+            ScriptId = script.ScriptId
+        });
         return new ScriptResponseDto
         {
             ScriptId = script.ScriptId,
@@ -141,7 +196,8 @@ public class ScriptService(
             OutputScriptType = script.OutputScriptType,
             ProgrammingLanguage = script.ProgrammingLanguage,
             Visibility = script.Visibility,
-            CreatorName = user.Username
+            CreatorName = user.Username,
+            NumberOfLikes = 1
         };
     }
 
@@ -155,9 +211,6 @@ public class ScriptService(
         {
             return null;
         }
-
-        //Check with token if scriptInBdd.UserId == token.UserId
-        // ....
 
         scriptInBdd.ScriptId = scriptUpdateRequestDto.ScriptId;
         scriptInBdd.ScriptName = scriptUpdateRequestDto.ScriptName;
@@ -175,6 +228,8 @@ public class ScriptService(
         {
             return null;
         }
+        var numberOfLikes = await likeRepository.GetLikesByScriptId(scriptUpdated.ScriptId);
+        
         return new ScriptResponseDto
         {
             ScriptId = scriptUpdated.ScriptId,
@@ -184,7 +239,9 @@ public class ScriptService(
             UserId = scriptUpdated.UserId,
             OutputScriptType = scriptUpdated.OutputScriptType,
             ProgrammingLanguage = scriptUpdated.ProgrammingLanguage,
-            CreatorName = scriptUpdated.CreatorName
+            CreatorName = scriptUpdated.CreatorName,
+            NumberOfLikes = numberOfLikes.Count,
+            IsLiked = numberOfLikes.Any(x => x.UserId == scriptUpdated.UserId)
         };
     }
 
@@ -268,15 +325,18 @@ public class ScriptService(
         };
     }
 
-    public async Task<List<ScriptResponseDto>> GetScriptsByKeyWord(string keyword)
+    public async Task<List<ScriptResponseDto>> GetScriptsByKeyWord(string keyword, int requesterId)
     {
         var scripts = await scriptRepository.GetScriptsByKeyWord(keyword);
         if (scripts.Count == 0)
         {
-            return new List<ScriptResponseDto>();
+            return [];
         }
-        return scripts
-            .Select(script => new ScriptResponseDto
+        var listOfScripts = new List<ScriptResponseDto>();
+        foreach (var script in scripts)
+        {
+            var numberOfLikes = await likeRepository.GetLikesByScriptId(script.ScriptId);
+            listOfScripts.Add(new ScriptResponseDto
             {
                 ScriptId = script.ScriptId,
                 ScriptName = script.ScriptName,
@@ -286,9 +346,12 @@ public class ScriptService(
                 OutputScriptType = script.OutputScriptType,
                 ProgrammingLanguage = script.ProgrammingLanguage,
                 Visibility = script.Visibility,
-                CreatorName = script.CreatorName
-            })
-            .ToList();
+                CreatorName = script.CreatorName,
+                NumberOfLikes = numberOfLikes.Count,
+                IsLiked = numberOfLikes.Any(x => x.UserId == requesterId)
+            });
+        }
+        return listOfScripts;
     }
 
     public async Task<List<ScriptResponseDto>> GetScriptsByUserIdAndVisibility(int userId, ScriptRequestForOtherUserDto scriptRequest)
@@ -299,14 +362,14 @@ public class ScriptService(
         try
         {
             
-        switch (visibility)
-        {
-            case "Public":
-                var  r = await scriptRepository.GetScriptsByUserId(creatorId);
-                r.ForEach((script) =>
-                {
-                    if (script.Visibility == "Public")
+            switch (visibility)
+            {
+                case "Public":
+                    var userScripts = await scriptRepository.GetScriptsByUserId(creatorId);
+                    foreach (var script in userScripts)
                     {
+                        if (script.Visibility != "Public") continue;
+                        var numberOfLikes = await likeRepository.GetLikesByScriptId(script.ScriptId);
                         scripts.Add(new ScriptResponseDto
                         {
                             ScriptId = script.ScriptId,
@@ -317,56 +380,25 @@ public class ScriptService(
                             OutputScriptType = script.OutputScriptType,
                             ProgrammingLanguage = script.ProgrammingLanguage,
                             Visibility = script.Visibility,
-                            CreatorName = script.CreatorName
+                            CreatorName = script.CreatorName,
+                            NumberOfLikes = numberOfLikes.Count,
+                            IsLiked = numberOfLikes.Any(x => x.UserId == userId)
                         });
-                    }
-                });
-                break;
-            case "Private":
-                //never provide private scripts
-                break;
-            case "Friend":
-                //check if userId is friend with creatorId
-                var friendRequest = await friendRepository.GetFriendRequest(userId, creatorId);
-                if (friendRequest is { Status: "Accepted" })
-                {
-                    var r2 = await scriptRepository.GetScriptsByUserId(creatorId);
-                    r2.ForEach((script) =>
-                    {
-                        if (script.Visibility is "Friend" or "Public")
-                        {
-                            scripts.Add(new ScriptResponseDto
-                            {
-                                ScriptId = script.ScriptId,
-                                ScriptName = script.ScriptName,
-                                Description = script.Description,
-                                InputScriptType = script.InputScriptType,
-                                UserId = script.UserId,
-                                OutputScriptType = script.OutputScriptType,
-                                ProgrammingLanguage = script.ProgrammingLanguage,
-                                Visibility = script.Visibility,
-                                CreatorName = script.CreatorName
-                            });
-                        }
-                    });
-                }
-                break;
-            case "Group":
-                //check if userId is in the same group as creatorId
-                var groupId = scriptRequest.GroupId;
-                var group = await groupRepository.GetGroupById(groupId);
-                if (group == null)
-                {
+                    };
                     break;
-                }
-                var groupRequest = await groupRepository.GetGroupMembers(groupId);
-                if (groupRequest != null && groupRequest.Any(x => x.UserId == userId) && groupRequest.Any(x => x.UserId == creatorId))
-                {
-                    var r3 = await scriptRepository.GetScriptsByUserId(creatorId);
-                    r3.ForEach((script) =>
+                case "Private":
+                    //never provide private scripts
+                    break;
+                case "Friend":
+                    //check if userId is friend with creatorId
+                    var friendRequest = await friendRepository.GetFriendRequest(userId, creatorId);
+                    if (friendRequest is { Status: "Accepted" })
                     {
-                        if (script.Visibility is "Group" or "Public")
+                        var friendScripts = await scriptRepository.GetScriptsByUserId(creatorId);
+                        foreach (var script in friendScripts)
                         {
+                            if (script.Visibility is not ("Friend" or "Public")) continue;
+                            var numberOfLikes = await likeRepository.GetLikesByScriptId(script.ScriptId);
                             scripts.Add(new ScriptResponseDto
                             {
                                 ScriptId = script.ScriptId,
@@ -377,13 +409,47 @@ public class ScriptService(
                                 OutputScriptType = script.OutputScriptType,
                                 ProgrammingLanguage = script.ProgrammingLanguage,
                                 Visibility = script.Visibility,
-                                CreatorName = script.CreatorName
+                                CreatorName = script.CreatorName,
+                                NumberOfLikes = numberOfLikes.Count,
+                                IsLiked = numberOfLikes.Any(x => x.UserId == userId)
                             });
-                        }
-                    });
-                }
-                break;
-        }
+                        };
+                    }
+                    break;
+                case "Group":
+                    //check if userId is in the same group as creatorId
+                    var groupId = scriptRequest.GroupId;
+                    var group = await groupRepository.GetGroupById(groupId);
+                    if (group == null)
+                    {
+                        break;
+                    }
+                    var groupRequest = await groupRepository.GetGroupMembers(groupId);
+                    if (groupRequest.Any(x => x.UserId == userId) && groupRequest.Any(x => x.UserId == creatorId))
+                    {
+                        var groupScripts = await scriptRepository.GetScriptsByUserId(creatorId);
+                        foreach (var script in groupScripts)
+                        {
+                            if (script.Visibility is not ("Group" or "Public")) continue;
+                            var numberOfLikes = await likeRepository.GetLikesByScriptId(script.ScriptId);
+                            scripts.Add(new ScriptResponseDto
+                            {
+                                ScriptId = script.ScriptId,
+                                ScriptName = script.ScriptName,
+                                Description = script.Description,
+                                InputScriptType = script.InputScriptType,
+                                UserId = script.UserId,
+                                OutputScriptType = script.OutputScriptType,
+                                ProgrammingLanguage = script.ProgrammingLanguage,
+                                Visibility = script.Visibility,
+                                CreatorName = script.CreatorName,
+                                NumberOfLikes = numberOfLikes.Count,
+                                IsLiked = numberOfLikes.Any(x => x.UserId == userId)
+                            });
+                        };
+                    }
+                    break;
+            }
         } catch (Exception e)
         {
             Console.WriteLine(e);

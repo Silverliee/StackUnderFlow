@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import Group from "./Group";
+import Group from "./Group.jsx";
 import { List } from "@mui/material";
-import UnstyledPaginationIntroduction from "../components/UnstyledPaginationIntroduction";
+import UnstyledPaginationIntroduction from "../Custom/UnstyledPaginationIntroduction.jsx";
 
 function GroupList({
 	groups,

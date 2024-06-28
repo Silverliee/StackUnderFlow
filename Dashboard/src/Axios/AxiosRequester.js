@@ -640,6 +640,110 @@ class AxiosRequester {
 			console.error("Erreur lors de la requête :", error);
 		}
 	};
+
+	getComments = async (scriptId) => {
+		const apiUrl = this.baseUrl + `SocialInteraction/comments/${scriptId}`;
+		try {
+			const response = await axios.get(
+				apiUrl,
+				this.getConfig()
+			);
+			//console.log("Réponse de l'API :", { response: response });
+			if (response.status === 200) {
+				return response.data;
+			}
+		} catch (error) {
+			console.error("Erreur lors de la requête :", error);
+		}
+	}
+
+	postComment = async (scriptId,comment) => {
+		const apiUrl = this.baseUrl + `SocialInteraction/comments/${scriptId}`;
+		try {
+			const response = await axios.post(
+				apiUrl,
+				{
+					Description: comment
+				},
+				this.getConfig()
+			);
+			//console.log("Réponse de l'API :", { response: response });
+			if (response.status === 200) {
+				return response.data;
+			}
+		} catch (error) {
+			console.error("Erreur lors de la requête :", error);
+		}
+	}
+
+	updateComment = async (commentId, text) => {
+		const apiUrl = this.baseUrl + `SocialInteraction/comments/${commentId}`;
+		try {
+			const response = await axios.patch(
+				apiUrl,
+				{
+					Description: text
+				},
+				this.getConfig()
+			);
+			//console.log("Réponse de l'API :", { response: response });
+			if (response.status === 200) {
+				return response.data;
+			}
+		} catch (error) {
+			console.error("Erreur lors de la requête :", error);
+		}
+	}
+
+	deleteComment = async (commentId) => {
+		const apiUrl = this.baseUrl + `SocialInteraction/comments/${commentId}`;
+		try {
+			const response = await axios.delete(
+				apiUrl,
+				this.getConfig()
+			);
+			//console.log("Réponse de l'API :", { response: response });
+			if (response.status === 204) {
+				return "success";
+			}
+		} catch (error) {
+			console.error("Erreur lors de la requête :", error);
+		}
+	}
+
+	like = async (scriptId) => {
+		const apiUrl = this.baseUrl + `SocialInteraction/likes/${scriptId}`;
+		console.log(this.getConfig());
+		try {
+			const response = await axios.post(
+				apiUrl,
+				{},
+				this.getConfig()
+			);
+			//console.log("Réponse de l'API :", { response: response });
+			if (response.status === 201) {
+				return "success";
+			}
+		} catch (error) {
+			console.error("Erreur lors de la requête :", error);
+		}
+	}
+
+	unlike = async (scriptId) => {
+		const apiUrl = this.baseUrl + `SocialInteraction/likes/${scriptId}`;
+		try {
+			const response = await axios.delete(
+				apiUrl,
+				this.getConfig()
+			);
+			//console.log("Réponse de l'API :", { response: response });
+			if (response.status === 204) {
+				return "success";
+			}
+		} catch (error) {
+			console.error("Erreur lors de la requête :", error);
+		}
+	}
 }
 
 export default AxiosRequester;

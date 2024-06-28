@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import Contact from "./Contact";
+import Contact from "./Contact.jsx";
 import { List } from "@mui/material";
-import UnstyledPaginationIntroduction from "../components/UnstyledPaginationIntroduction";
+import UnstyledPaginationIntroduction from "../Custom/UnstyledPaginationIntroduction.jsx";
 
 function ContactList({
 	contacts,

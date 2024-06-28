@@ -4,18 +4,15 @@ import AxiosRq from "../Axios/AxiosRequester.js";
 const AuthContext = createContext();
 
 const AuthProvider = ({ children }) => {
-	const [authData, setAuthData] = useState(() => {
-		const savedAuthData = localStorage.getItem("authData");
-		return savedAuthData ? JSON.parse(savedAuthData) : null;
-	});
+	// const [authData, setAuthData] = useState(() => {
+	// 	const savedAuthData = localStorage.getItem("authData");
+	// 	return savedAuthData ? JSON.parse(savedAuthData) : null;
+	// });
+	const [authData, setAuthData] = useState(null);
+
 	const [isLoggedIn, setIsLoggedIn] = useState(!!authData);
 
 	useEffect(() => {
-		if (authData) {
-			localStorage.setItem("authData", JSON.stringify(authData));
-		} else {
-			localStorage.removeItem("authData");
-		}
 		setIsLoggedIn(!!authData);
 	}, [authData]);
 
@@ -63,7 +60,7 @@ const AuthProvider = ({ children }) => {
 
 	const logout = (callback) => {
 		setAuthData(null);
-		localStorage.removeItem("authData");
+		//localStorage.removeItem("authData");
 		setIsLoggedIn(false);
 		callback();
 	};

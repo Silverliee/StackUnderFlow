@@ -1,7 +1,7 @@
 import React from "react";
 import Button from "@mui/material/Button";
 import { Modal, Box } from "@mui/material";
-import UnstyledInputIntroduction from "./UnstyledInputIntroduction";
+import UnstyledInputIntroduction from "./Custom/UnstyledInputIntroduction.jsx";
 
 function RegisterModal({
 	open,

@@ -1,7 +1,7 @@
-import React, { createContext, useContext, useReducer, useEffect, useState } from "react";
+import React, {createContext, useContext, useEffect, useReducer} from "react";
 import AxiosRq from "../Axios/AxiosRequester";
-import { useAuth } from "./AuthProvider";
-import { useRelations } from "./RelationsProvider";
+import {useAuth} from "./AuthProvider";
+import {useRelations} from "./RelationsProvider";
 
 const ScriptsContext = createContext();
 
@@ -9,6 +9,9 @@ const scriptsReducer = (state, action) => {
     switch (action.type) {
         case 'SET_SCRIPTS_FOUND':
             return { ...state, scriptsFound: action.payload };
+        case 'ADD_SCRIPTS':
+            const updatedScriptsFound = [...state.scriptsFound, action.payload];
+            return { ...state, scriptsFound: updatedScriptsFound };
         case 'SET_MY_FRIENDS_SCRIPTS':
             return { ...state, myFriendsScripts: action.payload };
         case 'SET_MY_GROUPS_SCRIPTS':
@@ -49,6 +52,13 @@ const ScriptsProvider = ({ children }) => {
 
             const scriptsLoaded = await AxiosRq.getInstance().getScripts();
             dispatch({ type: 'SET_SCRIPTS_FOUND', payload: scriptsLoaded });
+        };
+        fetchScripts();
+    }, [authData?.userId]);
+
+    useEffect(() => {
+        const fetchFriends = async () => {
+            if (!authData?.userId) return;
 
             const friendsScripts = await Promise.all(friends?.map(async (friend) => {
                 const friendScripts = await AxiosRq.getInstance().getScriptByUserIdAndVisiblity(
@@ -57,6 +67,13 @@ const ScriptsProvider = ({ children }) => {
                 return friendScripts;
             }));
             dispatch({ type: 'SET_MY_FRIENDS_SCRIPTS', payload: friendsScripts.flat() });
+        };
+    fetchFriends();
+    }, [authData?.userId, friends]);
+
+    useEffect(() => {
+        const fetchGroups = async () => {
+            if (!authData?.userId) return;
 
             const groupMembersByGroupId = await fetchGroupsAndMembers(groups);
             const groupsScripts = await Promise.all(groups?.map(async (group) => {
@@ -70,17 +87,24 @@ const ScriptsProvider = ({ children }) => {
             }));
             dispatch({ type: 'SET_MY_GROUPS_SCRIPTS', payload: groupsScripts.flat() });
 
+        };
+        fetchGroups();
+    }, [authData?.userId, groups]);
+
+    useEffect(() => {
+        const fetchFollows = async () => {
+            if (!authData?.userId) return;
+
             const followingScripts = await Promise.all(follows?.map(async (follow) => {
-                const scripts = await AxiosRq.getInstance().getScriptByUserIdAndVisiblity(
+                return await AxiosRq.getInstance().getScriptByUserIdAndVisiblity(
                     follow.userId, "Follow"
                 );
-                return scripts;
             }));
             dispatch({ type: 'SET_MY_FOLLOWING_SCRIPTS', payload: followingScripts.flat() });
 
         };
-        fetchScripts();
-    }, [authData?.userId, friends, groups, follows]);
+        fetchFollows();
+    }, [authData?.userId, follows]);
 
     const fetchGroupsAndMembers = async (groups) => {
         try {

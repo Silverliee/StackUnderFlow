@@ -11,7 +11,7 @@ import Accordion from "@mui/material/Accordion";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import UnstyledInputIntroduction from "../components/UnstyledInputIntroduction";
+import UnstyledInputIntroduction from "../components/Custom/UnstyledInputIntroduction.jsx";
 import { useAuth } from "../hooks/AuthProvider";
 import { isValidEmail } from "../utils/utils";
 import RegisterModal from "../components/RegisterModal";

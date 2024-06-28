@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "../hooks/AuthProvider";
-import MessageItem from "../components/MessageItem";
-import MessagesList from "../components/MessagesList";
+import MessagesList from "../components/Message/MessagesList.jsx";
 import {
 	Accordion,
 	AccordionDetails,
@@ -10,116 +9,63 @@ import {
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import AxiosRq from "../Axios/AxiosRequester";
+import {useRelations} from "../hooks/RelationsProvider.jsx";
 
 function MessagePage() {
 	const [friendRequests, setFriendRequests] = useState([]);
 	const [groupRequests, setGroupRequests] = useState([]);
-	const [messages, setMessages] = useState([]);
 
 	const { userId } = useAuth();
-
-	const fakeFriendRequests = [
-		{
-			userId: 3,
-			friendId: 4,
-			friendName: "John Doe",
-			status: "Pending",
-			message: "Hey, I would like to be your friend",
-		},
-		{
-			userId: 3,
-			friendId: 5,
-			friendName: "Jane Doe",
-			status: "Pending",
-			message: "Hey, I would like to be your friend",
-		},
-	];
-
-	const fakeGroupRequests = [
-		{
-			UserId: 3,
-			GroupId: 999,
-			GroupName: "Group 1",
-			Message: "Join my group",
-		},
-		{
-			UserId: 3,
-			GroupId: 5,
-			GroupName: "Group 2",
-			Status: "Pending",
-			Message: "No, join my group instead",
-		},
-	];
+	const relations = useRelations();
 
 	useEffect(() => {
-		getFriendRequests();
-		getGroupRequests();
-		console.log("Main render");
-		//setFriendRequests(fakeFriendRequests);
-		//setGroupRequests(fakeGroupRequests);
-	}, [userId]);
-
-	useEffect(() => {
-		console.log("Render");
-	}, [friendRequests, groupRequests]);
-
-	const getFriendRequests = async () => {
-		const friendRequests = await AxiosRq.getInstance().getFriendRequests(
-			userId
-		);
-		console.log("friendRequests", friendRequests);
-		setFriendRequests(friendRequests);
-	};
-	const getGroupRequests = async () => {
-		const groupRequests = await AxiosRq.getInstance().getGroupRequests(userId);
-		setGroupRequests(groupRequests);
-	};
+		setFriendRequests(relations.friendRequests);
+		setGroupRequests(relations.groupRequests);
+	}, [userId,relations]);
 
 	const handleDeclineFriendRequest = (friendId) => {
-		console.log("Decline friend request", friendId);
 		AxiosRq.getInstance()
 			.declineFriendRequest(friendId)
 			.then(() => {
-				const friendRequestsUpdated = friendRequests.filter(
-					(request) => request.userId != friendId
-				);
-				setFriendRequests(friendRequestsUpdated);
+				relations.dispatchFriendRequests({
+					type: 'REMOVE_FRIEND_REQUEST',
+					payload: {friendId},
+				});
 			});
 	};
 
 	const handleAcceptFriendRequest = (friendId) => {
-		console.log("Accept friend request", friendId);
 		AxiosRq.getInstance()
 			.acceptFriendRequest(friendId)
 			.then(() => {
-				const friendRequestsUpdated = friendRequests.filter(
-					(request) => request.userId != friendId
-				);
-				setFriendRequests(friendRequestsUpdated);
+				relations.dispatchFriendRequests({
+					type: 'REMOVE_FRIEND_REQUEST',
+					payload: {friendId},
+				});
+				relations.fetchFriends();
 			});
 	};
 
 	const handleDeclineGroupRequest = (groupId) => {
-		console.log("Decline group request", groupId);
 		AxiosRq.getInstance()
 			.declineGroupInvitation(groupId)
 			.then(() => {
-				const groupRequestsUpdated = groupRequests.filter(
-					(request) => request.groupId != groupId
-				);
-				setGroupRequests(groupRequestsUpdated);
+				relations.dispatchGroupRequests({
+					type: 'REMOVE_GROUP_REQUEST',
+					payload: {groupId},
+				});
 			});
 	};
 
 	const handleAcceptGroupRequest = (groupId) => {
-		console.log("Accept group request", groupId);
 		AxiosRq.getInstance()
 			.acceptGroupInvitation(groupId)
 			.then(() => {
-				const groupRequestsUpdated = groupRequests.filter(
-					(request) => request.groupId != groupId
-				);
-				setGroupRequests(groupRequestsUpdated);
+				relations.dispatchGroupRequests({
+					type: 'REMOVE_GROUP_REQUEST',
+					payload: {groupId},
+				});
+				relations.fetchGroups();
 			});
 	};
 
@@ -138,6 +84,7 @@ function MessagePage() {
 						</AccordionSummary>
 						<AccordionDetails>
 							<MessagesList
+								group={false}
 								handleAccept={handleAcceptFriendRequest}
 								handleDecline={handleDeclineFriendRequest}
 								messageList={friendRequests}

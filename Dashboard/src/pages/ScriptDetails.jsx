@@ -4,12 +4,12 @@ import { TiArrowBack } from "react-icons/ti";
 import AxiosRq from "../Axios/AxiosRequester";
 
 import { List } from "@mui/material";
-import ScriptVersionModal from "../components/ScriptVersionModal";
+import ScriptVersionModal from "../components/ScriptVersion/ScriptVersionModal.jsx";
 import EditorFrame from "../components/EditorFrame";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import { useAuth } from "../hooks/AuthProvider";
-import ScriptVersionItem from "../components/ScriptVersionItem";
+import ScriptVersionItem from "../components/ScriptVersion/ScriptVersionItem.jsx";
 import "../styles/scriptDetails.css";
 import { ThumbUpFilled as ThumbUpOffAltIcon } from "@mui/icons-material/ThumbUpOffAlt";
 import { ThumbUp as ThumbUpAltIcon } from "@mui/icons-material/ThumbUpAlt";
@@ -17,10 +17,10 @@ import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import EditIcon from "@mui/icons-material/Edit";
 import { Modal, Box } from "@mui/material";
 import Button from "@mui/material/Button";
-import UnstyledTextareaIntroduction from "../components/UnstyledTextareaIntroduction";
-import UnstyledInputIntroduction from "../components/UnstyledInputIntroduction";
-import UnstyledSelectIntroduction from "../components/UnstyledSelectIntroduction";
-import ScriptVersionsList from "../components/ScriptVersionsList";
+import UnstyledTextareaIntroduction from "../components/Custom/UnstyledTextareaIntroduction.jsx";
+import UnstyledInputIntroduction from "../components/Custom/UnstyledInputIntroduction.jsx";
+import UnstyledSelectIntroduction from "../components/Custom/UnstyledSelectIntroduction.jsx";
+import ScriptVersionsList from "../components/ScriptVersion/ScriptVersionsList.jsx";
 
 const ScriptDetails = () => {
 	const { scriptId } = useParams();

@@ -3,11 +3,11 @@ import PropTypes from "prop-types";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Box from "@mui/material/Box";
-import SearchContactPage from "../pages/SearchContactPage";
-import FriendListPage from "../pages/FriendListPage";
-import AxiosRq from "../Axios/AxiosRequester";
-import GroupsPage from "../pages/GroupsPage.jsx";
-import {useRelations} from "../hooks/RelationsProvider.jsx";
+import SearchContactPage from "../../pages/SearchContactPage.jsx";
+import FriendListPage from "../../pages/FriendListPage.jsx";
+import AxiosRq from "../../Axios/AxiosRequester.js";
+import GroupsPage from "../../pages/GroupsPage.jsx";
+import {useRelations} from "../../hooks/RelationsProvider.jsx";
 
 function ContactTabPanel(props) {
 	const { children, value, index, ...other } = props;

@@ -3,8 +3,8 @@ import Editor from "@monaco-editor/react";
 import { Button, Input, Modal, Box } from "@mui/material";
 import { useState } from "react";
 import AxiosRq from "../Axios/AxiosRequester";
-import UnstyledTextareaIntroduction from "./UnstyledTextareaIntroduction";
-import UnstyledInputIntroduction from "./UnstyledInputIntroduction";
+import UnstyledTextareaIntroduction from "./Custom/UnstyledTextareaIntroduction.jsx";
+import UnstyledInputIntroduction from "./Custom/UnstyledInputIntroduction.jsx";
 
 function EditorFrame({
 	scriptVersionIdEdited,

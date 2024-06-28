@@ -4,7 +4,7 @@ import ListItem from "@mui/material/ListItem";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import AddReactionIcon from "@mui/icons-material/AddReaction";
-import UnstyledPaginationIntroduction from "../components/UnstyledPaginationIntroduction";
+import UnstyledPaginationIntroduction from "../Custom/UnstyledPaginationIntroduction.jsx";
 
 function SearchContactList({
 	contacts,

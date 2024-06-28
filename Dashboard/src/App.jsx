@@ -10,15 +10,14 @@ import {
 import Login from "./pages/Login.jsx";
 import AuthProvider from "./hooks/AuthProvider";
 import PrivateRoute from "./router/PrivateRoute";
-import Profile from "./components/Profile";
-import Register from "./components/Register.jsx";
+import Profile from "./components/Profile/Profile.jsx";
 import ExecutionPage from "./pages/ExecutionPage.jsx";
 import ContactsPage from "./pages/ContactsPage";
 import ScriptListPage from "./pages/ScriptListPage";
 import ScriptDetails from "./pages/ScriptDetails";
 import ScriptVersionPage from "./pages/ScriptVersionPage";
 import Layout from "./Layout";
-import HomePage from "./pages/HomePage";
+import SearchScriptPage from "./pages/SearchScriptPage.jsx";
 import LocalEditor from "./pages/LocalEditor";
 import ProfilePage from "./pages/ProfilePage.jsx";
 import SharingPage from "./pages/SharingPage.jsx";
@@ -26,6 +25,8 @@ import MessagePage from "./pages/MessagePage";
 import GroupDetails from "./pages/GroupDetails";
 import RelationsProvider from "./hooks/RelationsProvider.jsx";
 import ScriptsProvider from "./hooks/ScriptsProvider.jsx";
+import PersistentDrawerLeft from "./components/PersistentDrawerLeft.jsx";
+import HomePage from "./pages/HomePage.jsx";
 
 const App = () => {
 	return (
@@ -35,11 +36,14 @@ const App = () => {
 					<RelationsProvider>
 						<ScriptsProvider>
 						<Routes>
-						<Route exact path="/" element={<Login />} />
+							{/*<Route exact path="/" element={<Login />} />*/}
+							<Route exact path="/" element={<PersistentDrawerLeft />} />
 						<Route exact path="/login" element={<Login />} />
-						<Route exact path="/register" element={<Register />} />
-						<Route element={<Layout />}>
-							<Route element={<PrivateRoute />}>
+							{/*<Route element={<Layout />}>*/}
+							<Route element={<PersistentDrawerLeft />}>
+
+							<Route element={<PrivateRoute />}>FeedPage
+								<Route path="/search" element={<SearchScriptPage />} />
 								<Route path="/home" element={<HomePage />} />
 								<Route path="/exec" element={<ExecutionPage />} />
 								<Route path="/contacts" element={<ContactsPage />} />

@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import SearchBar from "../components/SearchBar";
+import SearchBar from "../components/Search/SearchBar.jsx";
 import { useAuth } from "../hooks/AuthProvider";
 import AxiosRq from "../Axios/AxiosRequester";
-import SearchContactList from "../components/SearchContactList";
+import SearchContactList from "../components/Search/SearchContactList.jsx";
 import { Modal, Box, Button } from "@mui/material";
-import UnstyledTextareaIntroduction from "../components/UnstyledTextareaIntroduction";
+import UnstyledTextareaIntroduction from "../components/Custom/UnstyledTextareaIntroduction.jsx";
 import {useRelations} from "../hooks/RelationsProvider.jsx";
 
 function SearchContactPage() {

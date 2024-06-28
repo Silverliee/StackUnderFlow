@@ -1,6 +1,6 @@
 import React from "react";
 import { List } from "@mui/material";
-import ScriptVersionItem from "./ScriptVersionItem";
+import ScriptVersionItem from "./ScriptVersionItem.jsx";
 
 function ScriptVersionsList({
 	dense,

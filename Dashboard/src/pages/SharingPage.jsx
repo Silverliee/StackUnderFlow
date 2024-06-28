@@ -3,10 +3,11 @@ import { Modal, Box } from "@mui/material";
 import Button from "@mui/material/Button";
 import { styled } from "@mui/material/styles";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
-import UnstyledTextareaIntroduction from "../components/UnstyledTextareaIntroduction";
-import UnstyledInputIntroduction from "../components/UnstyledInputIntroduction";
+import UnstyledTextareaIntroduction from "../components/Custom/UnstyledTextareaIntroduction.jsx";
+import UnstyledInputIntroduction from "../components/Custom/UnstyledInputIntroduction.jsx";
 import AxiosRq from "../Axios/AxiosRequester";
-import UnstyledSelectIntroduction from "../components/UnstyledSelectIntroduction";
+import UnstyledSelectIntroduction from "../components/Custom/UnstyledSelectIntroduction.jsx";
+import { useScripts} from "../hooks/ScriptsProvider.jsx";
 
 const SharingPage = ({ script }) => {
 	const [open, setOpen] = useState(false);
@@ -19,6 +20,7 @@ const SharingPage = ({ script }) => {
 	const [visibility, setVisibility] = useState("Public");
 
 	const acceptedFiles = [".py", ".cs"];
+	const { dispatch } = useScripts();
 
 	const style = {
 		//transform: "translate(-50%, -50%)",
@@ -30,7 +32,6 @@ const SharingPage = ({ script }) => {
 		px: 4,
 		pb: 3,
 	};
-
 	const VisuallyHiddenInput = styled("input")({
 		clip: "rect(0 0 0 0)",
 		clipPath: "inset(50%)",
@@ -42,7 +43,6 @@ const SharingPage = ({ script }) => {
 		whiteSpace: "nowrap",
 		width: 1,
 	});
-
 	const handleOpen = () => {
 		setOpen(true);
 	};
@@ -79,8 +79,11 @@ const SharingPage = ({ script }) => {
 		console.log(result);
 		if (!result) {
 			alert("Error uploading script");
+		} else {
+			alert("Script uploaded successfully");
+			dispatch({type: "ADD_SCRIPTS", payload: result});
 		}
-		alert("Script uploaded successfully");
+
 		handleReset();
 	};
 

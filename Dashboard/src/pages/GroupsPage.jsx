@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import AxiosRq from "../Axios/AxiosRequester";
-import GroupList from "../components/GroupList";
+import GroupList from "../components/Group/GroupList.jsx";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import { Modal, Box, Button } from "@mui/material";
-import UnstyledInputIntroduction from "../components/UnstyledInputIntroduction";
+import UnstyledInputIntroduction from "../components/Custom/UnstyledInputIntroduction.jsx";
 import {useRelations} from "../hooks/RelationsProvider.jsx";
 
 function GroupsPage() {

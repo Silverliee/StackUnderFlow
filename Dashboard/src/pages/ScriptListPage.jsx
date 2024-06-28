@@ -3,14 +3,14 @@ import AxiosRq from "../Axios/AxiosRequester";
 import { useAuth } from "../hooks/AuthProvider";
 import { useRelations } from "../hooks/RelationsProvider.jsx";
 import { useScripts} from "../hooks/ScriptsProvider.jsx";
-import UnstyledInputIntroduction from "../components/UnstyledInputIntroduction";
-import UnstyledSelectIntroduction from "../components/UnstyledSelectIntroduction";
+import UnstyledInputIntroduction from "../components/Custom/UnstyledInputIntroduction.jsx";
+import UnstyledSelectIntroduction from "../components/Custom/UnstyledSelectIntroduction.jsx";
 
 import { Button } from "@mui/material";
 import { Typography } from "@mui/material";
 import { Accordion, AccordionDetails, AccordionSummary } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import MyScriptsList from "../components/MyScriptsList";
+import MyScriptsList from "../components/Script/MyScriptsList.jsx";
 
 function ScriptListPage() {
 	const [search, setSearch] = useState("");

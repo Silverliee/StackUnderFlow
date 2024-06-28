@@ -6,6 +6,7 @@ export default function UnstyledTextareaIntroduction({
 	handleInput,
 	value,
 	placeholder,
+	disabled
 }) {
 	return (
 		<TextareaAutosize
@@ -13,6 +14,7 @@ export default function UnstyledTextareaIntroduction({
 			aria-label="empty textarea"
 			placeholder={placeholder ? placeholder : "Empty"}
 			value={value}
+			disabled={disabled}
 		/>
 	);
 }
@@ -40,7 +42,7 @@ const grey = {
 };
 
 const TextareaAutosize = styled(BaseTextareaAutosize)(
-	({ theme }) => `
+	({ theme,disabled }) => `
   box-sizing: border-box;
   width: 320px;
   font-family: 'IBM Plex Sans', sans-serif;
@@ -50,11 +52,12 @@ const TextareaAutosize = styled(BaseTextareaAutosize)(
   padding: 8px 12px;
   border-radius: 8px;
   color: ${theme.palette.mode === "dark" ? grey[300] : grey[900]};
-  background: ${theme.palette.mode === "dark" ? grey[900] : "#fff"};
+  background: ${disabled ? grey[100] : theme.palette.mode === "dark" ? grey[900] : "#fff"};
   border: 1px solid ${theme.palette.mode === "dark" ? grey[700] : grey[200]};
   box-shadow: 0px 2px 2px ${
 		theme.palette.mode === "dark" ? grey[900] : grey[50]
 	};
+  disabled: ${theme.disabled};
 
   &:hover {
     border-color: ${blue[400]};

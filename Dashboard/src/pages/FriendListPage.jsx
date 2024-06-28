@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import ContactList from "../components/ContactList";
+import ContactList from "../components/Contact/ContactList.jsx";
 import AxiosRq from "../Axios/AxiosRequester";
 import {useRelations} from "../hooks/RelationsProvider.jsx";
 

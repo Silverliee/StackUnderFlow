@@ -89,7 +89,7 @@ public class MySqlDbContext : DbContext
             .WithMany(u => u.Likes)
             .HasForeignKey(l => l.UserId)
             .OnDelete(DeleteBehavior.NoAction);
-
+        
         modelBuilder.Entity<Script>().HasKey(s => s.ScriptId);
         modelBuilder
             .Entity<Script>()

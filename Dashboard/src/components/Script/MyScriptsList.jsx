@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import SearchScripts from "./SearchScripts.jsx";
+import SearchScripts from "../Search/SearchScripts.jsx";
 
 function MyScriptsList({
 	myScripts,
