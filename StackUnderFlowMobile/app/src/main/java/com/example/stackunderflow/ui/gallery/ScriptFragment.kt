@@ -28,27 +28,25 @@ class ScriptFragment : Fragment() {
     ): View? {
         _binding = FragmentScriptBinding.inflate(inflater, container, false)
 
-        scriptViewModel.GetScriptById(1)
+        /*scriptViewModel.GetScriptById(1)
         scriptViewModel.script.observe(viewLifecycleOwner) { script ->
             Log.d("ScriptFragment", "Received script: $script")
             Log.d("ScriptFragment", "Script ID: ${script.scriptId}")
-            Log.d("ScriptFragment", "Script Name: ${script.ScriptName}")
-            Log.d("ScriptFragment", "Description: ${script.Description}")
-            Log.d("ScriptFragment", "Input Script Type: ${script.InputScriptType}")
-            Log.d("ScriptFragment", "Output Script Type: ${script.OutputScriptType}")
-            Log.d("ScriptFragment", "Programming Language: ${script.ProgrammingLanguage}")
-            Log.d("ScriptFragment", "Visibility: ${script.Visibility}")
-            Log.d("ScriptFragment", "User ID: ${script.UserId}")
-            Log.d("ScriptFragment", "Creator Name: ${script.CreatorName}")
-        }
-
-
-
-
-        /*val textView: TextView = binding.textGallery
-        galleryViewModel.text.observe(viewLifecycleOwner) {
-          textView.text = it
+            Log.d("ScriptFragment", "Script Name: ${script.scriptName}")
+            Log.d("ScriptFragment", "Description: ${script.description}")
+            Log.d("ScriptFragment", "Input Script Type: ${script.inputScriptType}")
+            Log.d("ScriptFragment", "Output Script Type: ${script.outputScriptType}")
+            Log.d("ScriptFragment", "Programming Language: ${script.programmingLanguage}")
+            Log.d("ScriptFragment", "Visibility: ${script.visibility}")
+            Log.d("ScriptFragment", "User ID: ${script.userId}")
+            Log.d("ScriptFragment", "Creator Name: ${script.creatorName}")
         }*/
+
+        scriptViewModel.GetMyScript();
+        scriptViewModel.myScripts.observe(viewLifecycleOwner) { script ->
+            Log.d("ScriptFragment", "Received script: ${script.size}")}
+
+
         return inflater.inflate(R.layout.fragment_script, container, false)
       }
 

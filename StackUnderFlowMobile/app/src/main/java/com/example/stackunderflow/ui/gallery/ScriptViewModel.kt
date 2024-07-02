@@ -12,6 +12,8 @@ import io.reactivex.rxjava3.kotlin.addTo
 class ScriptViewModel(private val scriptRepository: ScriptRepository): ViewModel() {
 
     val script = MutableLiveData<ScriptModelDto>()
+
+    val myScripts = MutableLiveData<List<ScriptModelDto>>()
     private val disposeBag = CompositeDisposable()
     private val _text = MutableLiveData<String>().apply {
         value = "This is gallery Fragment"
@@ -24,8 +26,18 @@ class ScriptViewModel(private val scriptRepository: ScriptRepository): ViewModel
             Log.d("GetScriptById", "Received script: $post")
             this.script.postValue(post)
         }, { error ->
-            Log.d("Test error in getPostById",
+            Log.d("Test error in GetScriptById",
                 error.message?:"erroer")
+        }).addTo(disposeBag)
+    }
+
+    fun GetMyScript(){
+        scriptRepository.GetMyScripts().subscribe({ post ->
+            Log.d("GetMyScript", "Received all my scripts: $post")
+            this.myScripts.postValue(post)
+        }, { error ->
+            Log.d("Test error in GetMyScript",
+                error.message?:"error")
         }).addTo(disposeBag)
     }
 }

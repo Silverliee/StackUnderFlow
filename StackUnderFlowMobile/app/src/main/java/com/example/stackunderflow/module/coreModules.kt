@@ -4,7 +4,9 @@ import com.example.stackunderflow.repository.ScriptRepository
 import com.example.stackunderflow.repository.UsersRepository
 import com.example.stackunderflow.service.StackUnderFlowApiService
 import com.example.stackunderflow.ui.gallery.ScriptViewModel
+import com.example.stackunderflow.utils.AuthInterceptor
 import com.example.stackunderflow.utils.Constants
+import com.example.stackunderflow.utils.SessionManager
 import com.example.stackunderflow.viewModels.UserViewModel
 import okhttp3.OkHttpClient
 import org.koin.androidx.viewmodel.dsl.viewModel
@@ -17,7 +19,11 @@ import org.koin.dsl.module
 internal val coreModules = module {
     single { UsersRepository(get(named("apiStackUnderFlow"))) }
 
-    viewModel { UserViewModel(get()) }
+    single { SessionManager(get()) }
+
+    single { AuthInterceptor(get()) }
+
+    viewModel { UserViewModel(get(),get()) }
     single { ScriptRepository(get(named("apiStackUnderFlow"))) }  // Correction ici
 
     viewModel { ScriptViewModel(get()) }

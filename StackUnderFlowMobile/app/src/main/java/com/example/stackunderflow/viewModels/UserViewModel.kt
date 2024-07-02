@@ -3,28 +3,27 @@ package com.example.stackunderflow.viewModels
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.stackunderflow.dto.UserModelDto
-import com.example.stackunderflow.models.UserModel
+import com.example.stackunderflow.dto.LoginUserDto
+import com.example.stackunderflow.models.LoginResponse
 import com.example.stackunderflow.repository.UsersRepository
+import com.example.stackunderflow.utils.SessionManager
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.disposables.Disposable
 import io.reactivex.rxjava3.kotlin.addTo
 
 class UserViewModel
-    (private val usersRepository: UsersRepository) : ViewModel()
+    (private val usersRepository: UsersRepository, private val sessionManager: SessionManager) : ViewModel()
 {
-
     private val disposeBag = CompositeDisposable()
 
-    val userConnected: MutableLiveData<UserModel> = MutableLiveData()
+    val isLogged: MutableLiveData<Boolean> = MutableLiveData<Boolean>(false)
 
-
-
-    fun getLogin(userModeldto: UserModelDto): Disposable {
-        return this.usersRepository.login(userModeldto).subscribe({
-                result -> this.userConnected.postValue(result)
+    fun getLogin(loginUserDto: LoginUserDto): Disposable {
+        return this.usersRepository.login(loginUserDto).subscribe({
+                result -> this.isLogged.postValue(true)
+                sessionManager.saveAuthToken(result.authToken)
         }, { error ->
-            Log.d("Error in function getRecordingsByArtist", error.message ?: "error")
+            Log.d("Error in Login", error.message ?: "error")
         }).addTo(disposeBag)
     }
 }

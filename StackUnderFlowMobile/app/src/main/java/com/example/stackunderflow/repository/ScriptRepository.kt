@@ -10,4 +10,9 @@ class ScriptRepository( private val stackUnderFlowApiService: StackUnderFlowApiS
     {
         return stackUnderFlowApiService.getScriptById(id)
     }
+
+    fun GetMyScripts(): Flowable<List<ScriptModelDto>>
+    {
+        return stackUnderFlowApiService.GetMyScripts()
+    }
 }

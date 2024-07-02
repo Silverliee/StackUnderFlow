@@ -1,5 +1,7 @@
 package com.example.stackunderflow.module
 
+import android.content.Context
+import com.example.stackunderflow.utils.AuthInterceptor
 import com.example.stackunderflow.utils.Constants
 import com.google.gson.GsonBuilder
 import okhttp3.Interceptor
@@ -17,10 +19,10 @@ internal val remoteModule = module {
         createRetrofit(get(named("apiStackUnderFlowHttpClient")), Constants.StackUnderFlowUrl)
     }
 
-    single(named("apiStackUnderFlowHttpClient")) { createOkHttpClient() }
+    single(named("apiStackUnderFlowHttpClient")) { createOkHttpClient(get()) }
 }
 
-private fun createOkHttpClient(): OkHttpClient {
+private fun createOkHttpClient(context: Context): OkHttpClient {
     val interceptor = HttpLoggingInterceptor()
     interceptor.level = HttpLoggingInterceptor.Level.BODY
 
@@ -36,6 +38,7 @@ private fun createOkHttpClient(): OkHttpClient {
         .readTimeout(20, TimeUnit.SECONDS)
         .addInterceptor(interceptor)
         .addInterceptor(userAgentInterceptor)
+        .addInterceptor(AuthInterceptor(context))
         .build()
 }
 
