@@ -24,13 +24,13 @@
             android:src="@drawable/baseline_account_circle_24" />
 
         <EditText
-            android:id="@+id/mail_input"
+            android:id="@+id/email_input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="32dp"
             android:background="@drawable/login_shape"
             android:hint="@string/email"
-            android:inputType="text"
+            android:inputType="textEmailAddress"
             android:padding="18dp"
             android:textColor="@color/white"
             android:textColorHint="@color/white"
@@ -43,7 +43,7 @@
             android:layout_marginTop="16dp"
             android:background="@drawable/login_shape"
             android:hint="@string/username"
-            android:inputType="textPassword"
+            android:inputType="textPersonName"
             android:padding="18dp"
             android:textColor="@color/white"
             android:textColorHint="@color/white"
@@ -63,13 +63,14 @@
             android:textSize="20sp" />
 
         <Button
+            android:id="@+id/create_account_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="32dp"
             android:background="@drawable/login_shape"
             android:padding="18sp"
             android:text="@string/createAccount"
-            android:textColor="@color/black" />
+            android:textColor="@color/white" />
 
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

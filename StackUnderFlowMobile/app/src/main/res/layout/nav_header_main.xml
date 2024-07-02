@@ -27,6 +27,15 @@
             app:layout_constraintStart_toStartOf="parent"
             tools:ignore="MissingConstraints" />
 
+        <TextView
+            android:id="@+id/UserProfileNameNavBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toTopOf="@+id/textView10"
+            app:layout_constraintEnd_toStartOf="@+id/button_log_out"
+            app:layout_constraintStart_toEndOf="@+id/imageView"
+            app:layout_constraintTop_toTopOf="@+id/imageView" />
+
         <Button
             android:layout_width="50dp"
             android:layout_height="wrap_content"
@@ -37,13 +46,14 @@
             tools:layout_editor_absoluteY="3dp" />
 
         <TextView
+            android:id="@+id/textView10"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingTop="@dimen/nav_header_vertical_spacing"
             android:text="@string/nav_header_title"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-            tools:ignore="MissingConstraints"
-            app:layout_constraintTop_toBottomOf="@id/imageView"/>
+            app:layout_constraintTop_toBottomOf="@id/imageView"
+            tools:ignore="MissingConstraints" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 

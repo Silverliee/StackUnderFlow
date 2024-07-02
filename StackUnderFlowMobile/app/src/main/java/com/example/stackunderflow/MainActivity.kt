@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.widget.Button
+import android.widget.TextView
 import com.google.android.material.navigation.NavigationView
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
@@ -13,15 +14,18 @@ import androidx.navigation.ui.setupWithNavController
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.Observer
 import com.example.stackunderflow.databinding.ActivityMainBinding
 import com.example.stackunderflow.module.injectModuleDependencies
 import com.example.stackunderflow.ui.login.LoginActivity
+import com.example.stackunderflow.viewModels.UserViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
-
+    private val userViewModel : UserViewModel by viewModel()
     private var islogin = false
     private var isBooleanTrue = false
 
@@ -30,6 +34,7 @@ class MainActivity : AppCompatActivity() {
 
         injectModuleDependencies(this@MainActivity)
         // Check if user is logged in
+        userViewModel.getUserInfo()
         val sharedPreferences = getSharedPreferences("APP_PREFS", MODE_PRIVATE)
         val isLoggedIn = sharedPreferences.getBoolean("is_logged_in", false)
         if (!isLoggedIn) {
@@ -52,11 +57,13 @@ class MainActivity : AppCompatActivity() {
         // menu should be considered as top level destinations.
         appBarConfiguration = AppBarConfiguration(
             setOf(
-                R.id.nav_home, R.id.nav_scripts, R.id.nav_friends
+                R.id.nav_profile, R.id.nav_scripts, R.id.nav_friends, R.id.nav_feed
             ), drawerLayout
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
+
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -67,25 +74,21 @@ class MainActivity : AppCompatActivity() {
 
     override fun onSupportNavigateUp(): Boolean {
         val navController = findNavController(R.id.nav_host_fragment_content_main)
-        val button: Button = findViewById(R.id.button_log_out)
-        button.setOnClickListener {
-            // Toggle the boolean value
-            isBooleanTrue = !isBooleanTrue
 
-            // Switch the icon
-            if (islogin) {
-                button.setCompoundDrawablesWithIntrinsicBounds(
-                    ContextCompat.getDrawable(this, R.drawable.baseline_logout_24), null, null, null
-                )
-            } else {
-                button.setCompoundDrawablesWithIntrinsicBounds(
-                    ContextCompat.getDrawable(this, R.drawable.baseline_login_24), null, null, null
-                )
-            }
-
-            // Toggle the icon state
-            islogin = !islogin
+        val logoutButton: Button = findViewById(R.id.button_log_out)
+        val UsernameTexteView: TextView = findViewById(R.id.UserProfileNameNavBar)
+        // Set a click listener for the logout button
+        logoutButton.setOnClickListener {
+            userViewModel.isLogged.value = false
+            val intent = Intent(this, LoginActivity::class.java)
+            startActivity(intent)
+            finish()
         }
+
+        userViewModel.user.observe(this, Observer { user ->
+            UsernameTexteView.text = user.username
+        })
+
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
 }
