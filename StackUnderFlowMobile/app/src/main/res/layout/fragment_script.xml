@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/purple_200"
-    tools:context=".ui.gallery.ScriptFragment" >
+    tools:context=".ui.Scripts.ScriptFragment" >
 
     <RelativeLayout
         android:id="@+id/search_script_layout"
@@ -14,7 +14,7 @@
         android:layout_margin="10dp">
 
         <EditText
-            android:id="@+id/seach_username_input"
+            android:id="@+id/seach_script_input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
@@ -44,10 +44,10 @@
     </RelativeLayout>
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/search_user_recycler_view"
+        android:id="@+id/search_script_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/search_script_layout"
         android:padding="10dp"
-        tools:listitem="@layout/recycler_view_scritps" />
+        tools:listitem="@layout/item_scritps" />
 </RelativeLayout>

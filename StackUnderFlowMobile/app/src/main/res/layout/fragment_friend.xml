@@ -53,7 +53,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/search_user_layout"
         android:padding="10dp"
-        tools:listitem="@layout/recycler_view_friends" />
+        tools:listitem="@layout/item_friends" />
 
 
 </RelativeLayout>

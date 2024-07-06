@@ -23,7 +23,7 @@ interface StackUnderFlowApiService {
     @GET("Script/{id}")
     fun getScriptById(@Path("id") id: Int): Flowable<ScriptModelDto>
 
-    @GET("Script/")
+    @GET("Script/user")
     fun GetMyScripts(): Flowable<List<ScriptModelDto>>
 
     @GET("User/")

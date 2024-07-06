@@ -1,4 +1,4 @@
-package com.example.stackunderflow.ui.gallery
+package com.example.stackunderflow.ui.Scripts
 
 import android.util.Log
 import androidx.lifecycle.LiveData
@@ -15,10 +15,6 @@ class ScriptViewModel(private val scriptRepository: ScriptRepository): ViewModel
 
     val myScripts = MutableLiveData<List<ScriptModelDto>>()
     private val disposeBag = CompositeDisposable()
-    private val _text = MutableLiveData<String>().apply {
-        value = "This is gallery Fragment"
-    }
-    val text: LiveData<String> = _text
 
 
     fun GetScriptById(id: Int){

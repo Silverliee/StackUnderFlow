@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#ECECECEC"
+    android:background="@color/purple_200"
     android:elevation="3dp"
     tools:context=".ui.home.ProfileFragment">
 
@@ -37,24 +37,13 @@
                         android:id="@+id/layout_back"
                         android:layout_width="match_parent"
                         android:layout_height="360dp"
-                        android:background="@drawable/top_background"
+                        android:background="@color/purple_200"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintHorizontal_bias="0.0"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent">
 
                     </androidx.constraintlayout.widget.ConstraintLayout>
-
-                    <ImageView
-                        android:id="@+id/imageView9"
-                        android:layout_width="0dp"
-                        android:layout_height="0dp"
-                        android:scaleType="centerCrop"
-                        android:src="@drawable/circles"
-                        app:layout_constraintBottom_toBottomOf="@id/layout_back"
-                        app:layout_constraintEnd_toEndOf="@id/layout_back"
-                        app:layout_constraintStart_toStartOf="@id/layout_back"
-                        app:layout_constraintTop_toTopOf="@id/layout_back" />
 
                     <ImageView
                         android:id="@+id/imageViewProfile"
@@ -74,7 +63,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="16dp"
-                        android:text="Profile Name"
+                        android:text="@string/UsernameTopProfile"
                         android:textColor="#ffffff"
                         android:textSize="20sp"
                         android:textStyle="bold"
@@ -87,7 +76,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="15dp"
-                        android:text="Email@gmail.com"
+                        android:text="@string/emailTopProfile"
                         android:textColor="#ffffff"
                         android:textSize="15sp"
                         app:layout_constraintEnd_toEndOf="@+id/textViewProfileName"
@@ -95,33 +84,41 @@
                         app:layout_constraintTop_toBottomOf="@+id/textViewProfileName" />
 
                     <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="400dp"
+                        android:layout_width="368dp"
+                        android:layout_height="196dp"
                         android:layout_marginStart="24dp"
                         android:layout_marginTop="60dp"
                         android:layout_marginEnd="24dp"
-                        android:background="@drawable/background_linear_layout"
+                        android:layout_marginBottom="10dp"
+                        android:background="@drawable/grey_background"
                         android:elevation="3dp"
                         android:orientation="vertical"
+                        app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.0"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/textViewEmailTop">
+                        app:layout_constraintTop_toBottomOf="@+id/textViewEmailTop"
+                        app:layout_constraintVertical_bias="1.0">
 
 
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_margin="10dp"
+                            android:layout_marginLeft="10dp"
+                            android:layout_marginTop="20dp"
+                            android:layout_marginRight="10dp"
+                            android:layout_marginBottom="10dp"
+                            android:background="@drawable/profile_rounded_layout"
                             android:orientation="horizontal">
 
                             <TextView
                                 android:id="@+id/textView1"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginTop="30dp"
+                                android:layout_margin="10dp"
                                 android:layout_weight="1"
-                                android:text="Email :"
-                                android:textColor="#182693"
+                                android:text="@string/profileEmail"
+                                android:textColor="@color/white"
                                 android:textSize="18sp"
                                 android:textStyle="bold" />
 
@@ -129,11 +126,11 @@
                                 android:id="@+id/textViewEmailChange"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginTop="30dp"
+                                android:layout_margin="10dp"
                                 android:layout_weight="1"
-                                android:text="Email@gmail.com"
+                                android:text="@string/ProfileEmailText"
                                 android:textAlignment="viewEnd"
-                                android:textColor="#5B5B5B"
+                                android:textColor="@color/white"
                                 android:textSize="16sp" />
 
                         </LinearLayout>
@@ -149,16 +146,17 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_margin="10dp"
+                            android:background="@drawable/profile_rounded_layout"
                             android:orientation="horizontal">
 
                             <TextView
                                 android:id="@+id/textView4"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginTop="30dp"
+                                android:layout_margin="10dp"
                                 android:layout_weight="1"
-                                android:text="Username :"
-                                android:textColor="#182693"
+                                android:text="@string/ProfileUsername"
+                                android:textColor="@color/white"
                                 android:textSize="18sp"
                                 android:textStyle="bold" />
 
@@ -166,11 +164,11 @@
                                 android:id="@+id/textViewUsernameChange"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginTop="30dp"
+                                android:layout_margin="10dp"
                                 android:layout_weight="1"
-                                android:text="Username"
+                                android:text="@string/ProfileUsernameText"
                                 android:textAlignment="viewEnd"
-                                android:textColor="#5B5B5B"
+                                android:textColor="@color/white"
                                 android:textSize="16sp" />
 
                         </LinearLayout>

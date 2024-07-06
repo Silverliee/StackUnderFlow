@@ -20,4 +20,10 @@
     <string name="todo">TODO</string>
     <string name="register">Register</string>
     <string name="menu_feed">Feed</string>
+    <string name="profileEmail">Email :</string>
+    <string name="ProfileUsernameText">Username</string>
+    <string name="ProfileUsername">Username :</string>
+    <string name="ProfileEmailText">Email@gmail.com</string>
+    <string name="emailTopProfile">Email@gmail.com</string>
+    <string name="UsernameTopProfile">Profile Name</string>
 </resources>

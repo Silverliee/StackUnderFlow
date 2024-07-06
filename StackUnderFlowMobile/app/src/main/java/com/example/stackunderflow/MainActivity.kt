@@ -17,6 +17,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import com.example.stackunderflow.databinding.ActivityMainBinding
 import com.example.stackunderflow.module.injectModuleDependencies
+import com.example.stackunderflow.ui.Scripts.ScriptViewModel
 import com.example.stackunderflow.ui.login.LoginActivity
 import com.example.stackunderflow.viewModels.UserViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -26,6 +27,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
     private val userViewModel : UserViewModel by viewModel()
+    private val scriptViewModel : ScriptViewModel by viewModel()
     private var islogin = false
     private var isBooleanTrue = false
 
@@ -35,6 +37,7 @@ class MainActivity : AppCompatActivity() {
         injectModuleDependencies(this@MainActivity)
         // Check if user is logged in
         userViewModel.getUserInfo()
+        scriptViewModel.GetMyScript()
         val sharedPreferences = getSharedPreferences("APP_PREFS", MODE_PRIVATE)
         val isLoggedIn = sharedPreferences.getBoolean("is_logged_in", false)
         if (!isLoggedIn) {
