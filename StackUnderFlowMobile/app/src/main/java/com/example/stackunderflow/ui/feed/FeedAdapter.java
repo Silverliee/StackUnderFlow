@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -40,10 +41,17 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
 
         @Override
         public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-            holder.scriptName.setText(scripts.get(position).getScriptName());
-            holder.scriptDescription.setText(scripts.get(position).getDescription());
-            holder.scriptNumberOfLikes.setText(String.valueOf((scripts.get(position).getNumberOfLikes())));
-            holder.scriptUsername.setText(scripts.get(position).getCreatorName());
+            ScriptModelDto currentScript = scripts.get(position);
+            holder.scriptName.setText(currentScript.getScriptName());
+            holder.scriptDescription.setText(currentScript.getDescription());
+            holder.scriptNumberOfLikes.setText(String.valueOf(currentScript.getNumberOfLikes()));
+            holder.scriptUsername.setText(currentScript.getCreatorName());
+
+            if (currentScript.isLiked()) {
+                holder.scriptLikeButton.setImageResource(R.drawable.baseline_favorite_24_red); // ic_like_red est l'ID de la ressource pour l'icône rouge
+            } else {
+                holder.scriptLikeButton.setImageResource(R.drawable.baseline_favorite_24); // Utilisez l'icône par défaut ou une autre si nécessaire
+            }
         }
 
         @Override
@@ -56,8 +64,8 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
             TextView scriptName;
             TextView scriptDescription;
             TextView scriptNumberOfLikes;
-            Button scriptCommentButton;
-            Button scriptLikeButton;
+            ImageButton scriptCommentButton;
+            ImageButton scriptLikeButton;
 
             public ViewHolder(@NonNull View itemView) {
                 super(itemView);
@@ -65,7 +73,8 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
                 scriptName = itemView.findViewById(R.id.script_nameFeed);
                 scriptDescription = itemView.findViewById(R.id.script_descriptionFeed);
                 scriptNumberOfLikes = itemView.findViewById(R.id.number_of_likesFeed);
-                scriptCommentButton = itemView.findViewById(R.id.comment_buttonFeed);
+                scriptCommentButton = itemView.findViewById(R.id.CommentButtonFeed);
+                scriptLikeButton = itemView.findViewById(R.id.likeButtonFeed);
             }
         }
     }

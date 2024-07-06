@@ -80,11 +80,11 @@
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </LinearLayout>
 
-            <LinearLayout
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:gravity="center_vertical"
+
                 android:orientation="horizontal">
 
                 <TextView
@@ -92,28 +92,48 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="123"
+                    android:layout_marginRight="8dp"
                     android:textColor="@color/white"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintRight_toLeftOf="@+id/likeButtonFeed"
+                    android:layout_marginLeft="25dp"
                     android:textSize="14sp" />
 
                 <ImageButton
+                    android:id="@+id/likeButtonFeed"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     app:srcCompat="@drawable/baseline_favorite_24"
-                    android:backgroundTint="@color/purple_500"
+                    android:backgroundTint="@color/purple_700"
+                    app:layout_constraintRight_toLeftOf="@+id/favoriteButtonFeed"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
                 />
 
-                <View
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1" />
-
-                <Button
-                    android:id="@+id/comment_buttonFeed"
+                <ImageButton
+                    android:id="@+id/favoriteButtonFeed"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    app:srcCompat="@drawable/baseline_bookmark_add_24"
                     android:backgroundTint="@color/purple_700"
-                    android:text="Comment" />
-            </LinearLayout>
+                    app:layout_constraintRight_toLeftOf="@+id/CommentButtonFeed"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    />
+
+
+                <ImageButton
+                    android:id="@+id/CommentButtonFeed"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:srcCompat="@drawable/baseline_message_24"
+                    android:backgroundTint="@color/purple_700"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    />
+            </androidx.constraintlayout.widget.ConstraintLayout>
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 </androidx.constraintlayout.widget.ConstraintLayout>
