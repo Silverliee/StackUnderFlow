@@ -15,4 +15,14 @@ class ScriptRepository( private val stackUnderFlowApiService: StackUnderFlowApiS
     {
         return stackUnderFlowApiService.GetMyScripts()
     }
+
+    fun CreateLike(scriptId : Int) : Flowable<Int>
+    {
+        return stackUnderFlowApiService.createLike(scriptId)
+    }
+
+    fun DeleteLike(scriptId : Int) : Flowable<Void>
+    {
+        return stackUnderFlowApiService.deleteLike(scriptId)
+    }
 }

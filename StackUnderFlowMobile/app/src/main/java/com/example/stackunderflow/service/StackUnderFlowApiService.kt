@@ -7,6 +7,7 @@ import com.example.stackunderflow.models.LoginResponse
 import com.example.stackunderflow.models.User
 import io.reactivex.rxjava3.core.Flowable
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Path
@@ -28,5 +29,11 @@ interface StackUnderFlowApiService {
 
     @GET("User/")
     fun getUserInfo(): Flowable<User>
+
+    @POST("likes/{id}")
+    fun createLike(@Path("id") id: Int) : Flowable<Int>
+
+    @DELETE("likes/{id}")
+    fun deleteLike(@Path("id") id: Int) : Flowable<Void>
 
 }

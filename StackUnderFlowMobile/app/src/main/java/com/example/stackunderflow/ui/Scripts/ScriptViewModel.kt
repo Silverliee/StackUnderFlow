@@ -36,4 +36,22 @@ class ScriptViewModel(private val scriptRepository: ScriptRepository): ViewModel
                 error.message?:"error")
         }).addTo(disposeBag)
     }
+
+    fun CreateLike(scriptId: Int){
+        scriptRepository.CreateLike(scriptId).subscribe({ post ->
+            Log.d("Like A Script", "Like: $post")
+        }, { error ->
+            Log.d("Test error in CreateLike",
+                error.message?:"error")
+        }).addTo(disposeBag)
+    }
+
+    fun DeleteLike(scriptId: Int){
+        scriptRepository.DeleteLike(scriptId).subscribe({ post ->
+            Log.d("UnLike A Script", "Unlike : $post")
+        }, { error ->
+            Log.d("Test error in DeleteLike",
+                error.message?:"error")
+        }).addTo(disposeBag)
+    }
 }

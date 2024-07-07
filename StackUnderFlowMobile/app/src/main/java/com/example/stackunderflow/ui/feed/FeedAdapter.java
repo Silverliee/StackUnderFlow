@@ -1,12 +1,11 @@
 package com.example.stackunderflow.ui.feed;
 
 
-import android.annotation.SuppressLint;
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
@@ -15,18 +14,24 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.stackunderflow.R;
 import com.example.stackunderflow.dto.ScriptModelDto;
-import com.example.stackunderflow.ui.Scripts.RecyclerViewAdapterScripts;
+import com.example.stackunderflow.repository.ScriptRepository;
+import com.example.stackunderflow.ui.Scripts.ScriptViewModel;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
+
+import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
 
         private final Context context;
         private final List<ScriptModelDto> scripts;
 
+        private final ScriptViewModel scriptViewModel;
+
         // Constructor modification
-        public FeedAdapter(Context context, List<ScriptModelDto> scripts) {
+        public FeedAdapter(ScriptViewModel scriptViewModel, Context context, List<ScriptModelDto> scripts) {
+            this.scriptViewModel = scriptViewModel;
             this.context = context;
             this.scripts = scripts;
         }
@@ -52,6 +57,21 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
             } else {
                 holder.scriptLikeButton.setImageResource(R.drawable.baseline_favorite_24); // Utilisez l'icône par défaut ou une autre si nécessaire
             }
+
+            holder.scriptLikeButton.setOnClickListener(view -> {
+                if (currentScript.isLiked()) {
+                    scriptViewModel.DeleteLike(currentScript.getScriptId());
+                    //currentScript.setLiked(false);
+                    //currentScript.setNumberOfLikes(currentScript.getNumberOfLikes() - 1);
+                    holder.scriptLikeButton.setImageResource(R.drawable.baseline_favorite_24);
+                } else {
+                    scriptViewModel.CreateLike(currentScript.getScriptId());
+                    //currentScript.setLiked(true);
+                    //currentScript.setNumberOfLikes(currentScript.getNumberOfLikes() + 1);
+                    holder.scriptLikeButton.setImageResource(R.drawable.baseline_favorite_24_red);
+                }
+                holder.scriptNumberOfLikes.setText(String.valueOf(currentScript.getNumberOfLikes()));
+            });
         }
 
         @Override
@@ -67,6 +87,8 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
             ImageButton scriptCommentButton;
             ImageButton scriptLikeButton;
 
+            boolean isLiked;
+
             public ViewHolder(@NonNull View itemView) {
                 super(itemView);
                 scriptUsername = itemView.findViewById(R.id.script_userIdFeed);
@@ -75,6 +97,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
                 scriptNumberOfLikes = itemView.findViewById(R.id.number_of_likesFeed);
                 scriptCommentButton = itemView.findViewById(R.id.CommentButtonFeed);
                 scriptLikeButton = itemView.findViewById(R.id.likeButtonFeed);
+                isLiked = false;
             }
         }
     }

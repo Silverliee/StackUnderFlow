@@ -7,11 +7,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.stackunderflow.R
 import com.example.stackunderflow.databinding.FragmentFeedBinding
-import com.example.stackunderflow.ui.Scripts.RecyclerViewAdapterScripts
 import com.example.stackunderflow.ui.Scripts.ScriptViewModel
-import com.example.stackunderflow.viewModels.UserViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class FeedFragment : Fragment() {
@@ -33,7 +30,7 @@ class FeedFragment : Fragment() {
         scriptViewModel.GetMyScript()
         scriptViewModel.myScripts.observe(viewLifecycleOwner) { scripts ->
             Log.d("ScriptFragment", "Received script: ${scripts.size}")
-            val feedAdapter = FeedAdapter(context, scripts)
+            val feedAdapter = FeedAdapter(scriptViewModel ,context, scripts)
             binding.feedRecyclerView.adapter = feedAdapter
             binding.feedRecyclerView.layoutManager = LinearLayoutManager(context)
         }
