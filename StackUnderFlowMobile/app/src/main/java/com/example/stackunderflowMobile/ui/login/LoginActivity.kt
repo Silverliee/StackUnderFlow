@@ -8,7 +8,7 @@ import android.widget.EditText
 import android.widget.Toast
 import com.example.stackunderflow.MainActivity
 import com.example.stackunderflow.R
-import com.example.stackunderflow.dto.LoginUserDto
+import com.example.stackunderflowMobile.dto.LoginUserDto
 import com.example.stackunderflow.module.injectModuleDependencies
 import com.example.stackunderflow.viewModels.UserViewModel
 import androidx.lifecycle.Observer

@@ -3,8 +3,8 @@ package com.example.stackunderflow.viewModels
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.stackunderflow.dto.LoginUserDto
-import com.example.stackunderflow.dto.RegisterUserDto
+import com.example.stackunderflowMobile.dto.LoginUserDto
+import com.example.stackunderflowMobile.dto.RegisterUserDto
 import com.example.stackunderflow.models.User
 import com.example.stackunderflow.repository.UsersRepository
 import com.example.stackunderflow.utils.SessionManager

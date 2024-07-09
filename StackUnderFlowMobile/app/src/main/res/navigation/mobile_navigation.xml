@@ -7,24 +7,24 @@
 
     <fragment
         android:id="@+id/nav_feed"
-        android:name="com.example.stackunderflow.ui.feed.FeedFragment"
+        android:name="com.example.stackunderflowMobile.ui.feed.FeedFragment"
         android:label="@string/menu_feed"
         tools:layout="@layout/fragment_feed" />
     <fragment
         android:id="@+id/nav_profile"
-        android:name="com.example.stackunderflow.ui.home.ProfileFragment"
+        android:name="com.example.stackunderflowMobile.ui.home.ProfileFragment"
         android:label="@string/menu_home"
         tools:layout="@layout/fragment_profile" />
 
     <fragment
         android:id="@+id/nav_scripts"
-        android:name="com.example.stackunderflow.ui.Scripts.ScriptFragment"
+        android:name="com.example.stackunderflowMobile.ui.Scripts.ScriptFragment"
         android:label="@string/menu_scripts"
         tools:layout="@layout/fragment_script" />
 
     <fragment
         android:id="@+id/nav_friends"
-        android:name="com.example.stackunderflow.ui.slideshow.FriendsFragment"
+        android:name="com.example.stackunderflowMobile.ui.slideshow.FriendsFragment"
         android:label="@string/menu_friends"
         tools:layout="@layout/fragment_friend" />
 </navigation>

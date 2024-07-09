@@ -1,4 +1,4 @@
-package com.example.stackunderflow.dto
+package com.example.stackunderflowMobile.dto
 
 import com.google.gson.annotations.SerializedName
 

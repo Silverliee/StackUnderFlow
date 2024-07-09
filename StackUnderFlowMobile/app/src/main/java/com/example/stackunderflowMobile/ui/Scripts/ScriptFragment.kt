@@ -1,17 +1,15 @@
 package com.example.stackunderflow.ui.Scripts
 
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.example.stackunderflow.R
 import com.example.stackunderflow.databinding.FragmentScriptBinding
+import com.example.stackunderflowMobile.ui.Scripts.RecyclerViewAdapterScripts
+import com.example.stackunderflowMobile.ui.Scripts.ScriptViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class ScriptFragment : Fragment() {

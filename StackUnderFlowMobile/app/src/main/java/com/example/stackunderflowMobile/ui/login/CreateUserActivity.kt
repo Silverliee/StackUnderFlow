@@ -6,11 +6,9 @@ import android.widget.Button
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import com.example.stackunderflow.R
-import com.example.stackunderflow.dto.RegisterUserDto
-import com.example.stackunderflow.service.StackUnderFlowApiService
+import com.example.stackunderflowMobile.dto.RegisterUserDto
 import com.example.stackunderflow.viewModels.UserViewModel
 import androidx.lifecycle.Observer
-import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class CreateUserActivity : AppCompatActivity() {

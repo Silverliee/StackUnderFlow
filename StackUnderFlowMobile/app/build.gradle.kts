@@ -69,7 +69,7 @@ dependencies {
     // Koin DI
     implementation("io.insert-koin:koin-core:3.5.0")
     implementation("io.insert-koin:koin-android:3.5.0")
-    implementation("org.jetbrains.kotlin:kotlin-stdlib:1.8.10") // Assurez-vous que cette version correspond à celle du plugin
+    implementation("org.jetbrains.kotlin:kotlin-stdlib:1.8.10")
     implementation("androidx.core:core-ktx:1.13.1")
     implementation("androidx.appcompat:appcompat:1.7.0")
     implementation("com.google.android.material:material:1.12.0")

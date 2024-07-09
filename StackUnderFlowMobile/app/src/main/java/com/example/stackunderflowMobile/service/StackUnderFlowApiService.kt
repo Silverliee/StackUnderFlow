@@ -1,8 +1,8 @@
 package com.example.stackunderflow.service
 
-import com.example.stackunderflow.dto.LoginUserDto
-import com.example.stackunderflow.dto.RegisterUserDto
-import com.example.stackunderflow.dto.ScriptModelDto
+import com.example.stackunderflowMobile.dto.LoginUserDto
+import com.example.stackunderflowMobile.dto.RegisterUserDto
+import com.example.stackunderflowMobile.dto.ScriptModelDto
 import com.example.stackunderflow.models.LoginResponse
 import com.example.stackunderflow.models.User
 import io.reactivex.rxjava3.core.Flowable
@@ -30,10 +30,10 @@ interface StackUnderFlowApiService {
     @GET("User/")
     fun getUserInfo(): Flowable<User>
 
-    @POST("likes/{id}")
+    @POST("SocialInteraction/likes/{id}")
     fun createLike(@Path("id") id: Int) : Flowable<Int>
 
-    @DELETE("likes/{id}")
+    @DELETE("SocialInteraction/likes/{id}")
     fun deleteLike(@Path("id") id: Int) : Flowable<Void>
 
 }

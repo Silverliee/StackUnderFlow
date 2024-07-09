@@ -1,4 +1,4 @@
-package com.example.stackunderflow.ui.feed
+package com.example.stackunderflowMobile.ui.feed
 
 import android.os.Bundle
 import android.util.Log
@@ -8,7 +8,8 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.stackunderflow.databinding.FragmentFeedBinding
-import com.example.stackunderflow.ui.Scripts.ScriptViewModel
+import com.example.stackunderflow.ui.feed.FeedViewModel
+import com.example.stackunderflowMobile.ui.Scripts.ScriptViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class FeedFragment : Fragment() {
@@ -23,14 +24,14 @@ class FeedFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentFeedBinding.inflate(inflater, container, false)
         val view = binding.root
 
         scriptViewModel.GetMyScript()
         scriptViewModel.myScripts.observe(viewLifecycleOwner) { scripts ->
             Log.d("ScriptFragment", "Received script: ${scripts.size}")
-            val feedAdapter = FeedAdapter(scriptViewModel ,context, scripts)
+            val feedAdapter = FeedAdapter(scriptViewModel, context, scripts)
             binding.feedRecyclerView.adapter = feedAdapter
             binding.feedRecyclerView.layoutManager = LinearLayoutManager(context)
         }
