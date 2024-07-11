@@ -16,7 +16,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import com.example.stackunderflow.databinding.ActivityMainBinding
 import com.example.stackunderflow.module.injectModuleDependencies
-import com.example.stackunderflowMobile.ui.Scripts.ScriptViewModel
+import com.example.stackunderflow.ui.Scripts.ScriptViewModel
 import com.example.stackunderflow.ui.login.LoginActivity
 import com.example.stackunderflow.viewModels.UserViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel

@@ -1,4 +1,4 @@
-package com.example.stackunderflowMobile.ui.feed
+package com.example.stackunderflow.ui.feed
 
 import android.os.Bundle
 import android.util.Log
@@ -8,8 +8,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.stackunderflow.databinding.FragmentFeedBinding
-import com.example.stackunderflow.ui.feed.FeedViewModel
-import com.example.stackunderflowMobile.ui.Scripts.ScriptViewModel
+import com.example.stackunderflow.ui.Scripts.ScriptViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class FeedFragment : Fragment() {

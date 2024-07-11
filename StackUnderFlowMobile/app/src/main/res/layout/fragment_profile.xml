@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@color/purple_200"
     android:elevation="3dp"
-    tools:context=".ui.home.ProfileFragment">
+    tools:context="com.example.stackunderflow.ui.home.ProfileFragment">
 
     <ScrollView
         android:layout_width="match_parent"

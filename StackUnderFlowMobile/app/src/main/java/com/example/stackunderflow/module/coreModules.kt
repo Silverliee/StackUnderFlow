@@ -3,7 +3,7 @@ package com.example.stackunderflow.module
 import com.example.stackunderflow.repository.ScriptRepository
 import com.example.stackunderflow.repository.UsersRepository
 import com.example.stackunderflow.service.StackUnderFlowApiService
-import com.example.stackunderflowMobile.ui.Scripts.ScriptViewModel
+import com.example.stackunderflow.ui.Scripts.ScriptViewModel
 import com.example.stackunderflow.utils.AuthInterceptor
 import com.example.stackunderflow.utils.Constants
 import com.example.stackunderflow.utils.SessionManager

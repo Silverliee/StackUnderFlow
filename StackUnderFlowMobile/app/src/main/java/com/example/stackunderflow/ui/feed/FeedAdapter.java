@@ -1,4 +1,4 @@
-package com.example.stackunderflowMobile.ui.feed;
+package com.example.stackunderflow.ui.feed;
 
 
 import android.content.Context;
@@ -12,8 +12,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.stackunderflow.R;
-import com.example.stackunderflowMobile.dto.ScriptModelDto;
-import com.example.stackunderflowMobile.ui.Scripts.ScriptViewModel;
+import com.example.stackunderflow.dto.ScriptModelDto;
+import com.example.stackunderflow.ui.Scripts.ScriptViewModel;
 
 import java.util.List;
 
@@ -55,16 +55,18 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
         holder.scriptLikeButton.setOnClickListener(view -> {
             if (currentScript.isLiked()) {
                 scriptViewModel.DeleteLike(currentScript.getScriptId());
-                //currentScript.setLiked(false);
-                //currentScript.setNumberOfLikes(currentScript.getNumberOfLikes() - 1);
-                //holder.scriptLikeButton.setImageResource(R.drawable.baseline_favorite_24);
+                currentScript.setLiked(false);
+                currentScript.setNumberOfLikes(currentScript.getNumberOfLikes() - 1);
+                holder.scriptLikeButton.setImageResource(R.drawable.baseline_favorite_24);
+
             } else {
                 scriptViewModel.CreateLike(currentScript.getScriptId());
-                //currentScript.setLiked(true);
-                //currentScript.setNumberOfLikes(currentScript.getNumberOfLikes() + 1);
-                //holder.scriptLikeButton.setImageResource(R.drawable.baseline_favorite_24_red);
+                currentScript.setLiked(true);
+                currentScript.setNumberOfLikes(currentScript.getNumberOfLikes() + 1);
+                holder.scriptLikeButton.setImageResource(R.drawable.baseline_favorite_24_red);
+
             }
-            scriptViewModel.GetMyScript();
+
             holder.scriptNumberOfLikes.setText(String.valueOf(currentScript.getNumberOfLikes()));
         });
     }

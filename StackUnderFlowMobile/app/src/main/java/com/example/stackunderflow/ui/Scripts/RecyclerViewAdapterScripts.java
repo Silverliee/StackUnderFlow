@@ -1,4 +1,4 @@
-package com.example.stackunderflowMobile.ui.Scripts;
+package com.example.stackunderflow.ui.Scripts;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -11,7 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.stackunderflow.R;
-import com.example.stackunderflowMobile.dto.ScriptModelDto;
+import com.example.stackunderflow.dto.ScriptModelDto;
 
 import java.util.ArrayList;
 import java.util.List;

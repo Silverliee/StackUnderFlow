@@ -1,4 +1,4 @@
-package com.example.stackunderflowMobile.dto
+package com.example.stackunderflow.dto
 
 import com.google.gson.annotations.SerializedName
 
@@ -12,8 +12,8 @@ data class ScriptModelDto(
     @SerializedName("visibility") val visibility: String?,
     @SerializedName("userId") val userId: Int,
     @SerializedName("creatorName") val creatorName: String?,
-    @SerializedName("numberOfLikes") val numberOfLikes: Int,
-    @SerializedName("isLiked") val isLiked: Boolean
+    @SerializedName("numberOfLikes") var numberOfLikes: Int,
+    @SerializedName("isLiked") var isLiked: Boolean
 ) {
 }
 

@@ -1,9 +1,9 @@
-package com.example.stackunderflowMobile.ui.Scripts
+package com.example.stackunderflow.ui.Scripts
 
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.stackunderflowMobile.dto.ScriptModelDto
+import com.example.stackunderflow.dto.ScriptModelDto
 import com.example.stackunderflow.repository.ScriptRepository
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.kotlin.addTo

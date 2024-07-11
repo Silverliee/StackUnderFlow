@@ -1,8 +1,8 @@
 package com.example.stackunderflow.service
 
-import com.example.stackunderflowMobile.dto.LoginUserDto
-import com.example.stackunderflowMobile.dto.RegisterUserDto
-import com.example.stackunderflowMobile.dto.ScriptModelDto
+import com.example.stackunderflow.dto.LoginUserDto
+import com.example.stackunderflow.dto.RegisterUserDto
+import com.example.stackunderflow.dto.ScriptModelDto
 import com.example.stackunderflow.models.LoginResponse
 import com.example.stackunderflow.models.User
 import io.reactivex.rxjava3.core.Flowable

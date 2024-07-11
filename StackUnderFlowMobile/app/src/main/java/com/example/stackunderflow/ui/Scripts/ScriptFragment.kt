@@ -8,8 +8,6 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.stackunderflow.databinding.FragmentScriptBinding
-import com.example.stackunderflowMobile.ui.Scripts.RecyclerViewAdapterScripts
-import com.example.stackunderflowMobile.ui.Scripts.ScriptViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class ScriptFragment : Fragment() {
