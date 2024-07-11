@@ -12,9 +12,14 @@ public class ScriptRepository(MySqlDbContext context) : IScriptRepository
         return await context.Scripts.ToListAsync();
     }
     
-    public async Task<List<Script?>> GetScripts(int offset, int records)
+    public async Task<List<Script?>> GetScripts(int offset, int records, string visibility)
     {
-        return await context.Scripts.Skip(offset).Take(records).ToListAsync();
+        return await context.Scripts
+            .Where(x => x.Visibility == visibility)
+            .OrderByDescending(x => x.ScriptId)
+            .Skip(offset)
+            .Take(records)
+            .ToListAsync();
     }
 
     //get script by id
@@ -53,10 +58,22 @@ public class ScriptRepository(MySqlDbContext context) : IScriptRepository
         await context.SaveChangesAsync();
     }
 
-    public async Task<List<Script?>> GetScriptsByKeyWord(string keyword)
+    public async Task<(List<Script?> scripts, int totalCount)> GetScriptsByKeyWord(string keyword, int offset, int records, string visibility)
     {
-        return await context
-            .Scripts.Where(x => x.ScriptName.Contains(keyword) || x.Description.Contains(keyword))
+        var filteredScripts = await context
+            .Scripts
+            .Where(x => (x.ScriptName.Contains(keyword) || x.Description.Contains(keyword)) && x.Visibility == visibility)
+            .OrderByDescending(x => x.ScriptId)
+            .Skip(offset)
+            .Take(records)
             .ToListAsync();
+
+        var totalCount = await context
+            .Scripts
+            .Where(x => (x.ScriptName.Contains(keyword) || x.Description.Contains(keyword)) && x.Visibility == visibility)
+            .CountAsync();
+
+        return (filteredScripts, totalCount);
     }
+
 }

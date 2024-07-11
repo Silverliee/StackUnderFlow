@@ -333,13 +333,13 @@ namespace StackUnderFlow.Application.Controllers
         [Authorize]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetScriptsByKeyWord(string keyword)
+        public async Task<IActionResult> GetScriptsByKeyWord(string keyword, [FromQuery] int offset = 0, [FromQuery] int records = 5, [FromQuery] string visibility = "Public")
         {
             var userId = Convert.ToInt32(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
             try
             {
                 BackgroundJob.Enqueue(() => Console.WriteLine("getting scripts by keyword"));
-                var scripts = await scriptService.GetScriptsByKeyWord(keyword, userId);
+                var scripts = await scriptService.GetScriptsByKeyWord(keyword, userId, offset,records,visibility);
                 return Ok(scripts);
             }
             catch(Exception e)

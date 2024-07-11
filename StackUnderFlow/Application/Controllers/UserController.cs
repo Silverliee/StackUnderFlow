@@ -82,7 +82,7 @@ public class UserController(ILoginService loginService,
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
     }
-    [HttpGet("{keyword}")]
+    [HttpGet("search/{keyword}")]
     [Authorize]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -90,5 +90,29 @@ public class UserController(ILoginService loginService,
     {
         var users = await loginService.SearchUsersByKeyword(keyword);
         return Ok(users);
+    }
+    
+    [HttpGet("{userId:int}")]
+    [Authorize]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> GetUserById(int userId)
+    {
+        try
+        {
+            BackgroundJob.Enqueue(() => Console.WriteLine("Getting user by id"));
+            var user = await loginService.GetUserById(userId);
+            if (user == null)
+            {
+                return NotFound();
+            }
+            return Ok(user);
+        }
+        catch (Exception e)
+        {
+            bugsnag.Notify(e);
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
     }
 }

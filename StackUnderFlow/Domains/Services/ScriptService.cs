@@ -16,7 +16,7 @@ public class ScriptService(
 {
     public async Task<List<ScriptResponseDto>> GetScripts(int offset, int records, string visibility, int requesterId)
     {
-        var scripts = await scriptRepository.GetScripts(offset, records);
+        var scripts = await scriptRepository.GetScripts(offset, records,visibility);
         if (scripts.Count == 0)
         {
             return [];
@@ -325,15 +325,19 @@ public class ScriptService(
         };
     }
 
-    public async Task<List<ScriptResponseDto>> GetScriptsByKeyWord(string keyword, int requesterId)
+    public async Task<ListScriptsResponseDto> GetScriptsByKeyWord(string keyword, int requesterId, int offset, int records, string visibility)
     {
-        var scripts = await scriptRepository.GetScriptsByKeyWord(keyword);
-        if (scripts.Count == 0)
+        var result = await scriptRepository.GetScriptsByKeyWord(keyword, offset,records,visibility);
+        if (result.totalCount == 0)
         {
-            return [];
+            return new ListScriptsResponseDto
+            {
+                Scripts = new List<ScriptResponseDto>(),
+                TotalCount = 0
+            };
         }
         var listOfScripts = new List<ScriptResponseDto>();
-        foreach (var script in scripts)
+        foreach (var script in result.scripts)
         {
             var numberOfLikes = await likeRepository.GetLikesByScriptId(script.ScriptId);
             listOfScripts.Add(new ScriptResponseDto
@@ -351,7 +355,11 @@ public class ScriptService(
                 IsLiked = numberOfLikes.Any(x => x.UserId == requesterId)
             });
         }
-        return listOfScripts;
+        return new ListScriptsResponseDto
+        {
+            Scripts = listOfScripts,
+            TotalCount = result.totalCount
+        };
     }
 
     public async Task<List<ScriptResponseDto>> GetScriptsByUserIdAndVisibility(int userId, ScriptRequestForOtherUserDto scriptRequest)

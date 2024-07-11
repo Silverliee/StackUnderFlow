@@ -141,7 +141,7 @@ class AxiosRequester {
 	/* getScripts:
 	 * @param {string} userId
 	 */
-	getScripts = async () => {
+	getScripts = async (props = {}) => {
 		const apiUrl = this.baseUrl + `Script/user`;
 		try {
 			const response = await axios.get(apiUrl, this.getConfig());
@@ -151,6 +151,17 @@ class AxiosRequester {
 			console.error("Erreur lors de la requête :", error);
 		}
 	};
+
+	getScriptsForFeed= async (options = {offset:0, records:5, visibility:"Public"}) => {
+		const apiUrl = this.baseUrl + `Script?offset=${options.offset}&records=${options.records}&visibility=${options.visibility}`;
+		try {
+			const response = await axios.get(apiUrl, this.getConfig());
+			console.log("Réponse de l'API :", { response: response.data });
+			return response.data;
+		} catch (error) {
+			console.error("Erreur lors de la requête :", error);
+		}
+	}
 
 	/* deleteScript: Delete the script and all its versions from DB
 	 * @param {string} scriptId
@@ -233,8 +244,9 @@ class AxiosRequester {
 		});
 	};
 
-	searchScriptsByKeyWord = async (keyWord) => {
-		const apiUrl = this.baseUrl + `Script/search/${keyWord}`;
+	searchScriptsByKeyWord = async (keyWord, options = {offset:0, records:5,visibility:"Public"}) => {
+		const apiUrl = this.baseUrl + `Script/search/${keyWord}?offset=${options.offset}&records=${options.records}&visibility=${options.visibility}`;
+
 		try {
 			const response = await axios.get(apiUrl, this.getConfig());
 			//console.log("Réponse de l'API :", { response: response.data });
@@ -273,6 +285,21 @@ class AxiosRequester {
 			console.error("Erreur lors de la requête :", error);
 		}
 	};
+
+	getUserById = async (userId) => {
+		const apiUrl = this.baseUrl + `User/${userId}`;
+		try {
+			const response = await axios.get(apiUrl, this.getConfig());
+			console.log("Réponse de l'API :", { response: response });
+			if (response.status === 200) {
+				return response.data;
+			} else {
+				return null;
+			}
+		} catch (error) {
+			console.error("Erreur lors de la requête :", error);
+		}
+	}
 
 	getFriends = async () => {
 		const apiUrl = this.baseUrl + `SocialInteraction/friends`;
@@ -604,7 +631,7 @@ class AxiosRequester {
 	};
 
 	searchUsersByKeyword = async (keyword) => {
-		const apiUrl = this.baseUrl + `User/${keyword}`;
+		const apiUrl = this.baseUrl + `User/search/${keyword}`;
 		try {
 			const response = await axios.get(apiUrl, this.getConfig());
 			//console.log("Réponse de l'API :", { response: response });

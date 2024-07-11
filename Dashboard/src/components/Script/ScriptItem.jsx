@@ -39,35 +39,45 @@ export const ScriptItem = ({
 
 	return (
 		<ListItem key={script.scriptId} role={undefined} dense button>
-			<ListItemIcon>
-				{lastSegment == "script" && script.userId === userId && (
-					<Checkbox
-						checked={check}
-						key={script.scriptId}
-						edge="start"
-						tabIndex={-1}
-						disableRipple
-						id={`${script.scriptId}`}
-						onChange={handleItemSelected}
+			<div style={{ display: "flex", width: "100%" }}>
+				<div style={{ flex: "1", display:"flex" }}>
+					<ListItemIcon>
+						{lastSegment === "script" && script.userId === userId && (
+							<Checkbox
+								checked={check}
+								key={script.scriptId}
+								edge="start"
+								tabIndex={-1}
+								disableRipple
+								id={`${script.scriptId}`}
+								onChange={handleItemSelected}
+							/>
+						)}
+					</ListItemIcon>
+					<ListItemText
+						id={script.scriptId}
+						primary={script.scriptName}
+						secondary={script.programmingLanguage}
 					/>
-				)}
-			</ListItemIcon>
-			<ListItemText
-				id={script.scriptId}
-				primary={script.scriptName}
-				secondary={script.programmingLanguage}
-			/>
-			<ListItemText
-				id={script.scriptId + "1"}
-				primary={"By " + script.creatorName}
-			/>{" "}
-			<Link to={`/script/${script.scriptId}`}>See details</Link>
-			<DownloadIcon onClick={handleDownload}></DownloadIcon>
-			{lastSegment == "script" && script.userId === userId && (
-				<DeleteIcon onClick={() => handleDelete(script.scriptId)}></DeleteIcon>
-			)}
+				</div>
+				<div style={{ display: "flex", justifyContent: "space-between", flex: "1" }}>
+					<ListItemText
+						id={script.scriptId + "1"}
+						primary={"By " + script.creatorName}
+					/>
+					<div style={{ display: "flex", justifyContent: "space-between" }}>
+						<Link to={`/script/${script.scriptId}`}>See details</Link>
+						<DownloadIcon onClick={handleDownload} style={{ marginLeft: "10px" }} />
+						{lastSegment === "script" && script.userId === userId && (
+							<DeleteIcon onClick={() => handleDelete(script.scriptId)} style={{ marginLeft: "10px" }} />
+						)}
+					</div>
+				</div>
+			</div>
 		</ListItem>
 	);
+
+
 };
 
 export default ScriptItem;

@@ -50,8 +50,8 @@ const ScriptsProvider = ({ children }) => {
         const fetchScripts = async () => {
             if (!authData?.userId) return;
 
-            const scriptsLoaded = await AxiosRq.getInstance().getScripts();
-            dispatch({ type: 'SET_SCRIPTS_FOUND', payload: scriptsLoaded });
+            // const scriptsLoaded = await AxiosRq.getInstance().getScripts();
+            dispatch({ type: 'SET_SCRIPTS_FOUND', payload: [] });
         };
         fetchScripts();
     }, [authData?.userId]);
@@ -60,13 +60,14 @@ const ScriptsProvider = ({ children }) => {
         const fetchFriends = async () => {
             if (!authData?.userId) return;
 
-            const friendsScripts = await Promise.all(friends?.map(async (friend) => {
-                const friendScripts = await AxiosRq.getInstance().getScriptByUserIdAndVisiblity(
-                    friend.userId, "Friend"
-                );
-                return friendScripts;
-            }));
-            dispatch({ type: 'SET_MY_FRIENDS_SCRIPTS', payload: friendsScripts.flat() });
+            // const friendsScripts = await Promise.all(friends?.map(async (friend) => {
+            //     const friendScripts = await AxiosRq.getInstance().getScriptByUserIdAndVisiblity(
+            //         friend.userId, "Friend"
+            //     );
+            //     return friendScripts;
+            // }));
+            //dispatch({ type: 'SET_MY_FRIENDS_SCRIPTS', payload: friendsScripts.flat() });
+            dispatch({ type: 'SET_MY_FRIENDS_SCRIPTS', payload: [] });
         };
     fetchFriends();
     }, [authData?.userId, friends]);
@@ -76,16 +77,17 @@ const ScriptsProvider = ({ children }) => {
             if (!authData?.userId) return;
 
             const groupMembersByGroupId = await fetchGroupsAndMembers(groups);
-            const groupsScripts = await Promise.all(groups?.map(async (group) => {
-                const groupMembers = groupMembersByGroupId.find(gp => gp.groupId === group.groupId)?.members || [];
-                const scripts = await Promise.all(groupMembers?.map(async (member) => {
-                    return await AxiosRq.getInstance().getScriptByUserIdAndVisiblity(
-                        member.userId, "Group", group.groupId
-                    );
-                }));
-                return scripts.flat();
-            }));
-            dispatch({ type: 'SET_MY_GROUPS_SCRIPTS', payload: groupsScripts.flat() });
+            // const groupsScripts = await Promise.all(groups?.map(async (group) => {
+            //     const groupMembers = groupMembersByGroupId.find(gp => gp.groupId === group.groupId)?.members || [];
+            //     const scripts = await Promise.all(groupMembers?.map(async (member) => {
+            //         return await AxiosRq.getInstance().getScriptByUserIdAndVisiblity(
+            //             member.userId, "Group", group.groupId
+            //         );
+            //     }));
+            //     return scripts.flat();
+            // }));
+            //dispatch({ type: 'SET_MY_GROUPS_SCRIPTS', payload: groupsScripts.flat() });
+            dispatch({ type: 'SET_MY_GROUPS_SCRIPTS', payload: [] });
 
         };
         fetchGroups();
@@ -94,13 +96,14 @@ const ScriptsProvider = ({ children }) => {
     useEffect(() => {
         const fetchFollows = async () => {
             if (!authData?.userId) return;
-
-            const followingScripts = await Promise.all(follows?.map(async (follow) => {
-                return await AxiosRq.getInstance().getScriptByUserIdAndVisiblity(
-                    follow.userId, "Follow"
-                );
-            }));
-            dispatch({ type: 'SET_MY_FOLLOWING_SCRIPTS', payload: followingScripts.flat() });
+            //
+            // const followingScripts = await Promise.all(follows?.map(async (follow) => {
+            //     return await AxiosRq.getInstance().getScriptByUserIdAndVisiblity(
+            //         follow.userId, "Follow"
+            //     );
+            // }));
+            // dispatch({ type: 'SET_MY_FOLLOWING_SCRIPTS', payload: followingScripts.flat() });
+            dispatch({ type: 'SET_MY_FOLLOWING_SCRIPTS', payload: [] });
 
         };
         fetchFollows();

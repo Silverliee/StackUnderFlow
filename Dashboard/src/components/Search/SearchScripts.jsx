@@ -14,7 +14,8 @@ function SearchScripts({
 	handleChangePage,
 	handleChangeRowsPerPage,
 	selectedScripts,
-	item
+	item,
+	numberOfScripts
 }) {
 	return (
 		<>
@@ -37,7 +38,7 @@ function SearchScripts({
 					))}
 				</div>
 				<Pagination
-					numberOfResults={scriptsFoundFiltered.length}
+					numberOfResults={numberOfScripts ? numberOfScripts : scriptsFoundFiltered.length}
 					handleChangePage={handleChangePage}
 					handleChangeRowsPerPage={handleChangeRowsPerPage}
 					page={page}
