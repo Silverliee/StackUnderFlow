@@ -5,7 +5,7 @@ import { Button } from "@mui/material";
 
 import { useAuth } from "../hooks/AuthProvider";
 
-import SearchScripts from "../components/Search/SearchScripts.jsx";
+import NewSearchScripts from "../components/Search/NewSearchScripts.jsx";
 
 function SearchScriptPage() {
 	const [search, setSearch] = React.useState("");
@@ -17,6 +17,7 @@ function SearchScriptPage() {
 	const [scriptsFoundFiltered, setScriptsFoundFiltered] = useState([]);
 	const [page, setPage] = React.useState(0);
 	const [rowsPerPage, setRowsPerPage] = React.useState(5);
+	const [numberOfScripts, setNumberOfScripts] = React.useState(0);
 	const userId = useAuth().authData?.userId;
 
 	const handleChangePage = (event, newPage) => {
@@ -29,11 +30,18 @@ function SearchScriptPage() {
 	};
 
 	useEffect(() => {
-		setScriptsFoundPaginated(
-			scriptsFoundFiltered.slice(page * rowsPerPage, (page + 1) * rowsPerPage)
-		);
-	}, [rowsPerPage, page, scriptsFoundFiltered]);
+		fetchScripts();
+	}, [rowsPerPage, page]);
 
+	const fetchScripts = async () => {
+		if (search.length > 3) {
+			const result = await AxiosRq.getInstance().searchScriptsByKeyWord(
+				search, {offset: page * rowsPerPage, records: rowsPerPage, visibility: "Public"}
+			);
+			setScriptsFound(result.scripts);
+			setNumberOfScripts(result.totalCount);
+		}
+	}
 	useEffect(() => {}, [scriptsFoundPaginated, scriptsFound]);
 
 	const handleSelectChange = (event) => {
@@ -65,19 +73,11 @@ function SearchScriptPage() {
 		setOpen(!open);
 	};
 
+	const handleItemSelected = () => {}
+
 	const handleSearch = async () => {
 		if (search.length > 3) {
-			const scriptsFound = await AxiosRq.getInstance().searchScriptsByKeyWord(
-				search
-			);
-			console.log("Scripts found :", scriptsFound);
-			setScriptsFound(scriptsFound);
-			setScriptsFoundFiltered(
-				scriptsFound?.filter((script) => {
-					if (selectedLanguage === "Any language") return true;
-					return script.programmingLanguage === selectedLanguage;
-				})
-			);
+			fetchScripts();
 			setDisplay("block");
 		} else {
 			alert("Please enter at least 4 characters");
@@ -106,20 +106,20 @@ function SearchScriptPage() {
 			<div>
 				<Button onClick={handleOpenAdvancedOptions}>Advanced Options</Button>
 			</div>
-			<SearchScripts
-				handleSelectChange={handleSelectChange}
-				selectedLanguage={selectedLanguage}
-				display={display}
-				search={search}
-				scriptsFoundFiltered={scriptsFoundFiltered}
-				scriptsFoundPaginated={scriptsFoundPaginated}
-				handleClick={handleClick}
-				userId={userId}
-				page={page}
-				rowsPerPage={rowsPerPage}
-				handleChangePage={handleChangePage}
-				handleChangeRowsPerPage={handleChangeRowsPerPage}
-				open={open}
+			<NewSearchScripts
+					handleSelectChange={handleSelectChange}
+					selectedLanguage={selectedLanguage}
+					display={display}
+					search={search}
+					scriptsFound={scriptsFound}
+					handleItemSelected={handleItemSelected}
+					handleClick={handleClick}
+					userId={userId}
+					page={page}
+					rowsPerPage={rowsPerPage}
+					handleChangePage={handleChangePage}
+					handleChangeRowsPerPage={handleChangeRowsPerPage}
+					numberOfScripts={numberOfScripts}
 			/>
 		</>
 	);

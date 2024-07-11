@@ -1,37 +1,42 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import AxiosRq from "../Axios/AxiosRequester";
 import { TiArrowBack } from "react-icons/ti";
 import { useNavigate } from "react-router-dom";
 import { Grid, Typography } from "@mui/material";
 import ContactList from "../components/Contact/ContactList.jsx";
+import Button from "@mui/material/Button";
+import ModalAddGroupMember from "../components/Group/ModalAddGroupMember.jsx";
+import { useAuth} from "../hooks/AuthProvider.jsx";
 
 function GroupDetails() {
-	const { groupId } = useParams();
 	const [group, setGroup] = useState({});
 	const [members, setMembers] = useState([]);
 	const [creator, setCreator] = useState({});
 	const [membersPaginated, setMembersPaginated] = useState([]);
 	const [page, setPage] = useState(0);
 	const [rowsPerPage, setRowsPerPage] = useState(5);
+	const [open, setOpen] = useState(false);
 
+	const { groupId } = useParams();
+	const { authData } = useAuth();
 	const navigate = useNavigate();
 
 	useEffect(() => {
 		AxiosRq.getInstance()
 			.getGroupByGroupId(groupId)
 			.then((res) => {
-				var group = res;
+				let group = res;
 				setGroup(group);
 				AxiosRq.getInstance()
 					.getGroupMembers(groupId)
 					.then((response) => {
-						var members = response;
+						let members = response;
 						setMembers(members);
 						setMembersPaginated(
 							members.slice(page * rowsPerPage, (page + 1) * rowsPerPage)
 						);
-						var creator = members?.find(
+						let creator = members?.find(
 							(member) => member.userId === group.creatorUserID
 						);
 						setCreator(creator);
@@ -52,26 +57,50 @@ function GroupDetails() {
 		setPage(newPage);
 	};
 
+	const handleOpen = () => {
+		setOpen(true);
+	}
+
+	const handleClose = () => {
+		setOpen(false);
+	};
+
+	const handleSubmitRegisterEvent = () => {
+
+	}
+
 	return (
 		<>
 			<div>Group Details</div>
-			<div className="contacts--header">
+			<div className="contacts--header" style={{display: "flex", justifyContent: "flex-end"}}>
 				<TiArrowBack onClick={() => navigate("/contacts")} />
 			</div>
 			<Grid item xs={12} md={6}>
-				<div className="container--group-name">
-					<Typography sx={{ mt: 4, mb: 2 }} variant="h6" component="div">
-						Group Name: {group?.groupName}
-					</Typography>
-					{/* <EditIcon onClick={handleOpenEdit}></EditIcon>
-					<div title="Add version" onClick={handleOpenAddVersion}>
-						<AddCircleOutlineIcon></AddCircleOutlineIcon> 
-					</div>*/}
+				<div style={{display: "flex", alignItems:'center', justifyContent:'space-around'}}>
+					<div style={{flexGrow: 1}}>
+						<img
+							src={`/assets/Group${group?.groupId % 3 + 1}.jpg`}
+							alt="Profile"
+							style={{
+								width: '80px',
+								height: '80px',
+								borderRadius: '50%',
+								objectFit: 'cover',
+								marginRight: '15px'
+							}}
+						/>
+					</div>
+					<div className="container--group-name"
+						 style={{display: "flex", flexDirection: "column", flexGrow: 3}}>
+						<p>{group?.groupName}</p>
+						<p>Description: {group?.description}</p>
+						<p>Creator: {creator?.username}</p>
+					</div>
+					{ authData.userId === group.creatorUserID && (<div style={{flexGrow: 1}}>
+						<Button onClick={handleOpen}>Add Members</Button>
+					</div>)}
 				</div>
 				<div>
-					<p>Description: {group?.description}</p>
-					<p>Creator: {creator?.username}</p>
-
 					<Typography sx={{ mt: 4, mb: 2 }} variant="h6" component="div">
 						Members
 					</Typography>
@@ -86,6 +115,9 @@ function GroupDetails() {
 						handleChangeRowsPerPage={handleChangeRowsPerPage}
 					/>
 				</div>
+				<ModalAddGroupMember open={open}
+									 handleClose={handleClose}
+									 handleSubmitRegisterEvent={handleSubmitRegisterEvent}/>
 			</Grid>
 		</>
 	);

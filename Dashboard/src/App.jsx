@@ -16,7 +16,6 @@ import ContactsPage from "./pages/ContactsPage";
 import ScriptListPage from "./pages/ScriptListPage";
 import ScriptDetails from "./pages/ScriptDetails";
 import ScriptVersionPage from "./pages/ScriptVersionPage";
-import Layout from "./Layout";
 import SearchScriptPage from "./pages/SearchScriptPage.jsx";
 import LocalEditor from "./pages/LocalEditor";
 import ProfilePage from "./pages/ProfilePage.jsx";
@@ -27,6 +26,8 @@ import RelationsProvider from "./hooks/RelationsProvider.jsx";
 import ScriptsProvider from "./hooks/ScriptsProvider.jsx";
 import PersistentDrawerLeft from "./components/PersistentDrawerLeft.jsx";
 import HomePage from "./pages/HomePage.jsx";
+import NewScriptListPage from "./pages/NewScriptListPage.jsx";
+import ContactDetails from "./pages/ContactDetails.jsx";
 
 const App = () => {
 	return (
@@ -56,8 +57,9 @@ const App = () => {
 									path="/script/:scriptId/version"
 									element={<ScriptVersionPage />}
 								/>
+								<Route path="/friend/:friendId" element={<ContactDetails />} />
 								<Route path="/script/:scriptId" element={<ScriptDetails />} />
-								<Route path="/script" element={<ScriptListPage />} />
+								<Route path="/script" element={<NewScriptListPage />} />
 								<Route path="/group/:groupId" element={<GroupDetails />} />
 							</Route>
 						</Route>

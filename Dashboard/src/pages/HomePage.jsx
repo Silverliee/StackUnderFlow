@@ -1,17 +1,27 @@
 import React, {useEffect, useState} from 'react';
-import {useScripts} from "../hooks/ScriptsProvider.jsx";
 import PostItem from "../components/Post/PostItem.jsx";
-import Divider from '@mui/material/Divider';
+import AxiosRequester from "../Axios/AxiosRequester.js";
+import Button from '@mui/material/Button';
 
 const HomePage = () => {
     const [myPosts, setMyPosts] = useState([]);
-    const scripts = useScripts();
+    const [offset, setOffset] = useState(0);
+    const [records, setRecords] = useState(5);
 
-    useEffect (() => {
-        console.log(scripts.state.scriptsFound[0]);
-        const posts = [...scripts.state.scriptsFound].reverse();
-        setMyPosts(posts);
-    },[scripts.state.scriptsFound]);
+    useEffect(() => {
+        getScriptsForFeed(offset,records)
+    },[offset,records])
+
+    const getScriptsForFeed= async (offset,records) => {
+        const scripts = await AxiosRequester.getInstance().getScriptsForFeed({offset,records,visibility:"Public"});
+        if (scripts) {
+            setMyPosts([...myPosts, ...scripts]);
+        }
+    }
+
+    const HandleAddMore = () => {
+        setOffset(offset+5);
+    }
 
     return (
         <div>
@@ -19,8 +29,10 @@ const HomePage = () => {
             {myPosts?.length > 0 && (
                 myPosts.map((post, index) => (
                     <PostItem key={index} post={post}/>
-                )))
+                ))
+            )
             }
+            <Button size="small" onClick={HandleAddMore}>Add More</Button>
         </div>
     )
 };
