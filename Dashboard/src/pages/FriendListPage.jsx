@@ -44,6 +44,7 @@ function FriendListPage() {
 
 	return (
 		<ContactList
+			profileType={"friend"}
 			contacts={friendsList}
 			contactsPaginated={friendsPaginated}
 			handleDelete={handleDeleteFriend}

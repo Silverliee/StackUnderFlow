@@ -231,7 +231,7 @@ function ScriptListPage() {
 					handleSelectChange={handleSelectChange}
 					selectedValue={selectedLanguage}
 					label="Programming Language"
-					defaultValue="Any"
+					defaultValue="Any language"
 				/>
 			</div>
 			<Accordion defaultExpanded>

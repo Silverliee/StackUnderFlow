@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react';
 import PostItem from "../components/Post/PostItem.jsx";
 import AxiosRequester from "../Axios/AxiosRequester.js";
 import Button from '@mui/material/Button';
+import {Typography} from "@mui/material";
 
 const HomePage = () => {
     const [myPosts, setMyPosts] = useState([]);
@@ -25,10 +26,11 @@ const HomePage = () => {
 
     return (
         <div>
-            HomePage
+            <Typography variant="h3" color={"#1976d2"}>What's new today?</Typography>
+            <br/>
             {myPosts?.length > 0 && (
                 myPosts.map((post, index) => (
-                    <PostItem key={index} post={post}/>
+                    <PostItem key={index} post={post} style={{marginBottom:'10px'}}/>
                 ))
             )
             }

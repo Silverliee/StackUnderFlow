@@ -7,11 +7,20 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import { PiFileCSharpDuotone } from "react-icons/pi";
 import { SiPython } from "react-icons/si";
-import ThumbUpOffAltIcon from '@mui/icons-material/ThumbUpOffAlt';
-import ThumbUpAltIcon from '@mui/icons-material/ThumbUpAlt';
 import CommentContainer from "./CommentContainer.jsx";
 import AxiosRq from "../../Axios/AxiosRequester.js";
 import {useEffect} from "react";
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import BookmarkIcon from '@mui/icons-material/Bookmark';
+import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
+import {ListItemText} from "@mui/material";
+import {useNavigate} from "react-router-dom";
+import Accordion from "@mui/material/Accordion";
+import AccordionSummary from "@mui/material/AccordionSummary";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore.js";
+import AccordionDetails from "@mui/material/AccordionDetails";
+import UnstyledInputIntroduction from "../Custom/UnstyledInputIntroduction.jsx";
 
 export default function PostItem({post}) {
     const [comments, setComments] = React.useState([{text:"coucou"},{text:"coucou2"},{text:"coucou3"}]);
@@ -20,9 +29,13 @@ export default function PostItem({post}) {
     const [numberOfLikes, setNumberOfLikes] = React.useState(post?.numberOfLikes);
     const [isLiked, setIsLiked] = React.useState(post?.isLiked);
 
+    const [isFavorite, setIsFavorite] = React.useState(false);
+    const navigate = useNavigate();
     const handleOpenComments = () => {
         setOpen(!open);
     }
+
+    const imageId = (post.scriptId % 5) + 1
 
     useEffect(() => {
         fetchComments()
@@ -90,14 +103,32 @@ export default function PostItem({post}) {
         }
     }
 
+    const handleUnfavorite = async (scriptId) => {
+        setIsFavorite(false);
+    }
+
+    const handleFavorite = async (scriptId) => {
+        setIsFavorite(true);
+    }
+
     return (
         <>
+            <Accordion defaultExpanded>
+                <AccordionSummary
+                    expandIcon={<ExpandMoreIcon />}
+                    aria-controls="panel2-content"
+                    id={post.scriptId}
+                >
+                    <Typography>{post.scriptName} By {post.creatorName}</Typography>
+                </AccordionSummary>
+                <AccordionDetails>
+
             <Card sx={{ maxWidth: 600, marginBottom: 4 }}>
                 <CardMedia
                     component="img"
                     alt="random_picture"
                     height="140"
-                    image={post.source ? post.source : "https://www.echosciences-grenoble.fr/uploads/article/image/attachment/1005418938/xl_lens-1209823_1920.jpg"}
+                    image={post.source ? post.source : `/assets/postImage${imageId}.jpg`}
                 />
                 <CardContent>
                     <Typography gutterBottom variant="h5" component="div">
@@ -106,6 +137,9 @@ export default function PostItem({post}) {
                     <Typography variant="body2" color="text.secondary">
                         {post.description}
                     </Typography>
+                    <Typography variant="body2" color="blue" style={{textAlign:"end"}}>
+                        <Button onClick={() => navigate(`/user/${post.userId}`)}>By {post.creatorName}</Button>
+                    </Typography>
                     <br/>
                     <Button onClick={handleDownload}>
                         {post.programmingLanguage == "Csharp" ? <PiFileCSharpDuotone style={{marginRight: 4}}/> :
@@ -113,20 +147,35 @@ export default function PostItem({post}) {
                         } Try me !
                     </Button>
                 </CardContent>
-                <CardActions style={{display:"flex", justifyContent: 'space-between'}}>
-                    <Button size="small" onClick={handleOpenComments}>Comments</Button>
-                    <div style={{alignContent:"center"}}>{isLiked ?
-                        <ThumbUpAltIcon style={{cursor:"pointer"}} onClick={() => handleUnlike(post.scriptId)}/>
-                        :
-                        <ThumbUpOffAltIcon style={{cursor:"pointer"}} onClick={() => handleLike(post.scriptId)}/>
-                        }
-                        {numberOfLikes}
+                <div className={"FooterPost"} style={{display: "flex", justifyContent: "space-between"}}>
+                    <div>
+                        <Button size="small" onClick={handleOpenComments}>Comments ({comments.length})</Button>
                     </div>
-                </CardActions>
-                {open && (
-                    <CommentContainer key={post.scriptId} comments={comments} handleComment={handleComment} handleDelete={handleDelete} handleEdit={handleEdit} editMode={editMode} setEditMode={setEditMode}/>
-                )}
+                    <CardActions style={{display: "flex", justifyContent: 'space-between'}}>
+                        <div style={{alignContent: "center"}}>{isLiked ?
+                            <FavoriteIcon style={{cursor: "pointer"}} onClick={() => handleUnlike(post.scriptId)}/>
+                            :
+                            <FavoriteBorderIcon style={{cursor: "pointer"}} onClick={() => handleLike(post.scriptId)}/>
+                        }
+                            {numberOfLikes}
+                        </div>
+                        <div style={{alignContent: "center"}}>{isFavorite ?
+                            <BookmarkIcon style={{cursor: "pointer"}} onClick={() => handleUnfavorite(post.scriptId)}/>
+                            :
+                            <BookmarkBorderIcon style={{cursor: "pointer"}} onClick={() => handleFavorite(post.scriptId)}/>
+                        }
+                        </div>
+
+                    </CardActions>
+                </div>
+                    {open && (
+                        <CommentContainer key={post.scriptId} comments={comments} handleComment={handleComment}
+                                          handleDelete={handleDelete} handleEdit={handleEdit} editMode={editMode}
+                                          setEditMode={setEditMode}/>
+                    )}
             </Card>
+                </AccordionDetails>
+            </Accordion>
         </>
     );
 }

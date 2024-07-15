@@ -244,8 +244,9 @@ class AxiosRequester {
 		});
 	};
 
-	searchScriptsByKeyWord = async (keyWord, options = {offset:0, records:5,visibility:"Public"}) => {
-		const apiUrl = this.baseUrl + `Script/search/${keyWord}?offset=${options.offset}&records=${options.records}&visibility=${options.visibility}`;
+	searchScriptsByKeyWord = async (keyWord, options = {offset:0, records:5,visibility:"Public",language:"all"}) => {
+		console.log({options});
+		const apiUrl = this.baseUrl + `Script/search/${keyWord}?offset=${options.offset}&records=${options.records}&visibility=${options.visibility}&language=${options.language}`;
 
 		try {
 			const response = await axios.get(apiUrl, this.getConfig());
@@ -769,6 +770,23 @@ class AxiosRequester {
 			}
 		} catch (error) {
 			console.error("Erreur lors de la requête :", error);
+		}
+	}
+
+	executePipeline = async(scripts) => {
+		const apiUrl = this.baseUrl + `Runner/execute-pipeline`;
+		try {
+			const response = await axios.post(
+				apiUrl,
+				scripts,
+				this.getConfig()
+			)
+			if (response.status === 200) {
+				const pipelineId = response.data;
+				SocketManager.getInstance().connectWebSocketPipeline(pipelineId);
+			}
+		} catch (error) {
+			console.error("Erreur lors de la requete \"execute pipeline\":",error);
 		}
 	}
 }

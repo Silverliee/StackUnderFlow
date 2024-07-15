@@ -6,7 +6,7 @@ public interface IScriptRepository
 {
     Task<List<Script?>> GetAllScripts();
     Task<List<Script?>> GetScripts(int offset, int records, string visibility);
-    Task<(List<Script?> scripts, int totalCount)> GetScriptsByKeyWord(string keyword, int offset, int records, string visibility);
+    Task<(List<Script?> scripts, int totalCount)> GetScriptsByKeyWord(string[] keywords, int offset, int records, string visibility, string language);
     Task<Script?> GetScriptById(int id);
     Task<List<Script>> GetScriptsByUserId(int userId);
     Task<Script?> AddScript(Script script);

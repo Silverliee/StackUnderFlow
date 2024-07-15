@@ -28,9 +28,14 @@ import PersistentDrawerLeft from "./components/PersistentDrawerLeft.jsx";
 import HomePage from "./pages/HomePage.jsx";
 import NewScriptListPage from "./pages/NewScriptListPage.jsx";
 import ContactDetails from "./pages/ContactDetails.jsx";
+import {SnackbarProvider} from "notistack";
+import NewLogin from "./pages/NewLogin.jsx";
+import PipelinePage from "./components/Pipeline/PipelinePage.jsx";
 
 const App = () => {
 	return (
+		<SnackbarProvider maxSnack={3}>
+
 		<div className="App">
 			<Router>
 				<AuthProvider>
@@ -39,8 +44,7 @@ const App = () => {
 						<Routes>
 							{/*<Route exact path="/" element={<Login />} />*/}
 							<Route exact path="/" element={<PersistentDrawerLeft />} />
-						<Route exact path="/login" element={<Login />} />
-							{/*<Route element={<Layout />}>*/}
+						<Route exact path="/login" element={<NewLogin />} />
 							<Route element={<PersistentDrawerLeft />}>
 
 							<Route element={<PrivateRoute />}>FeedPage
@@ -57,19 +61,23 @@ const App = () => {
 									path="/script/:scriptId/version"
 									element={<ScriptVersionPage />}
 								/>
-								<Route path="/friend/:friendId" element={<ContactDetails />} />
+								<Route path="/pipeline" element={<PipelinePage />} />
+								<Route path="/friend/:userId" element={<ContactDetails />} />
+								<Route path="/group/:groupId/member/:userId" element={<ContactDetails />} />
+								<Route path="/user/:userId" element={<ContactDetails />} />
 								<Route path="/script/:scriptId" element={<ScriptDetails />} />
 								<Route path="/script" element={<NewScriptListPage />} />
 								<Route path="/group/:groupId" element={<GroupDetails />} />
 							</Route>
 						</Route>
-						<Route path="*" element={<Navigate to="/" />} />
+						<Route path="*" element={<Navigate to="/login" />} />
 					</Routes>
 						</ScriptsProvider>
 					</RelationsProvider>
 				</AuthProvider>
 			</Router>
 		</div>
+		</SnackbarProvider>
 	);
 };
 

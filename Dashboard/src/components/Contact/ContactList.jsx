@@ -12,6 +12,8 @@ function ContactList({
 	handleChangeRowsPerPage,
 	page,
 	rowsPerPage,
+	profileType,
+	groupId
 }) {
 	const [check, setCheck] = useState(false);
 
@@ -21,6 +23,8 @@ function ContactList({
 				{contacts?.length > 0 &&
 					contactsPaginated?.map((user) => (
 						<Contact
+							groupId={groupId}
+							profileType={profileType}
 							key={user.userId}
 							user={user}
 							check={check}

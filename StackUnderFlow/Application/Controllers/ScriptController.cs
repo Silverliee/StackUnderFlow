@@ -1,9 +1,11 @@
 using System.Security.Claims;
+using System.Text.RegularExpressions;
 using Hangfire;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using StackUnderFlow.Application.DataTransferObject.Request;
+using StackUnderFlow.Application.DataTransferObject.Response;
 using StackUnderFlow.Domains.Services;
 
 namespace StackUnderFlow.Application.Controllers
@@ -333,13 +335,22 @@ namespace StackUnderFlow.Application.Controllers
         [Authorize]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetScriptsByKeyWord(string keyword, [FromQuery] int offset = 0, [FromQuery] int records = 5, [FromQuery] string visibility = "Public")
+        public async Task<IActionResult> GetScriptsByKeyWord(string keyword, [FromQuery] int offset = 0, [FromQuery] int records = 5, [FromQuery] string visibility = "Public", [FromQuery] string language = "all")
         {
             var userId = Convert.ToInt32(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+            var pattern = @"[ ,.;:!?]+";
+
+            // Split the input string using the regex pattern
+            var words = Regex.Split(keyword, pattern);
+            
             try
             {
                 BackgroundJob.Enqueue(() => Console.WriteLine("getting scripts by keyword"));
-                var scripts = await scriptService.GetScriptsByKeyWord(keyword, userId, offset,records,visibility);
+                if (words.Length == 0)
+                {
+                    return Ok(new ListScriptsResponseDto());
+                }
+                var scripts = await scriptService.GetScriptsByKeyWord(words, userId, offset,records,visibility,language);
                 return Ok(scripts);
             }
             catch(Exception e)

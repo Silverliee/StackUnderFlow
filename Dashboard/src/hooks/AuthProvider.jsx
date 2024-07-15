@@ -1,5 +1,6 @@
 import { useContext, useEffect, createContext, useState } from "react";
 import AxiosRq from "../Axios/AxiosRequester.js";
+import {enqueueSnackbar} from "notistack";
 
 const AuthContext = createContext();
 
@@ -34,9 +35,12 @@ const AuthProvider = ({ children }) => {
 					userId: user.userId,
 				});
 				setIsLoggedIn(true);
+				const variant = 'success';
+				enqueueSnackbar("Login successful", {variant, autoHideDuration: 2000});
 				callback();
 			} else {
-				alert("Invalid login credentials");
+				const variant = 'error';
+				enqueueSnackbar("Invalid login credentials", {variant, autoHideDuration: 2000});
 			}
 		} catch (err) {
 			console.error(err);
@@ -48,11 +52,13 @@ const AuthProvider = ({ children }) => {
 		try {
 			const response = await AxiosRq.getInstance().registerRequest(data);
 			if (response) {
-				alert("Registration successful");
+				const variant = 'success';
+				enqueueSnackbar("Registration successful", {variant, autoHideDuration: 2000});
 				callback();
 				return;
 			}
-			alert("Invalid registration credentials");
+			const variant = 'error';
+			enqueueSnackbar("Invalid registration credentials", {variant, autoHideDuration: 2000});
 		} catch (err) {
 			console.error(err);
 		}

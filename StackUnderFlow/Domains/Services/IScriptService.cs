@@ -18,6 +18,6 @@ public interface IScriptService
     public Task<ScriptVersionResponseDto?> AddScriptVersion(
         ScriptVersionUploadRequestDto? scriptVersionUploadRequestDto
     );
-    public Task<ListScriptsResponseDto> GetScriptsByKeyWord(string keyword, int requesterId, int offset, int records, string visibility);
+    public Task<ListScriptsResponseDto> GetScriptsByKeyWord(string[] keywords, int requesterId, int offset, int records, string visibility, string language);
     public Task<List<ScriptResponseDto>> GetScriptsByUserIdAndVisibility(int userId,ScriptRequestForOtherUserDto scriptRequest);
 }
