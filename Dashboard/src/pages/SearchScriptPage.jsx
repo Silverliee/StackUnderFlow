@@ -6,6 +6,8 @@ import { Button } from "@mui/material";
 import { useAuth } from "../hooks/AuthProvider";
 
 import NewSearchScripts from "../components/Search/NewSearchScripts.jsx";
+import {enqueueSnackbar} from "notistack";
+import UnstyledSelectIntroduction from "../components/Custom/UnstyledSelectIntroduction.jsx";
 
 function SearchScriptPage() {
 	const [search, setSearch] = React.useState("");
@@ -14,10 +16,10 @@ function SearchScriptPage() {
 	const [open, setOpen] = React.useState(false);
 	const [selectedLanguage, setSelectedLanguage] = useState("Any language");
 	const [scriptsFoundPaginated, setScriptsFoundPaginated] = useState([]);
-	const [scriptsFoundFiltered, setScriptsFoundFiltered] = useState([]);
 	const [page, setPage] = React.useState(0);
 	const [rowsPerPage, setRowsPerPage] = React.useState(5);
 	const [numberOfScripts, setNumberOfScripts] = React.useState(0);
+	const [visibility,setVisibility] = React.useState("Public");
 	const userId = useAuth().authData?.userId;
 
 	const handleChangePage = (event, newPage) => {
@@ -31,28 +33,29 @@ function SearchScriptPage() {
 
 	useEffect(() => {
 		fetchScripts();
-	}, [rowsPerPage, page]);
+	}, [rowsPerPage, page,selectedLanguage,visibility]);
 
 	const fetchScripts = async () => {
 		if (search.length > 3) {
 			const result = await AxiosRq.getInstance().searchScriptsByKeyWord(
-				search, {offset: page * rowsPerPage, records: rowsPerPage, visibility: "Public"}
+				search, {offset: page * rowsPerPage, records: rowsPerPage, visibility: visibility, language: selectedLanguage !== "Any language" ? selectedLanguage : ""}
 			);
 			setScriptsFound(result.scripts);
 			setNumberOfScripts(result.totalCount);
 		}
 	}
-	useEffect(() => {}, [scriptsFoundPaginated, scriptsFound]);
 
-	const handleSelectChange = (event) => {
+	const handleSelectChangeLanguage = (event) => {
 		const value = event?.target?.innerHTML; // Get the selected value
 		setSelectedLanguage(value);
-		setScriptsFoundFiltered(
-			scriptsFound?.filter((script) => {
-				if (value === "Any language") return true;
-				return script.programmingLanguage === value;
-			})
-		);
+	};
+
+	const handleSelectChangeVisibility = (event) => {
+		const value = event?.target?.innerHTML; // Get the selected value
+		console.log({visibility,
+		value,
+		event});
+		setVisibility(value);
 	};
 
 	const handleKeyDown = async (event) => {
@@ -67,6 +70,9 @@ function SearchScriptPage() {
 		setScriptsFound([]);
 		setPage(0);
 		setRowsPerPage(5);
+		setVisibility("Public");
+		setSelectedLanguage("Any language");
+		setOpen(false);
 	};
 
 	const handleOpenAdvancedOptions = () => {
@@ -80,7 +86,8 @@ function SearchScriptPage() {
 			fetchScripts();
 			setDisplay("block");
 		} else {
-			alert("Please enter at least 4 characters");
+			const variant = 'error'
+			enqueueSnackbar("4 characters minimum needed",{variant, autoHideDuration: 2000})
 		}
 	};
 
@@ -106,9 +113,23 @@ function SearchScriptPage() {
 			<div>
 				<Button onClick={handleOpenAdvancedOptions}>Advanced Options</Button>
 			</div>
+			<div id="advanced-options" style={{ display: open ? "block" : "none" }}>
+				<UnstyledSelectIntroduction
+					options={["Python", "Csharp"]}
+					handleSelectChange={handleSelectChangeLanguage}
+					selectedValue={selectedLanguage}
+					label="Programming Language"
+					defaultValue="Any language"
+				/>
+				<UnstyledSelectIntroduction
+					options={["Public", "Friend", "Group"]}
+					handleSelectChange={handleSelectChangeVisibility}
+					selectedValue={visibility}
+					label="Visibility"
+					defaultValue="Public"
+				/>
+			</div>
 			<NewSearchScripts
-					handleSelectChange={handleSelectChange}
-					selectedLanguage={selectedLanguage}
 					display={display}
 					search={search}
 					scriptsFound={scriptsFound}

@@ -8,32 +8,51 @@ import {TextareaAutosize} from "@mui/material";
 import Profile from "../components/Profile/Profile.jsx";
 import PostItem from "../components/Post/PostItem.jsx";
 import {TiArrowBack} from "react-icons/ti";
-import { useNavigate} from "react-router-dom";
+import { useNavigate, useLocation} from "react-router-dom";
 
 const ContactDetails = () => {
     const [userDetails, setUserDetails] = useState({});
     const [loading, setLoading] = useState(true);
     const [userScripts, setUserScripts] = useState([]);
-    const { friendId } = useParams();
-    const randomInt = getRandomInt(friendId);
-    const landscapeInt = friendId % 3 + 1;
+    const { userId, groupId } = useParams();
+    const randomInt = getRandomInt(userId);
+    const landscapeInt = userId % 3 + 1;
     const navigate = useNavigate();
 
+    const location = useLocation();
+    const currentPath = location.pathname;
+    const firstPathSegment = currentPath.split("/")[1]; // Accéder à la première partie significative de l'URL
+
+    const contactType = (() => {
+        switch (firstPathSegment) {
+            case "friend":
+                return "Friend";
+            case "group":
+                return "Group";
+            case "user":
+                return "Public";
+            default:
+                return "Public";
+        }
+    });
+
     useEffect(() => {
+        console.log(currentPath);
+        console.log(contactType());
         getUserInfo();
         getUserScripts();
-    }, [friendId]);
+    }, [userId]);
 
     const getUserInfo = async () => {
-        const user = await AxiosRequester.getInstance().getUserById(friendId);
-        console.log({ user, friendId });
+        const user = await AxiosRequester.getInstance().getUserById(userId);
+        console.log({ user, userId });
         if (user !== null) {
             setUserDetails(user);
         }
     }
 
     const getUserScripts = async () => {
-        const result = await AxiosRequester.getInstance().getScriptByUserIdAndVisiblity(friendId,"Friend");
+        const result = await AxiosRequester.getInstance().getScriptByUserIdAndVisiblity(userId,contactType(),groupId);
         if (result !== null) {
             setUserScripts(result);
         }

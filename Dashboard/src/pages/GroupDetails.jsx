@@ -105,6 +105,8 @@ function GroupDetails() {
 						Members
 					</Typography>
 					<ContactList
+						groupId={groupId}
+						profileType={"group-member"}
 						contacts={members}
 						contactsPaginated={membersPaginated}
 						handleDelete={handRemoveMember}

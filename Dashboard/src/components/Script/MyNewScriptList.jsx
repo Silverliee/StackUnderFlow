@@ -15,7 +15,8 @@ function MyNewScriptsList({
                            scriptsFoundPaginated,
                            handleItemSelected,
                            handleChangePage,
-                           handleChangeRowsPerPage
+                           handleChangeRowsPerPage,
+                              handleOnClick
                        }) {
 
     return (
@@ -35,6 +36,7 @@ function MyNewScriptsList({
                 handleChangePage={handleChangePage}
                 handleChangeRowsPerPage={handleChangeRowsPerPage}
                 selectedScripts={selectedScripts}
+                handleOnClick={handleOnClick}
             />
         </>
     );

@@ -15,7 +15,8 @@ function SearchScripts({
 	handleChangeRowsPerPage,
 	selectedScripts,
 	item,
-	numberOfScripts
+	numberOfScripts,
+	handleOnClick
 }) {
 	return (
 		<>
@@ -29,6 +30,7 @@ function SearchScripts({
 							handleItemSelected={handleItemSelected}
 							handleDelete={handleDelete}
 							userId={userId}
+							handleOnClick={handleOnClick}
 							check={
 								selectedScripts
 									? selectedScripts?.includes(script.scriptId.toString())

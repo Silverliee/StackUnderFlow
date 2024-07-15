@@ -1,3 +1,5 @@
+using System.Linq.Dynamic.Core;
+using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using StackUnderFlow.Domains.Model;
 using StackUnderFlow.Infrastructure.Settings;
@@ -57,23 +59,51 @@ public class ScriptRepository(MySqlDbContext context) : IScriptRepository
         context.Scripts.Remove(script);
         await context.SaveChangesAsync();
     }
-
-    public async Task<(List<Script?> scripts, int totalCount)> GetScriptsByKeyWord(string keyword, int offset, int records, string visibility)
+    
+    private Expression<Func<Script, bool>> BuildFilterExpression(string[] keywords, string visibility, string language)
     {
-        var filteredScripts = await context
+        var parameter = Expression.Parameter(typeof(Script), "x");
+        var visibilityExpression = Expression.Equal(Expression.Property(parameter, "Visibility"), Expression.Constant(visibility));
+
+        Expression combinedExpression = null;
+
+        // Create the expression for each keyword
+        foreach (var keyword in keywords)
+        {
+            var scriptNameContainsKeyword = Expression.Call(Expression.Property(parameter, "ScriptName"), "Contains", null, Expression.Constant(keyword));
+            var descriptionContainsKeyword = Expression.Call(Expression.Property(parameter, "Description"), "Contains", null, Expression.Constant(keyword));
+
+            var keywordExpression = Expression.OrElse(scriptNameContainsKeyword, descriptionContainsKeyword);
+            
+            combinedExpression = combinedExpression == null ? keywordExpression : Expression.OrElse(combinedExpression, keywordExpression);
+        }
+        
+        combinedExpression = Expression.AndAlso(combinedExpression, visibilityExpression);
+        if (language != "all")
+        {
+            combinedExpression = Expression.AndAlso(combinedExpression, Expression.Equal(Expression.Property(parameter, "ProgrammingLanguage"), Expression.Constant(language)));
+        }
+        return Expression.Lambda<Func<Script, bool>>(combinedExpression, parameter);
+    }
+
+
+    public async Task<(List<Script?> scripts, int totalCount)> GetScriptsByKeyWord(string[] keywords, int offset, int records, string visibility, string language)
+    {
+        var filterExpression = BuildFilterExpression(keywords, visibility,language);
+
+        var filteredScriptsQuery = context
             .Scripts
-            .Where(x => (x.ScriptName.Contains(keyword) || x.Description.Contains(keyword)) && x.Visibility == visibility)
+            .Where(filterExpression)
+            .Distinct();
+
+        var totalCount = await filteredScriptsQuery.CountAsync();
+
+        var filteredScripts = await filteredScriptsQuery
             .OrderByDescending(x => x.ScriptId)
             .Skip(offset)
             .Take(records)
             .ToListAsync();
 
-        var totalCount = await context
-            .Scripts
-            .Where(x => (x.ScriptName.Contains(keyword) || x.Description.Contains(keyword)) && x.Visibility == visibility)
-            .CountAsync();
-
         return (filteredScripts, totalCount);
     }
-
 }

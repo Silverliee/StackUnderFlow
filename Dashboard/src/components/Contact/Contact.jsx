@@ -6,12 +6,23 @@ import {
 	ListItemText,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import Button from "@mui/material/Button";
 
-export const Contact = ({ user, check, handleItemSelected, handleDelete }) => {
+export const Contact = ({ user, check, handleItemSelected, handleDelete, profileType, groupId }) => {
 	const navigate = useNavigate();
+
+	const link = (() => {
+		switch (profileType) {
+			case "friend":
+				return `/${profileType}/${user.userId}`;
+			case "group-member":
+				return `/group/${groupId}/member/${user.userId}`;
+			default:
+				return `/user/${user.userId}`;
+		}
+	});
+
 	return (
 		<ListItem key={user.userId} role={undefined} dense button>
 			<ListItemIcon>
@@ -41,7 +52,7 @@ export const Contact = ({ user, check, handleItemSelected, handleDelete }) => {
 				primary={user.username}
 			/>
 
-			<Button onClick={() => navigate(`/friend/${user.userId}`)}>See Details</Button>
+			<Button onClick={() => navigate(link())}>See Details</Button>
 			<DeleteIcon onClick={() => handleDelete(user.userId)}></DeleteIcon>
 		</ListItem>
 	);

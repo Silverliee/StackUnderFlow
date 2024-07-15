@@ -1,0 +1,45 @@
+.pipeline-container {
+    padding: 20px;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.header-item {
+    margin-right: 10px;
+}
+
+.group-jobs {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.group-button {
+    margin-left: 10px;
+}
+
+.stages {
+    display: flex;
+    justify-content: space-between;
+}
+
+.stage {
+    padding: 20px;
+    text-align: center;
+}
+
+.job {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 10px;
+}
+
+.icon {
+    color: green;
+    margin-right: 5px;
+}

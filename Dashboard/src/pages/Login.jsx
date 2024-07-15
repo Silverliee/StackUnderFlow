@@ -15,6 +15,7 @@ import UnstyledInputIntroduction from "../components/Custom/UnstyledInputIntrodu
 import { useAuth } from "../hooks/AuthProvider";
 import { isValidEmail } from "../utils/utils";
 import RegisterModal from "../components/RegisterModal";
+import {enqueueSnackbar} from "notistack";
 
 export default function Login() {
 	const [email, setEmail] = React.useState("");
@@ -50,7 +51,8 @@ export default function Login() {
 			auth.loginAction({ email, password }, navigateDashboard);
 			return;
 		}
-		alert("please provide a invalid input");
+		const variant = 'error';
+		enqueueSnackbar("please provide a valid input", {variant, autoHideDuration: 2000});
 	};
 	const handleSubmitRegisterEvent = async (e) => {
 		e.preventDefault();
@@ -72,7 +74,12 @@ export default function Login() {
 			handleClose();
 			return;
 		}
-		alert("please provide a invalid input");
+		const variant = 'error';
+		let text = "Please provide a valid input"
+		if (passwordRegister !== passwordRegister2){
+			text = "Passwords do not match"
+		}
+		enqueueSnackbar(text, {variant, autoHideDuration: 2000});
 	};
 	return (
 		<>

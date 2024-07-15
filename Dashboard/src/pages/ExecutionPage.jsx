@@ -6,6 +6,7 @@ import AxiosRq from "../Axios/AxiosRequester";
 import { styled } from "@mui/material/styles";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import Button from "@mui/material/Button";
+import {enqueueSnackbar} from "notistack";
 
 function ExecutionPage() {
 	const [file, setFile] = useState(null);
@@ -24,24 +25,24 @@ function ExecutionPage() {
 		width: 1,
 	});
 	const navigate = useNavigate();
-	const handleExecute = () => {
-		console.log("Execute button clicked");
+	const handleExecute = async () => {
 		if (file === null) {
-			alert("Please select a file");
+			const variant = 'error';
+			enqueueSnackbar("Please select a file",{variant, autoHideDuration: 2000})
 			return;
 		}
 		const formData = new FormData();
 		formData.append("script", file);
-		AxiosRq.getInstance().executeScript(formData);
+		const result = await AxiosRq.getInstance().executeScript(formData);
 	};
 	function handleChange(event) {
 		setFile(null);
 		const selectedFile = event.target.files[0];
-		console.log(event);
 		if (selectedFile && selectedFile.type) {
 			setFile(selectedFile);
 		} else {
-			alert("Invalid file type");
+			const variant = 'error';
+			enqueueSnackbar("Invalid file type",{variant, autoHideDuration: 2000})
 		}
 	}
 	return (
@@ -73,6 +74,7 @@ function ExecutionPage() {
 						/>
 					</Button>
 					<p style={{ marginLeft: "10px" }}>{file?.name}</p>
+					<Button>Input</Button>
 				</div>
 				<Button
 					component="label"

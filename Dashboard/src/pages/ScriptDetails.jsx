@@ -21,6 +21,8 @@ import UnstyledTextareaIntroduction from "../components/Custom/UnstyledTextareaI
 import UnstyledInputIntroduction from "../components/Custom/UnstyledInputIntroduction.jsx";
 import UnstyledSelectIntroduction from "../components/Custom/UnstyledSelectIntroduction.jsx";
 import ScriptVersionsList from "../components/ScriptVersion/ScriptVersionsList.jsx";
+import MultipleSelectCheckmarks from "../components/Custom/MultipleSelectCheckmarks.jsx";
+import {enqueueSnackbar} from "notistack";
 
 const ScriptDetails = () => {
 	const { scriptId } = useParams();
@@ -38,13 +40,17 @@ const ScriptDetails = () => {
 	const [openEdit, setOpenEdit] = useState(false);
 	const [newScriptName, setNewScriptName] = useState(script.scriptName);
 	const [newDescription, setNewDescription] = useState(script.description);
-	const [newInputType, setNewInputType] = useState(script.inputType);
-	const [newOutputType, setNewOutputType] = useState(script.outputType);
+	const [newInputType, setNewInputType] = useState(script?.inputType?.split(','));
+	const [newOutputType, setNewOutputType] = useState(script?.outputType?.split(','));
 	const [newVisibility, setNewVisibility] = useState(script.visibility);
 	const [language, setLanguage] = useState(script.programmingLanguage);
 	const [visibility, setVisibility] = useState(script.visibility);
 	const [updated, setUpdated] = useState(false);
 	const userId = useAuth().authData?.userId;
+
+	const acceptedFormat = ["None","png","jpg","jpeg","txt","csv","xlsx","json"];
+
+
 	useEffect(() => {
 		AxiosRq.getInstance()
 			.getScriptById(scriptId)
@@ -53,8 +59,8 @@ const ScriptDetails = () => {
 				console.log(script);
 				setNewDescription(script.description);
 				setNewScriptName(script.scriptName);
-				setNewInputType(script.inputScriptType);
-				setNewOutputType(script.outputScriptType);
+				setNewInputType(script.inputScriptType.split(','));
+				setNewOutputType(script.outputScriptType.split(','));
 				setNewVisibility(script.visibility);
 				setLanguage(script.programmingLanguage);
 				setVisibility(script.visibility);
@@ -128,10 +134,12 @@ const ScriptDetails = () => {
 		});
 		console.log(result);
 		if (result) {
-			alert("Script version uploaded successfully");
+			const variant = 'success';
+			enqueueSnackbar("Script version uploaded successfully", {variant, autoHideDuration: 2000});
 			setScriptVersions([...scriptVersions, result]);
 		} else {
-			alert("Error uploading script version");
+			const variant = 'error';
+			enqueueSnackbar("Error uploading script version", {variant, autoHideDuration: 2000});
 		}
 		setFile(null);
 		setComment("");
@@ -139,42 +147,47 @@ const ScriptDetails = () => {
 		handleCloseAddVersion();
 	};
 	const handleSubmitUpdateEvent = async () => {
+		let inputTypeFormatted = newInputType.length > 1 ? newInputType.filter((item) => item !== "None") : newInputType
+		let outputTypeFormatted = newOutputType.length > 1 ? newOutputType.filter((item) => item !== "None") : newOutputType
 		const result = await AxiosRq.getInstance().updateScript({
 			ScriptId: script.scriptId,
 			ScriptName: newScriptName,
 			Description: newDescription,
-			InputScriptType: newInputType,
-			OutputScriptType: newOutputType,
+			InputScriptType: inputTypeFormatted.join(','),
+			OutputScriptType: outputTypeFormatted.join(','),
 			ProgrammingLanguage: language,
 			Visibility: newVisibility,
 		});
 		if (!result) {
-			alert("Error updating script");
+			const variant = 'error';
+			enqueueSnackbar("Error updating script", {variant, autoHideDuration: 2000});
 			return;
 		}
 		setUpdated(!updated);
-		handleCloseEdit();
+		setOpenEdit(false);
 	};
 
 	async function handleChange(event) {
 		setFile(null);
 		const selectedFile = event.target.files[0];
 		if (!selectedFile || !selectedFile.type) {
-			alert("Invalid file type");
+			const variant = 'error';
+			enqueueSnackbar("Invalid file type", {variant, autoHideDuration: 2000});
 			return;
 		}
 		setFile(selectedFile);
-		console.log(selectedFile);
 	}
 
 	const handleCloseAndSaveAndAddVersionFromEditor = async (data) => {
 		let result = await AxiosRq.getInstance().postScriptVersion(data);
 		console.log(result);
 		if (result) {
-			alert("Script version uploaded successfully");
+			const variant = 'success';
+			enqueueSnackbar("Script version uploaded successfully", {variant, autoHideDuration: 2000});
 			setScriptVersions([...scriptVersions, result]);
 		} else {
-			alert("Error uploading script version");
+			const variant = 'error';
+			enqueueSnackbar("Error uploading script version", {variant, autoHideDuration: 2000});
 		}
 	};
 
@@ -212,9 +225,29 @@ const ScriptDetails = () => {
 		setOpenEdit(false);
 		setNewDescription(script.description);
 		setNewScriptName(script.scriptName);
-		setNewInputType(script.inputScriptType);
-		setNewOutputType(script.outputScriptType);
+		setNewInputType(script.inputScriptType.split(''));
+		setNewOutputType(script.outputScriptType.split(','));
 		setNewVisibility(script.visibility);
+	};
+
+	const handleChangeInput = (event) => {
+		const {
+			target: { value },
+		} = event;
+		setNewInputType(
+			// On autofill we get a stringified value.
+			typeof value === 'string' ? value.split(',') : value,
+		);
+	};
+
+	const handleChangeOutput = (event) => {
+		const {
+			target: { value },
+		} = event;
+		setNewOutputType(
+			// On autofill we get a stringified value.
+			typeof value === 'string' ? value.split(',') : value,
+		);
 	};
 
 	return (
@@ -251,8 +284,10 @@ const ScriptDetails = () => {
 						<p>Programming Language: {script.programmingLanguage}</p>
 						<p>Description: {script.description}</p>
 						<p>Visibility: {script.visibility}</p>
+						<p>Input types: {script.inputScriptType}</p>
+						<p>Output types: {script.outputScriptType}</p>
 
-						<Typography sx={{ mt: 4, mb: 2 }} variant="h6" component="div">
+						<Typography sx={{mt: 4, mb: 2}} variant="h6" component="div">
 							Script versions
 						</Typography>
 						<ScriptVersionsList
@@ -321,20 +356,14 @@ const ScriptDetails = () => {
 						</div>
 						<div>
 							<label>InputType: </label>
-							<UnstyledInputIntroduction
-								id="inputType"
-								name="inputType"
-								value={newInputType}
-								handleInput={(event) => setNewInputType(event.target.value)}
+							<MultipleSelectCheckmarks formats={acceptedFormat} handleChange={handleChangeInput}
+													  value={newInputType} tag={'Input'}
 							/>
 						</div>
 						<div>
 							<label>OutputType: </label>
-							<UnstyledInputIntroduction
-								id="outputType"
-								name="outputType"
-								value={newOutputType}
-								handleInput={(event) => setNewOutputType(event.target.value)}
+							<MultipleSelectCheckmarks formats={acceptedFormat} handleChange={handleChangeOutput}
+													  value={newOutputType} tag={'Output'}
 							/>
 						</div>
 						<div>

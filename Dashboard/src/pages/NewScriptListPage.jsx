@@ -1,17 +1,22 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import AxiosRq from "../Axios/AxiosRequester";
 import { useAuth } from "../hooks/AuthProvider";
-import { useRelations } from "../hooks/RelationsProvider.jsx";
-import { useScripts} from "../hooks/ScriptsProvider.jsx";
 import UnstyledInputIntroduction from "../components/Custom/UnstyledInputIntroduction.jsx";
 import UnstyledSelectIntroduction from "../components/Custom/UnstyledSelectIntroduction.jsx";
-
-import { Button } from "@mui/material";
+import RocketLaunchIcon from '@mui/icons-material/RocketLaunch';
+import {Button, Snackbar} from "@mui/material";
 import { Typography } from "@mui/material";
 import { Accordion, AccordionDetails, AccordionSummary } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import MyScriptsList from "../components/Script/MyScriptsList.jsx";
 import MyNewScriptsList from "../components/Script/MyNewScriptList.jsx";
+import Chip from '@mui/material/Chip';
+import Stack from '@mui/material/Stack';
+import MultipleSelectCheckmarks from "../components/Custom/MultipleSelectCheckmarks.jsx";
+import IconButton from "@mui/material/IconButton";
+import CloseIcon from "@mui/icons-material/Close";
+import {useSnackbar} from "notistack";
+import {HtmlTooltip} from "../components/Custom/HtmlTooltip.jsx";
 
 function ScriptListPage() {
     const [search, setSearch] = useState("");
@@ -19,16 +24,31 @@ function ScriptListPage() {
     const [display, setDisplay] = useState("none");
     const [scriptsFound, setScriptsFound] = useState([]);
     const [selectedScripts, setSelectedScripts] = useState([]);
+    const [selectedScriptsTag, setSelectedScriptsTag] = useState([]);
+    const [invalidScriptIds,setInvalidScriptIds] = useState([]);
     const [scriptsFoundFiltered, setScriptsFoundFiltered] = useState([]);
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const [scriptsFoundPaginated, setScriptsFoundPaginated] = useState([]);
     const [open, setOpen] = useState(false);
+    const [inputType, setInputType] = useState([]);
+    const [outputType, setOutputType] = useState([]);
+    const [openSnackbar, setOpenSnackbar] = useState(false);
+
     const userId = useAuth().authData?.userId;
+
+    const acceptedFormat = ["None","png","jpg","jpeg","txt","csv","xlsx","json"];
+
+    const { enqueueSnackbar } = useSnackbar();
+
 
     useEffect(() => {
         fetchScripts();
     }, [userId]);
+
+    useEffect(() => {
+        console.log(checkScripts())
+    },[selectedScriptsTag])
 
     const fetchScripts = async () => {
         const scriptsLoaded = await AxiosRq.getInstance().getScripts();
@@ -37,16 +57,72 @@ function ScriptListPage() {
         setDisplay("block");
     }
 
+    function findScriptById(id) {
+        const script = scriptsFound.find(script => script.scriptId === id);
+        console.log({
+            script,
+            id,
+            scriptsFound
+        })
+        return script;
+    }
+
+    function checkTypes(string, types) {
+        // Sépare la chaîne en mots en utilisant la virgule comme délimiteur
+        const words = string.split(',');
+
+        // Vérifie chaque mot pour voir s'il est présent dans le tableau
+        for (let i = 0; i < words.length; i++) {
+            const trimmedWord = words[i].trim(); // Enlève les espaces autour du mot
+            if (types.includes(trimmedWord)) {
+                return true; // Retourne true dès qu'un mot est trouvé dans le tableau
+            }
+        }
+
+        return false; // Retourne false si aucun mot n'est trouvé dans le tableau
+    }
+
+    function checkScripts() {
+        const mismatchedIds = [];
+
+        for (let i = 0; i < selectedScriptsTag.length - 1; i++) {
+            const currentScript = selectedScriptsTag[i];
+            const nextScript = selectedScriptsTag[i + 1];
+
+            const currentOutputTypes = currentScript.outputScriptType.split(',');
+            const nextInputTypes = nextScript.inputScriptType.split(',');
+
+            const hasMatch = nextInputTypes.some(inputType => currentOutputTypes.includes(inputType));
+
+            if (!hasMatch) {
+                mismatchedIds.push(i+1);
+                setOpenSnackbar(true);
+                const variant = 'error'
+                enqueueSnackbar("mismatched input/output script !",{variant, autoHideDuration: 2000})
+            }
+        }
+
+        setInvalidScriptIds(mismatchedIds)
+        return mismatchedIds;
+    }
     useEffect(() => {
         setScriptsFoundFiltered(
             scriptsFound?.filter((script) => {
                 if (selectedLanguage === "Any language") return true;
                 return script.programmingLanguage === selectedLanguage;
+            }).filter((script) => {
+                if (inputType.length === 0) return true;
+                return checkTypes(script.inputScriptType,inputType);
+            }).filter((script) => {
+                if (outputType.length === 0) return true;
+                return checkTypes(script.outputScriptType,outputType);
             })
         );
     }, [
         scriptsFound,
         selectedLanguage,
+        inputType,
+        outputType
     ]);
 
     useEffect(() => {
@@ -69,7 +145,6 @@ function ScriptListPage() {
     };
 
     const handleItemSelected = (event) => {
-        console.log({event})
         if (event.target.checked) {
             setSelectedScripts([...selectedScripts, event.target.id]);
         } else {
@@ -78,6 +153,21 @@ function ScriptListPage() {
             );
         }
     };
+
+    const handleOnClick = (id) => {
+        const item = findScriptById(id);
+        console.log({
+            id,
+            item
+        })
+        setSelectedScriptsTag([...selectedScriptsTag, item]);
+    }
+
+    const handleDeleteTag = (indexToRemove) => {
+        setSelectedScriptsTag(
+            selectedScriptsTag.filter((_, index) => index !== indexToRemove)
+        )
+    }
 
     const handleDelete = async (scriptId) => {
         if (
@@ -91,7 +181,6 @@ function ScriptListPage() {
             );
             dispatch({ type: 'SET_SCRIPTS_FOUND', payload: scriptsFiltered });
             setScriptsFound(scriptsFiltered);
-
         }
     };
     const handleDeleteSelection = async () => {
@@ -128,7 +217,11 @@ function ScriptListPage() {
         setOpen(false);
         setScriptsFoundFiltered(scriptsFound);
         setScriptsFound(scriptsFound);
+        setSelectedScriptsTag([]);
+        setInvalidScriptIds([]);
         setSelectedLanguage("Any language");
+        setInputType([]);
+        setOutputType([])
         setPage(0);
         setRowsPerPage(5);
         setSelectedScripts([]);
@@ -152,6 +245,53 @@ function ScriptListPage() {
         );
         setDisplay("block");
     };
+
+    const handleChangeInput = (event) => {
+        const {
+            target: { value },
+        } = event;
+        setInputType(
+            // On autofill we get a stringified value.
+            typeof value === 'string' ? value.split(',') : value,
+        );
+    };
+
+    const handleChangeOutput = (event) => {
+        const {
+            target: { value },
+        } = event;
+        setOutputType(
+            // On autofill we get a stringified value.
+            typeof value === 'string' ? value.split(',') : value,
+        );
+    };
+    const launchPipeline = () => {
+        console.log('pipeline');
+        //it will launch the pipeline request and also subscribe to the websocket associated to the pipeline
+        // const scriptsIdToExecute = selectedScriptsTag.map((script) => script.scriptId);
+        // AxiosRq.getInstance().executePipeline(scriptsIdToExecute);
+    }
+
+    const handleClose = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+
+        setOpenSnackbar(false);
+    };
+
+    const action = (
+        <React.Fragment>
+            <IconButton
+                size="small"
+                aria-label="close"
+                color="inherit"
+                onClick={handleClose}
+            >
+                <CloseIcon fontSize="small" />
+            </IconButton>
+        </React.Fragment>
+    );
 
     return (
         <>
@@ -184,9 +324,45 @@ function ScriptListPage() {
                     handleSelectChange={handleSelectChange}
                     selectedValue={selectedLanguage}
                     label="Programming Language"
-                    defaultValue="Any"
+                    defaultValue="Any language"
+                />
+                <MultipleSelectCheckmarks formats={acceptedFormat} handleChange={handleChangeInput}
+                                          value={inputType} tag={'Input'}
+                />
+                <MultipleSelectCheckmarks formats={acceptedFormat} handleChange={handleChangeOutput}
+                                          value={outputType} tag={'Output'}
                 />
             </div>
+            {selectedScriptsTag.length > 0 && (
+                <>
+                <Stack direction="row" spacing={1}>
+                    {selectedScriptsTag.map((script,index) => (
+                        <HtmlTooltip
+                            title={
+                                <React.Fragment>
+                                    <Typography color="inherit">Input types:</Typography>
+                                    <b>{script.inputScriptType.replaceAll(',',' / ')}</b> .{' '}
+                                    <Typography color="inherit">Output types:</Typography>
+                                    <b>{script.outputScriptType.replaceAll(',',' / ')}</b>.{' '}
+                                </React.Fragment>
+                            }
+                        >
+                        <Chip
+                            style={{}}
+                            key={index}
+                            label={script.scriptName}
+                            onDelete={() => handleDeleteTag(index)}
+                            color={invalidScriptIds.includes(index) ? 'error' : 'info'}
+                        />
+                        </HtmlTooltip>
+                    ))}
+                <Button onClick={launchPipeline} disabled={invalidScriptIds.length > 0}>
+                    Pipeline
+                    <RocketLaunchIcon />
+                </Button>
+                </Stack>
+                </>
+            )}
             <Accordion defaultExpanded>
                 <AccordionSummary
                     expandIcon={<ExpandMoreIcon />}
@@ -211,10 +387,11 @@ function ScriptListPage() {
                         handleChangePage={handleChangePage}
                         handleChangeRowsPerPage={handleChangeRowsPerPage}
                         handleItemSelected={handleItemSelected}
+                        handleOnClick={handleOnClick}
                     />
                 </AccordionDetails>
             </Accordion>
-        </>
+                </>
     );
 }
 

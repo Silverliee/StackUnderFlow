@@ -8,6 +8,8 @@ import UnstyledInputIntroduction from "../components/Custom/UnstyledInputIntrodu
 import AxiosRq from "../Axios/AxiosRequester";
 import UnstyledSelectIntroduction from "../components/Custom/UnstyledSelectIntroduction.jsx";
 import { useScripts} from "../hooks/ScriptsProvider.jsx";
+import MultipleSelectCheckmarks from "../components/Custom/MultipleSelectCheckmarks.jsx";
+import {enqueueSnackbar} from "notistack";
 
 const SharingPage = ({ script }) => {
 	const [open, setOpen] = useState(false);
@@ -15,11 +17,12 @@ const SharingPage = ({ script }) => {
 	const [scriptName, setScriptName] = useState("");
 	const [description, setDescription] = useState("");
 	const [language, setLanguage] = useState("");
-	const [inputType, setInputType] = useState("None");
-	const [outputType, setOutputType] = useState("None");
+	const [inputType, setInputType] = useState(["None"]);
+	const [outputType, setOutputType] = useState(["None"]);
 	const [visibility, setVisibility] = useState("Public");
 
 	const acceptedFiles = [".py", ".cs"];
+	const acceptedFormat = ["None","png","jpg","jpeg","txt","csv","xlsx","json"];
 	const { dispatch } = useScripts();
 
 	const style = {
@@ -67,20 +70,25 @@ const SharingPage = ({ script }) => {
 			visibility,
 			file,
 		});
+		let inputTypeFormatted = inputType.length > 1 ? inputType.filter((item) => item !== "None") : inputType
+		let outputTypeFormatted = outputType.length > 1 ? outputType.filter((item) => item !== "None") : outputType
+
 		let result = await AxiosRq.getInstance().postScript({
 			ScriptName: scriptName,
 			Description: description,
 			ProgrammingLanguage: language,
-			InputScriptType: inputType,
-			OutputScriptType: outputType,
+			InputScriptType: inputTypeFormatted.join(','),
+			OutputScriptType: outputTypeFormatted.join(','),
 			Visibility: visibility,
 			SourceScriptBinary: file,
 		});
 		console.log(result);
 		if (!result) {
-			alert("Error uploading script");
+			const variant = 'error';
+			enqueueSnackbar("Error uploading script", {variant, autoHideDuration: 2000});
 		} else {
-			alert("Script uploaded successfully");
+			const variant = 'success';
+			enqueueSnackbar("Script uploaded successfully", {variant, autoHideDuration: 2000});
 			dispatch({type: "ADD_SCRIPTS", payload: result});
 		}
 
@@ -92,12 +100,32 @@ const SharingPage = ({ script }) => {
 		setScriptName("");
 		setDescription("");
 		setLanguage("");
-		setInputType("None");
-		setOutputType("None");
+		setInputType(["None"]);
+		setOutputType(["None"]);
 		setVisibility("Public");
 	}
 
-	async function handleChange(event) {
+	const handleChangeInput = (event) => {
+		const {
+			target: { value },
+		} = event;
+		setInputType(
+			// On autofill we get a stringified value.
+			typeof value === 'string' ? value.split(',') : value,
+		);
+	};
+
+	const handleChangeOutput = (event) => {
+		const {
+			target: { value },
+		} = event;
+		setOutputType(
+			// On autofill we get a stringified value.
+			typeof value === 'string' ? value.split(',') : value,
+		);
+	};
+
+	async function handleChangeFile(event) {
 		setFile(null);
 		const selectedFile = event.target.files[0];
 		if (selectedFile && selectedFile.type) {
@@ -109,7 +137,8 @@ const SharingPage = ({ script }) => {
 			}
 			setFile(selectedFile);
 		} else {
-			alert("Invalid file type");
+			const variant = 'error';
+			enqueueSnackbar("Invalid file type", {variant, autoHideDuration: 2000});
 		}
 	}
 
@@ -136,7 +165,7 @@ const SharingPage = ({ script }) => {
 							<VisuallyHiddenInput
 								type="file"
 								accept={acceptedFiles}
-								onChange={handleChange}
+								onChange={handleChangeFile}
 							/>
 						</Button>
 						<p>{file?.name}</p>
@@ -170,20 +199,14 @@ const SharingPage = ({ script }) => {
 					</div>
 					<div>
 						<label>InputType: </label>
-						<UnstyledInputIntroduction
-							id="inputType"
-							name="inputType"
-							value={inputType}
-							handleInput={(event) => setInputType(event.target.value)}
+						<MultipleSelectCheckmarks formats={acceptedFormat} handleChange={handleChangeInput}
+												  value={inputType} tag={'Input'}
 						/>
 					</div>
 					<div>
 						<label>OutputType: </label>
-						<UnstyledInputIntroduction
-							id="outputType"
-							name="outputType"
-							value={outputType}
-							handleInput={(event) => setOutputType(event.target.value)}
+						<MultipleSelectCheckmarks formats={acceptedFormat} handleChange={handleChangeOutput}
+												  value={outputType} tag={'Output'}
 						/>
 					</div>
 					<div>
@@ -211,8 +234,8 @@ const SharingPage = ({ script }) => {
 						!description ||
 						!scriptName ||
 						!language ||
-						!inputType ||
-						!outputType ||
+						inputType.length === 0 ||
+						outputType.length === 0 ||
 						!visibility ||
 						!file
 					}

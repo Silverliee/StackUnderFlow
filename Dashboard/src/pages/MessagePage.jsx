@@ -4,7 +4,7 @@ import MessagesList from "../components/Message/MessagesList.jsx";
 import {
 	Accordion,
 	AccordionDetails,
-	AccordionSummary,
+	AccordionSummary, Autocomplete, TextField,
 	Typography,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
@@ -112,6 +112,9 @@ function MessagePage() {
 					</Accordion>
 				)}
 			</div>
+			{friendRequests?.length === 0 && groupRequests?.length === 0 && (
+				<img src={'assets/NoMessages.jpg'} alt={'No Messages Image'} style={{width:'60vw'}}/>
+			)}
 		</>
 	);
 }

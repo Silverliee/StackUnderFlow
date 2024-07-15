@@ -1,3 +1,4 @@
+using System.Security.Cryptography;
 using StackUnderFlow.Application.DataTransferObject.Request;
 using StackUnderFlow.Application.DataTransferObject.Response;
 using StackUnderFlow.Domains.Model;
@@ -325,9 +326,9 @@ public class ScriptService(
         };
     }
 
-    public async Task<ListScriptsResponseDto> GetScriptsByKeyWord(string keyword, int requesterId, int offset, int records, string visibility)
+    public async Task<ListScriptsResponseDto> GetScriptsByKeyWord(string[] keywords, int requesterId, int offset, int records, string visibility, string language)
     {
-        var result = await scriptRepository.GetScriptsByKeyWord(keyword, offset,records,visibility);
+        var result = await scriptRepository.GetScriptsByKeyWord(keywords, offset,records,visibility, language);
         if (result.totalCount == 0)
         {
             return new ListScriptsResponseDto
@@ -367,6 +368,10 @@ public class ScriptService(
         var visibility = scriptRequest.Visibility;
         var creatorId = scriptRequest.UserId;
         var scripts = new List<ScriptResponseDto>();
+        if (userId == scriptRequest.UserId)
+        {
+            visibility = "All";
+        }
         try
         {
             
@@ -456,6 +461,28 @@ public class ScriptService(
                             });
                         };
                     }
+                    break;
+                default:
+                    //Case when you are looking at your own scripts through the user profile (as for friends and groups)
+                    var userScripts2 = await scriptRepository.GetScriptsByUserId(creatorId);
+                    foreach (var script in userScripts2)
+                    {
+                        var numberOfLikes = await likeRepository.GetLikesByScriptId(script.ScriptId);
+                        scripts.Add(new ScriptResponseDto
+                        {
+                            ScriptId = script.ScriptId,
+                            ScriptName = script.ScriptName,
+                            Description = script.Description,
+                            InputScriptType = script.InputScriptType,
+                            UserId = script.UserId,
+                            OutputScriptType = script.OutputScriptType,
+                            ProgrammingLanguage = script.ProgrammingLanguage,
+                            Visibility = script.Visibility,
+                            CreatorName = script.CreatorName,
+                            NumberOfLikes = numberOfLikes.Count,
+                            IsLiked = numberOfLikes.Any(x => x.UserId == userId)
+                        });
+                    };
                     break;
             }
         } catch (Exception e)

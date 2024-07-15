@@ -18,7 +18,7 @@ export default function UnstyledSelectIntroduction({
 			id="select"
 			onChange={handleSelectChange}
 		>
-			{defaultValue == "Any" && <Option value="Any">Any language</Option>}
+			{defaultValue === "Any language" && <Option value="Any language">Any language</Option>}
 			{options?.map((option, index) => (
 				<Option value={option} key={index}>
 					{option}
