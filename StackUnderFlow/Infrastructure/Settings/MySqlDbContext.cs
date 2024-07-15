@@ -3,15 +3,8 @@ using StackUnderFlow.Domains.Model;
 
 namespace StackUnderFlow.Infrastructure.Settings;
 
-public class MySqlDbContext : DbContext
+public class MySqlDbContext(IConfiguration configuration) : DbContext
 {
-    private readonly IConfiguration _configuration;
-
-    public MySqlDbContext(IConfiguration configuration)
-    {
-        _configuration = configuration;
-    }
-
     public DbSet<User> Users { get; set; }
     public DbSet<Script> Scripts { get; set; }
     public DbSet<Like> Likes { get; set; }
@@ -25,10 +18,12 @@ public class MySqlDbContext : DbContext
     public DbSet<Follow> Follows { get; set; }
 
     public DbSet<GroupRequest> GroupRequests { get; set; }
+    
+    public DbSet<Favorite> Favorites { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.UseSqlServer(_configuration.GetConnectionString("database"));
+        optionsBuilder.UseSqlServer(configuration.GetConnectionString("database"));
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -118,6 +113,19 @@ public class MySqlDbContext : DbContext
             .Entity<Sharing>()
             .HasOne(sh => sh.User)
             .WithMany(u => u.Sharings)
+            .HasForeignKey(sh => sh.UserId)
+            .OnDelete(DeleteBehavior.NoAction);
+        
+        modelBuilder.Entity<Favorite>().HasKey(sh => new { sh.ScritpId, sh.UserId });
+        modelBuilder
+            .Entity<Favorite>()
+            .HasOne(sh => sh.Script)
+            .WithMany(s => s.Favorite)
+            .HasForeignKey(sh => sh.ScritpId);
+        modelBuilder
+            .Entity<Favorite>()
+            .HasOne(sh => sh.User)
+            .WithMany(u => u.Favorite)
             .HasForeignKey(sh => sh.UserId)
             .OnDelete(DeleteBehavior.NoAction);
 

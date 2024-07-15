@@ -1,3 +1,4 @@
+using System.Net.Mail;
 using StackUnderFlow.Application.DataTransferObject.Request;
 using StackUnderFlow.Application.DataTransferObject.Response;
 using StackUnderFlow.Application.Middleware;
@@ -63,5 +64,25 @@ public class LoginService(
             Username = u.Username,
             Email = u.Email
         }).ToList();
+    }
+
+    public async Task<bool> ForgotPassword(string email)
+    {
+        var user = await userRepository.GetUserByEmail(email);
+        if (user == null)
+        {
+            return false;
+        }
+        var client = new SmtpClient("smtp-relay.brevo.com", 587);
+        client.Credentials = new System.Net.NetworkCredential("78a135001@smtp-brevo.com", "3gYFsx0ZGQJKDnp2");
+        var from = new MailAddress("emailservice@stackunderflow.software", "StackUnderFlow", System.Text.Encoding.UTF8);
+        var to = new MailAddress(user.Email);
+        var message = new MailMessage(from, to);
+        message.Body = "You forgot your password. Here is your password: " + user.Password;
+        message.BodyEncoding = System.Text.Encoding.UTF8;
+        message.Subject = "Password Reset";
+        message.SubjectEncoding = System.Text.Encoding.UTF8;
+        client.Send(message);
+        return true;
     }
 }
