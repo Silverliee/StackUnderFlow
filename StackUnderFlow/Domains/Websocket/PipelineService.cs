@@ -10,14 +10,18 @@ public class PipelineService(
     ConcurrentDictionary<string, WebSocket> sockets
 )
 {
-    public async Task ExecutePipelineAsync(string pipelineId, List<IFormFile> scripts)
+    public async Task<string> ExecutePipelineAsync(string pipelineId, List<IFormFile> scripts)
     {
+        var result = "";
         foreach (var script in scripts)
         {
             var output = await ExecuteScriptAsync(script);
-            NotifyClient(pipelineId, output);
+            result+= output;
+            //NotifyClient(pipelineId, output);
         }
-        NotifyClient(pipelineId, "Pipeline completed.");
+
+        return result;
+        //NotifyClient(pipelineId, "Pipeline completed.");
     }
 
     private async Task<string> ExecuteScriptAsync(IFormFile script)

@@ -40,12 +40,11 @@ namespace StackUnderFlow.Application.Controllers
         }
 
         [HttpPost("execute-pipeline")]
-        [Authorize]
         public IActionResult ExecutePipeline(List<IFormFile> scripts)
         {
             var pipelineId = Guid.NewGuid().ToString();
-            Task.Run(() => pipelineService.ExecutePipelineAsync(pipelineId, scripts));
-            return Ok(pipelineId);
+            var task = Task.Run(() => pipelineService.ExecutePipelineAsync(pipelineId, scripts));
+            return Ok(task.Result);
         }
 
         [HttpGet("subscribe/{pipelineId}")]

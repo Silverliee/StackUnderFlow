@@ -10,6 +10,8 @@ public class Comment
     public int UserId { get; set; }
     public int ScriptId { get; set; }
     public string Description { get; set; }
+    
+    public DateTime CreationDate { get; set; }
 
     [ForeignKey("UserId")]
     public User User { get; set; }

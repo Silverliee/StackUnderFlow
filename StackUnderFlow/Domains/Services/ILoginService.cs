@@ -10,4 +10,6 @@ public interface ILoginService
     public Task<LoginUserResponseDto?> Login(LoginUserDto loginUserDto);
     public Task<UserResponseDto?> GetUserById(int userId);
     public Task<List<UserResponseDto>> SearchUsersByKeyword(string keyword);
+    
+    public Task<bool> ForgotPassword(string email);
 }

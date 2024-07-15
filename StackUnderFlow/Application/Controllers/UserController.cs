@@ -115,4 +115,27 @@ public class UserController(ILoginService loginService,
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
     }
+    
+    // password reset
+    [HttpPost("forgot-password")]
+    public async Task<IActionResult> ForgotPassword(string email)
+    {
+        try
+        {
+            BackgroundJob.Enqueue(() => Console.WriteLine("Forgot password"));
+            var result = await loginService.ForgotPassword(email);
+            if (result)
+            {
+                return Ok("Password sent to email.");
+            } else
+            {
+                return NotFound("Email not found.");
+            }
+        }
+        catch (Exception e)
+        {
+            bugsnag.Notify(e);
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
+    }
 }

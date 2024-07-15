@@ -13,6 +13,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using OpenTelemetry.Metrics;
 using StackUnderFlow.Application.Middleware;
+using StackUnderFlow.Application.Security;
 using StackUnderFlow.Domains.Repository;
 using StackUnderFlow.Domains.Services;
 using StackUnderFlow.Domains.Websocket;
@@ -52,6 +53,9 @@ public abstract partial class Program
         builder.Services.AddScoped<IScriptVersionRepository, ScriptVersionRepository>();
         builder.Services.AddScoped<IFriendRepository, FriendRepository>();
         builder.Services.AddScoped<IFollowRepository, FollowRepository>();
+        builder.Services.AddScoped<IFavoriteRepository, FavoriteRepository>();
+        builder.Services.AddScoped<IFavoriteService, FavoriteService>();
+        builder.Services.AddScoped<ICryptographer, Cryptographer>();
         // Configuration de singleton
         builder.Services.AddSingleton<AuthenticationMiddleware>();
         builder.Services.AddSingleton<KubernetesService>();
@@ -217,7 +221,4 @@ public abstract partial class Program
 
 public abstract partial class Program
 {
-    protected Program()
-    {
-    }
 }
