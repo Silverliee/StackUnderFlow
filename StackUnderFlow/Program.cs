@@ -16,7 +16,6 @@ using StackUnderFlow.Application.Middleware;
 using StackUnderFlow.Application.Security;
 using StackUnderFlow.Domains.Repository;
 using StackUnderFlow.Domains.Services;
-using StackUnderFlow.Domains.Websocket;
 using StackUnderFlow.Infrastructure.Kubernetes;
 using StackUnderFlow.Infrastructure.Settings;
 
@@ -59,7 +58,6 @@ public abstract partial class Program
         // Configuration de singleton
         builder.Services.AddSingleton<AuthenticationMiddleware>();
         builder.Services.AddSingleton<KubernetesService>();
-        builder.Services.AddSingleton<PipelineService>();
         builder.Services.AddSingleton(new ConcurrentDictionary<string, WebSocket>());
         // Configuration des controllers/endpoints
         builder.Services.AddEndpointsApiExplorer();

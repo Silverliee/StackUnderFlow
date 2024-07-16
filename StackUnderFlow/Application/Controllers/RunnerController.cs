@@ -1,11 +1,8 @@
-using System.Collections.Concurrent;
-using System.Net.WebSockets;
 using Hangfire;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
-using StackUnderFlow.Domains.Websocket;
-using StackUnderFlow.Infrastructure.Kubernetes;
+using StackUnderFlow.Application.DataTransferObject.Request;
+using StackUnderFlow.Domains.Services;
 
 namespace StackUnderFlow.Application.Controllers
 {
@@ -13,106 +10,98 @@ namespace StackUnderFlow.Application.Controllers
     [Route("[controller]")]
     [EnableCors("AllowAll")]
     public class RunnerController(
-        PipelineService pipelineService,
-        KubernetesService kubernetesService,
+        IRunnerService runnerService,
         Bugsnag.IClient bugsnag
     ) : ControllerBase
     {
-        private static readonly ConcurrentDictionary<string, WebSocket> Sockets = new();
-
-        [HttpPost]
-        [Authorize]
-        public async Task<IActionResult> ExecuteSingleScript(IFormFile? script)
+        
+        [HttpPost("script")]
+        //[Authorize]
+        public async Task<IActionResult> RunScript(int scriptId)
         {
+            if (scriptId <= 0)
+            {
+                return BadRequest("Invalid script ID.");
+            }
+
             try
             {
-                BackgroundJob.Enqueue(() => Console.WriteLine("Executing script"));
-                if (script == null || script.Length == 0)
-                    return BadRequest("No script file uploaded");
-
-                return Ok(await ExecuteSingleScriptInternal(script));
+                BackgroundJob.Enqueue(() => Console.WriteLine($"Executing script by id: {scriptId}"));
+                return Ok(await runnerService.ExecuteScript(scriptId));
             }
             catch (Exception e)
             {
                 bugsnag.Notify(e);
-                return StatusCode(StatusCodes.Status500InternalServerError);
+                return StatusCode(StatusCodes.Status500InternalServerError, "Failed to execute script.");
+            }
+        }
+        
+        [HttpPost("script/file")]
+        //[Authorize]
+        public async Task<IActionResult> RunScriptFile(IFormFile? script)
+        {
+            if (script == null || script.Length == 0)
+            {
+                return BadRequest("No script file uploaded or file is empty.");
+            }
+
+            var fileName = script.FileName;
+
+            try
+            {
+                BackgroundJob.Enqueue(() =>  Console.WriteLine($"Executing script file: {fileName}"));
+                return Ok(await runnerService.ExecuteScriptFile(script));
+            }
+            catch (Exception e)
+            {
+                bugsnag.Notify(e);
+                return StatusCode(StatusCodes.Status500InternalServerError, "Failed to execute script file.");
             }
         }
 
-        [HttpPost("execute-pipeline")]
-        public IActionResult ExecutePipeline(List<IFormFile> scripts)
+        [HttpPost("pipeline")]
+        //[Authorize]
+        public async Task<IActionResult> RunPipeline(PipelineRequestDto pipelineRequest)
         {
-            var pipelineId = Guid.NewGuid().ToString();
-            var task = Task.Run(() => pipelineService.ExecutePipelineAsync(pipelineId, scripts));
-            return Ok(task.Result);
-        }
-
-        [HttpGet("subscribe/{pipelineId}")]
-        [Produces("application/json")]
-        public async Task<IActionResult> Subscribe(string pipelineId)
-        {
-            if (!HttpContext.WebSockets.IsWebSocketRequest)
-                return BadRequest("WebSocket connection expected.");
-            var socket = await HttpContext.WebSockets.AcceptWebSocketAsync();
-            Sockets.TryAdd(pipelineId, socket);
-            await Receive(socket);
-            return new EmptyResult();
-        }
-
-        private static async Task Receive(WebSocket socket)
-        {
-            var buffer = new byte[1024 * 4];
-            while (socket.State == WebSocketState.Open)
+            if (pipelineRequest.ScriptIds.Any(scriptId => scriptId <= 0))
             {
-                var result = await socket.ReceiveAsync(
-                    new ArraySegment<byte>(buffer),
-                    CancellationToken.None
-                );
-                if (result.MessageType == WebSocketMessageType.Close)
+                return BadRequest("Invalid script ID.");
+            }
+            
+            try
+            {
+                BackgroundJob.Enqueue(() => Console.WriteLine($"Executing pipeline with scripts: {string.Join(", ", pipelineRequest.ScriptIds)}"));
+                var files = await runnerService.ExecutePipelineWithIds(pipelineRequest.ScriptIds, pipelineRequest.Input);
+                if (files.Count == 1)
                 {
-                    await socket.CloseAsync(
-                        WebSocketCloseStatus.NormalClosure,
-                        "Closed by the client",
-                        CancellationToken.None
-                    );
+                    var file = files.First();
+                    const string contentType = "APPLICATION/octet-stream";
+                    HttpContext.Response.ContentType = contentType;
+                    HttpContext.Response.Headers.Append("Content-Disposition", $"attachment; filename={file.FileName}");
+                    await file.CopyToAsync(HttpContext.Response.Body);
+                    return new EmptyResult();
                 }
+                using var memoryStream = new MemoryStream();
+                using (var archive = new System.IO.Compression.ZipArchive(memoryStream, System.IO.Compression.ZipArchiveMode.Create, true))
+                {
+                    foreach (var file in files)
+                    {
+                        var zipEntry = archive.CreateEntry(file.FileName, System.IO.Compression.CompressionLevel.Fastest);
+                        await using var zipStream = zipEntry.Open();
+                        await file.CopyToAsync(zipStream);
+                    }
+                }
+
+                memoryStream.Seek(0, SeekOrigin.Begin);
+                var zipName = $"output-{DateTime.UtcNow:yyyy-MM-dd-HH-mm-ss}.zip";
+                return File(memoryStream.ToArray(), "APPLICATION/octet-stream", zipName);
+            }
+            catch (Exception e)
+            {
+                bugsnag.Notify(e);
+                return StatusCode(StatusCodes.Status500InternalServerError, "Failed to execute pipeline.");
             }
         }
-
-        private async Task<string> ExecuteSingleScriptInternal(IFormFile? script)
-        {
-            string output;
-            if (
-                Path.GetExtension(script!.FileName)
-                .Equals(".py", StringComparison.OrdinalIgnoreCase)
-            )
-            {
-                using var reader = new StreamReader(script.OpenReadStream());
-                var pythonScript = await reader.ReadToEndAsync();
-                output = await kubernetesService.ExecutePythonScript(
-                    "default",
-                    pythonScript,
-                    _ => { }
-                );
-            }
-            else if (
-                Path.GetExtension(script.FileName).Equals(".cs", StringComparison.OrdinalIgnoreCase)
-            )
-            {
-                using var reader = new StreamReader(script.OpenReadStream());
-                var csharpScript = await reader.ReadToEndAsync();
-                output = await kubernetesService.ExecuteCsharpScript(
-                    "default",
-                    csharpScript,
-                    _ => { }
-                );
-            }
-            else
-            {
-                return "Invalid script file extension";
-            }
-
-            return output;
-        }
+        
     }
 }
