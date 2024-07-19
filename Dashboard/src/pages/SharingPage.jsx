@@ -82,7 +82,6 @@ const SharingPage = ({ script }) => {
 			Visibility: visibility,
 			SourceScriptBinary: file,
 		});
-		console.log(result);
 		if (!result) {
 			const variant = 'error';
 			enqueueSnackbar("Error uploading script", {variant, autoHideDuration: 2000});

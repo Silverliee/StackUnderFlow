@@ -38,6 +38,26 @@ namespace StackUnderFlow.Application.Controllers
             }
         }
         
+        [HttpGet("favorites")]
+        [Authorize]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetMyScriptsAndFavoriteScripts()
+        {
+            BackgroundJob.Enqueue(() => Console.WriteLine("getting my scripts and my favorite scripts with pagination"));
+            var userId = Convert.ToInt32(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+            try
+            {
+                var scripts = await scriptService.GetScriptsAndFavoriteScripts(userId);
+                return Ok(scripts);
+            }
+            catch(Exception e)
+            {
+                bugsnag.Notify(e);
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
+        
         [HttpGet("{scriptId:int}")]
         [Authorize]
         [ProducesResponseType(StatusCodes.Status200OK)]

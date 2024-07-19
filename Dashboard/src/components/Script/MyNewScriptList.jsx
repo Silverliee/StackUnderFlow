@@ -16,7 +16,9 @@ function MyNewScriptsList({
                            handleItemSelected,
                            handleChangePage,
                            handleChangeRowsPerPage,
-                              handleOnClick
+                              handleOnClick,
+    handleFavorite,
+    handleUnfavorite
                        }) {
 
     return (
@@ -37,6 +39,8 @@ function MyNewScriptsList({
                 handleChangeRowsPerPage={handleChangeRowsPerPage}
                 selectedScripts={selectedScripts}
                 handleOnClick={handleOnClick}
+                handleFavorite={handleFavorite}
+                handleUnfavorite={handleUnfavorite}
             />
         </>
     );

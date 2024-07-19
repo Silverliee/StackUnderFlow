@@ -8,6 +8,7 @@ import ContactList from "../components/Contact/ContactList.jsx";
 import Button from "@mui/material/Button";
 import ModalAddGroupMember from "../components/Group/ModalAddGroupMember.jsx";
 import { useAuth} from "../hooks/AuthProvider.jsx";
+import {enqueueSnackbar} from "notistack";
 
 function GroupDetails() {
 	const [group, setGroup] = useState({});
@@ -17,6 +18,7 @@ function GroupDetails() {
 	const [page, setPage] = useState(0);
 	const [rowsPerPage, setRowsPerPage] = useState(5);
 	const [open, setOpen] = useState(false);
+	const [selectedUser, setSelectedUser] = useState(null);
 
 	const { groupId } = useParams();
 	const { authData } = useAuth();
@@ -44,7 +46,9 @@ function GroupDetails() {
 			});
 	}, [groupId]);
 
-	const handRemoveMember = (userId) => {};
+	const handleRemoveMember = (userId) => {
+		console.log(userId);
+	};
 
 	const handleItemSelected = (userId) => {};
 
@@ -65,8 +69,30 @@ function GroupDetails() {
 		setOpen(false);
 	};
 
-	const handleSubmitRegisterEvent = () => {
+	const isAlreadyMember = (id) => {
+		return members?.find((member) => member.userId === id);
+	}
 
+	const handleSubmitRegisterEvent = async () => {
+		if (selectedUser) {
+			if (!isAlreadyMember(selectedUser.userId)) {
+				const result = await AxiosRq.getInstance().inviteUserToGroup(groupId, selectedUser.userId, "Welcome in our group");
+				if (result) {
+					const variant = 'success';
+					let text = `${selectedUser.username} has been invited successfully.`;
+					enqueueSnackbar(text, {variant, autoHideDuration: 2000});
+				} else {
+					const variant = 'error';
+					let text = `An error occured while inviting ${selectedUser.username}.`;
+					enqueueSnackbar(text, {variant, autoHideDuration: 2000});
+				}
+				} else {
+				const variant = 'error';
+				let text = `${selectedUser.username} is already a member of the group`
+				enqueueSnackbar(text, {variant, autoHideDuration: 2000});
+			}
+		}
+		handleClose();
 	}
 
 	return (
@@ -109,7 +135,7 @@ function GroupDetails() {
 						profileType={"group-member"}
 						contacts={members}
 						contactsPaginated={membersPaginated}
-						handleDelete={handRemoveMember}
+						handleDelete={handleRemoveMember}
 						handleItemSelected={handleItemSelected}
 						page={page}
 						rowsPerPage={rowsPerPage}
@@ -119,6 +145,8 @@ function GroupDetails() {
 				</div>
 				<ModalAddGroupMember open={open}
 									 handleClose={handleClose}
+									 setSelectedUser={setSelectedUser}
+									 selectedUser={selectedUser}
 									 handleSubmitRegisterEvent={handleSubmitRegisterEvent}/>
 			</Grid>
 		</>

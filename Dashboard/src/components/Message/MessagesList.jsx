@@ -3,9 +3,6 @@ import {useEffect} from "react";
 
 function MessagesList({ messageList, handleAccept, handleDecline, group }) {
 
-	useEffect(() => {
-		console.log({group, messageList});
-	}, []);
 	return (
 		<>
 			{messageList?.length > 0 &&

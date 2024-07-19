@@ -23,6 +23,7 @@ import UnstyledSelectIntroduction from "../components/Custom/UnstyledSelectIntro
 import ScriptVersionsList from "../components/ScriptVersion/ScriptVersionsList.jsx";
 import MultipleSelectCheckmarks from "../components/Custom/MultipleSelectCheckmarks.jsx";
 import {enqueueSnackbar} from "notistack";
+import AlertDialog from "../components/Custom/AlertDialog.jsx";
 
 const ScriptDetails = () => {
 	const { scriptId } = useParams();
@@ -46,6 +47,11 @@ const ScriptDetails = () => {
 	const [language, setLanguage] = useState(script.programmingLanguage);
 	const [visibility, setVisibility] = useState(script.visibility);
 	const [updated, setUpdated] = useState(false);
+
+	const [open, setOpen] = useState(false);
+	const [text,setText] = useState("");
+	const [scriptVersionIdToDelete, setScriptVersionIdToDelete] = useState("");
+
 	const userId = useAuth().authData?.userId;
 
 	const acceptedFormat = ["None","png","jpg","jpeg","txt","csv","xlsx","json"];
@@ -56,7 +62,6 @@ const ScriptDetails = () => {
 			.getScriptById(scriptId)
 			.then((script) => {
 				setScript(script);
-				console.log(script);
 				setNewDescription(script.description);
 				setNewScriptName(script.scriptName);
 				setNewInputType(script.inputScriptType.split(','));
@@ -92,47 +97,46 @@ const ScriptDetails = () => {
 	};
 
 	const handleDelete = async (scriptVersionId) => {
-		if (
-			confirm(
-				`Are you sure you want to delete this version? ${
-					scriptVersions.length == 1
-						? "The script will be deleted as well as it is the only version"
-						: ""
-				}`
-			)
-		) {
-			if (deleteVersion) {
-				//remove last script version and script from DB
-				AxiosRq.getInstance().deleteScript(scriptId);
-				navigate("/script");
-			} else {
-				AxiosRq.getInstance().deleteScriptVersion(
-					scriptVersionId,
-					deleteVersion
-				);
-			}
-			var scriptVersionsFiltered = scriptVersions?.filter(
-				(scriptVersion) => scriptVersion.scriptVersionId !== scriptVersionId
+		setScriptVersionIdToDelete(scriptVersionId);
+		setText(`Are you sure you want to delete this version? ${
+			scriptVersions.length == 1
+				? "The script will be deleted as well as it is the only version"
+				: ""
+		}`);
+		setOpen(true);
+	}
+
+	const handleConfirm = async () => {
+		if (deleteVersion) {
+			//remove last script version and script from DB
+			AxiosRq.getInstance().deleteScript(scriptId);
+			setOpen(false);
+			navigate("/script");
+		} else {
+			AxiosRq.getInstance().deleteScriptVersion(
+				scriptVersionId,
+				deleteVersion
 			);
-			setScriptVersions(scriptVersionsFiltered);
 		}
+		setOpen(false);
+		setScriptVersionIdToDelete("");
+		let scriptVersionsFiltered = scriptVersions?.filter(
+			(scriptVersion) => scriptVersion.scriptVersionId !== scriptVersionId);
+		setScriptVersions(scriptVersionsFiltered);
 	};
 
 	const handleEditOnline = (scriptVersionId) => {
-		console.log("edit on line", scriptVersionId);
 		setOpenEditor(true);
 		setScriptVersionIdEdited(scriptVersionId);
 	};
 
 	const handleSubmitEvent = async () => {
-		console.log("submitting", comment, version, file);
 		let result = await AxiosRq.getInstance().postScriptVersion({
 			ScriptId: script.scriptId,
 			VersionNumber: version,
 			SourceScriptBinary: file,
 			Comment: comment,
 		});
-		console.log(result);
 		if (result) {
 			const variant = 'success';
 			enqueueSnackbar("Script version uploaded successfully", {variant, autoHideDuration: 2000});
@@ -180,7 +184,6 @@ const ScriptDetails = () => {
 
 	const handleCloseAndSaveAndAddVersionFromEditor = async (data) => {
 		let result = await AxiosRq.getInstance().postScriptVersion(data);
-		console.log(result);
 		if (result) {
 			const variant = 'success';
 			enqueueSnackbar("Script version uploaded successfully", {variant, autoHideDuration: 2000});
@@ -195,7 +198,6 @@ const ScriptDetails = () => {
 		const data = await AxiosRq.getInstance().getScriptVersionBlob(
 			scriptVersion.scriptVersionId
 		);
-		console.log(scriptVersion);
 		const element = document.createElement("a");
 		const file = new Blob([data], { type: "text/plain" });
 		element.href = URL.createObjectURL(file);
@@ -261,10 +263,14 @@ const ScriptDetails = () => {
 					<Typography sx={{ mt: 4, mb: 2 }} variant="h6" component="div">
 						Script Name: {script.scriptName}
 					</Typography>
-					<EditIcon onClick={handleOpenEdit}></EditIcon>
-					<div title="Add version" onClick={handleOpenAddVersion}>
-						<AddCircleOutlineIcon></AddCircleOutlineIcon>
-					</div>
+					{script.userId == userId && (
+						<>
+							<EditIcon onClick={handleOpenEdit}></EditIcon>
+							<div title="Add version" onClick={handleOpenAddVersion}>
+								<AddCircleOutlineIcon></AddCircleOutlineIcon>
+							</div>
+						</>
+					)				}
 					<ScriptVersionModal
 						handleClose={handleCloseAddVersion}
 						handleSubmitEvent={handleSubmitEvent}
@@ -306,6 +312,7 @@ const ScriptDetails = () => {
 					scriptVersionIdEdited={scriptVersionIdEdited}
 					scriptName={script.scriptName}
 					scriptId={scriptId}
+					creatorId={script.userId}
 					setOpenEditor={setOpenEditor}
 					handleCloseAndSaveAndAddVersionFromEditor={
 						handleCloseAndSaveAndAddVersionFromEditor
@@ -399,6 +406,7 @@ const ScriptDetails = () => {
 					</Button>
 				</Box>
 			</Modal>
+			<AlertDialog text={text} open={open} handleClose={() => setOpen(false)} handleConfirm={handleConfirm}/>
 		</>
 	);
 };

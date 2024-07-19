@@ -36,7 +36,8 @@ public class SocialInteractionService(
             {
                 UserId = friend.UserId,
                 Username = friend.Username,
-                Email = friend.Email
+                Email = friend.Email,
+                Description = friend.Description ?? ""
             };
             friendsListResponse.Add(friendRequestToAdd);
         }
@@ -141,7 +142,8 @@ public class SocialInteractionService(
         {
             UserId = friendRequest.UserId1,
             Username = user.Username,
-            Email = user.Email
+            Email = user.Email,
+            Description = user.Description ?? ""
         };
     }
 
@@ -157,7 +159,8 @@ public class SocialInteractionService(
             {
                 UserId = f.UserId1,
                 Username = f.User1.Username,
-                Email = f.User1.Email
+                Email = f.User1.Email,
+                Description = f.User1.Description ?? ""
             })
             .ToList();
     }
@@ -178,7 +181,8 @@ public class SocialInteractionService(
         {
             UserId = user.UserId1,
             Username = user.User1.Username,
-            Email = user.User1.Email
+            Email = user.User1.Email,
+            Description = user.User1.Description ?? ""
         };
     }
 
@@ -264,7 +268,8 @@ public class SocialInteractionService(
             {
                 UserId = user.UserId,
                 Username = user.Username,
-                Email = user.Email
+                Email = user.Email,
+                Description = user.Description ?? ""
             })
             .ToList();
     }
@@ -359,15 +364,17 @@ public class SocialInteractionService(
             Status = "Pending"
         };
 
-        await groupRepository.CreateGroupRequest(groupRequest);
-        return new GroupRequestResponseDto
+        var groupRequestDone = await groupRepository.CreateGroupRequest(groupRequest);
+        var creator = await userRepository.GetUserById(groupRequest.Group.CreatorUserID);
+        var grDto = new GroupRequestResponseDto
         {
-            GroupId = groupRequest.GroupId,
+            GroupId = groupRequestDone.GroupId,
             GroupName = groupRequest.Group.GroupName,
             UserId = groupRequest.UserId,
-            Username = groupRequest.User.Username,
+            Username = creator.Username,
             Status = groupRequest.Status
         };
+        return grDto;
     }
 
     public async Task<GroupRequestResponseDto> AcceptGroupRequest(int userId, int groupId)

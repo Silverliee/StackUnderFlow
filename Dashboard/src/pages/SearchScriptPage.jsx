@@ -129,7 +129,7 @@ function SearchScriptPage() {
 					defaultValue="Public"
 				/>
 			</div>
-			<NewSearchScripts
+			{scriptsFound.length > 0 &&(<NewSearchScripts
 					display={display}
 					search={search}
 					scriptsFound={scriptsFound}
@@ -141,7 +141,9 @@ function SearchScriptPage() {
 					handleChangePage={handleChangePage}
 					handleChangeRowsPerPage={handleChangeRowsPerPage}
 					numberOfScripts={numberOfScripts}
-			/>
+			/>)}
+			{scriptsFound.length === 0 &&(
+				<div> No scripts !</div>)}
 		</>
 	);
 }

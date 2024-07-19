@@ -13,6 +13,8 @@ public class ScriptResponseDto
     public string CreatorName { get; set; }
     public int NumberOfLikes { get; set; }
     public bool IsLiked { get; set; }
+    public bool IsFavorite { get; set; }
+    public string CreationDate { get; set; }
 
     // [ForeignKey("UserId")]
     // public User User { get; set; }

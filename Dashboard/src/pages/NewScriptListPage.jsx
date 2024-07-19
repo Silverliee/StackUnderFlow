@@ -17,6 +17,7 @@ import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
 import {useSnackbar} from "notistack";
 import {HtmlTooltip} from "../components/Custom/HtmlTooltip.jsx";
+import AlertDialog from "../components/Custom/AlertDialog.jsx";
 
 function ScriptListPage() {
     const [search, setSearch] = useState("");
@@ -30,10 +31,15 @@ function ScriptListPage() {
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const [scriptsFoundPaginated, setScriptsFoundPaginated] = useState([]);
-    const [open, setOpen] = useState(false);
+    const [openOptions, setOpenOptions] = useState(false);
     const [inputType, setInputType] = useState([]);
     const [outputType, setOutputType] = useState([]);
     const [openSnackbar, setOpenSnackbar] = useState(false);
+
+    const [open, setOpen] = useState(false);
+    const [text,setText] = useState("");
+    const [scriptIdToDelete, setScriptIdToDelete] = useState("");
+    const [deleteCase, setDeleteCase] = useState(1);
 
     const userId = useAuth().authData?.userId;
 
@@ -46,12 +52,9 @@ function ScriptListPage() {
         fetchScripts();
     }, [userId]);
 
-    useEffect(() => {
-        console.log(checkScripts())
-    },[selectedScriptsTag])
-
     const fetchScripts = async () => {
-        const scriptsLoaded = await AxiosRq.getInstance().getScripts();
+        //const scriptsLoaded = await AxiosRq.getInstance().getScripts();
+        const scriptsLoaded = await AxiosRq.getInstance().getMyScriptsAndFavoriteScript();
         setScriptsFound(scriptsLoaded);
         setSelectedLanguage("Any language");
         setDisplay("block");
@@ -170,39 +173,49 @@ function ScriptListPage() {
     }
 
     const handleDelete = async (scriptId) => {
-        if (
-            confirm(
-                "Are you sure you want to delete this script? (All version will be removed)"
-            )
-        ) {
-            AxiosRq.getInstance().deleteScript(scriptId);
-            const scriptsFiltered = scriptsFound?.filter(
-                (script) => script.scriptId !== scriptId
-            );
-            dispatch({ type: 'SET_SCRIPTS_FOUND', payload: scriptsFiltered });
-            setScriptsFound(scriptsFiltered);
+        setScriptIdToDelete(scriptId);
+        setDeleteCase("One");
+        setText("Are you sure you want to delete this script? (All version will be removed)");
+        setOpen(true);
+    }
+
+    const handleConfirm = async () => {
+        switch(deleteCase) {
+            case "One":
+                AxiosRq.getInstance().deleteScript(scriptIdToDelete);
+                setScriptsFound(scriptsFound.filter((script) => script.scriptId !== scriptIdToDelete));
+                setSelectedScripts(selectedScripts.filter((script) => script.scriptId !== scriptIdToDelete));
+                setSelectedScriptsTag(selectedScriptsTag.filter((script) => script.scriptId !== scriptIdToDelete));
+                break;
+            case "Several":
+                let scriptsWithoutDeletedScripts = scriptsFound;
+                let selectedScriptsTagWithoutDeletedScripts = selectedScriptsTag;
+                for (const scriptId of selectedScripts) {
+                    AxiosRq.getInstance().deleteScript(scriptId);
+                    scriptsWithoutDeletedScripts = scriptsWithoutDeletedScripts?.filter(
+                        (script) => script.scriptId != scriptId
+                    );
+                    selectedScriptsTagWithoutDeletedScripts = selectedScriptsTagWithoutDeletedScripts?.filter((script) => script.scriptId != scriptId);
+                }
+                setScriptsFound(scriptsWithoutDeletedScripts);
+                setSelectedScriptsTag(selectedScriptsTagWithoutDeletedScripts);
+                setSelectedScripts([]);
+                break;
+            case "Unfavorite":
+                AxiosRq.getInstance().removeAsFavoriteScript(scriptIdToDelete);
+                setScriptsFound(scriptsFound.filter((script) => script.scriptId !== scriptIdToDelete));
+                setSelectedScripts(selectedScripts.filter((script) => script.scriptId !== scriptIdToDelete));
+                setSelectedScriptsTag(selectedScriptsTag.filter((script) => script.scriptId !== scriptIdToDelete));
+                break;
         }
+        setOpen(false);
     };
     const handleDeleteSelection = async () => {
-        if (
-            confirm(
-                "Are you sure you want to delete the selected scripts? (All version will be removed)"
-            )
-        ) {
-            let scriptsWithoutDeletedScripts = scriptsFound;
-            for (const scriptId of selectedScripts) {
-                AxiosRq.getInstance().deleteScript(scriptId);
-                scriptsWithoutDeletedScripts = scriptsWithoutDeletedScripts?.filter(
-                    (script) => script.scriptId != scriptId
-                );
-            }
-            console.log({ scriptsWithoutDeletedScripts, scriptsFound });
-            setScriptsFound(scriptsWithoutDeletedScripts);
-            dispatch({ type: 'SET_SCRIPTS_FOUND', payload: scriptsWithoutDeletedScripts });
-
-            setSelectedScripts([]);
-        }
+        setDeleteCase("Several");
+        setText("Are you sure you want to delete the selected scripts? (All version will be removed)");
+        setOpen(true);
     };
+
     const handleSelectChange = (event) => {
         const value = event?.target?.innerHTML; // Get the selected value
         setSelectedLanguage(value);
@@ -214,7 +227,7 @@ function ScriptListPage() {
     };
     const handleReset = () => {
         setSearch("");
-        setOpen(false);
+        setOpenOptions(false);
         setScriptsFoundFiltered(scriptsFound);
         setScriptsFound(scriptsFound);
         setSelectedScriptsTag([]);
@@ -227,7 +240,7 @@ function ScriptListPage() {
         setSelectedScripts([]);
     };
     const handleOpenAdvancedOptions = () => {
-        setOpen(!open);
+        setOpenOptions(!openOptions);
     };
 
     const handleSearch = async () => {
@@ -280,6 +293,17 @@ function ScriptListPage() {
         setOpenSnackbar(false);
     };
 
+    const handleUnfavorite = (scriptId) => {
+        setScriptIdToDelete(scriptId);
+        setDeleteCase("Unfavorite");
+        setText("Are you sure you want to remove this favorite script?");
+        setOpen(true);
+    }
+
+    const handleFavorite = (script) => {
+
+    }
+
     const action = (
         <React.Fragment>
             <IconButton
@@ -318,7 +342,7 @@ function ScriptListPage() {
             <div>
                 <Button onClick={handleOpenAdvancedOptions}>Advanced Options</Button>
             </div>
-            <div id="advanced-options" style={{ display: open ? "block" : "none" }}>
+            <div id="advanced-options" style={{ display: openOptions ? "block" : "none" }}>
                 <UnstyledSelectIntroduction
                     options={["Python", "Csharp"]}
                     handleSelectChange={handleSelectChange}
@@ -388,10 +412,13 @@ function ScriptListPage() {
                         handleChangeRowsPerPage={handleChangeRowsPerPage}
                         handleItemSelected={handleItemSelected}
                         handleOnClick={handleOnClick}
+                        handleFavorite={handleFavorite}
+                        handleUnfavorite={handleUnfavorite}
                     />
                 </AccordionDetails>
             </Accordion>
-                </>
+            <AlertDialog text={text} open={open} handleClose={() => setOpen(false)} handleConfirm={handleConfirm}/>
+        </>
     );
 }
 

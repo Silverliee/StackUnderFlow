@@ -5,7 +5,6 @@ namespace StackUnderFlow.Domains.Model;
 
 public class Favorite
 {
-    [Key]
     public int ScritpId { get; set; }
     public int UserId { get; set; }
 

@@ -8,6 +8,7 @@ public interface IUserRepository
 
     public Task<User?> GetUserById(int id);
     public Task<List<User>> GetUsersByIds(List<int> userIds);
+    public Task<User?> GetUserByUsername(string username);
 
     public Task<User?> GetUserByEmail(string email);
 

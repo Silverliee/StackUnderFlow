@@ -1,12 +1,10 @@
 import React, {useEffect} from "react";
 import Card from "@mui/material/Card";
 import MailOutlineIcon from '@mui/icons-material/MailOutline';
+import UserDescription from "./UserDescription.jsx";
 
 function Profile({randomInt, user}) {
 
-	useEffect(() => {
-		console.log({user});
-	}, []);
 	return (
 		<>
 			<div style={{flexGrow: 1}}>
@@ -32,6 +30,7 @@ function Profile({randomInt, user}) {
 					<MailOutlineIcon />{user.email}
 				</div>
 			</Card>
+			{user.description && (<UserDescription description={user.description}/>)}
 		</div>
 	</>
 )

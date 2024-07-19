@@ -1,6 +1,5 @@
 import axios from "axios";
 import { getBase64 } from "../utils/utils";
-import { Visibility } from "@mui/icons-material";
 
 class AxiosRequester {
 	token = null;
@@ -10,6 +9,7 @@ class AxiosRequester {
 	constructor() {}
 
 	setToken(token) {
+		console.log("Bearer " +token);
 		this.token = token;
 	}
 
@@ -152,11 +152,42 @@ class AxiosRequester {
 		}
 	};
 
+	getMyScriptsAndFavoriteScript = async () => {
+		const apiUrl = this.baseUrl + `Script/favorites`;
+		try {
+			const response = await axios.get(apiUrl, this.getConfig());
+			return response.data;
+		} catch (error) {
+			console.log("Erreur lors de la requête:", error);
+		}
+	}
+
+	putAsFavoriteScript = async (scriptId) => {
+		const apiUrl = this.baseUrl + `SocialInteraction/favorites/${scriptId}`;
+		try {
+			const response = await axios.post(apiUrl, {}, this.getConfig());
+			console.log(response);
+			return response.data;
+		} catch (error) {
+			console.log("Erreur lors de la requête:", error);
+		}
+	}
+
+	removeAsFavoriteScript = async (scriptId) => {
+		const apiUrl = this.baseUrl + `SocialInteraction/favorites/${scriptId}`;
+		try {
+			const response = await axios.delete(apiUrl, this.getConfig());
+			return response.data;
+		} catch (error) {
+			console.log("Erreur lors de la requête:", error);
+		}
+	}
+
 	getScriptsForFeed= async (options = {offset:0, records:5, visibility:"Public"}) => {
 		const apiUrl = this.baseUrl + `Script?offset=${options.offset}&records=${options.records}&visibility=${options.visibility}`;
 		try {
 			const response = await axios.get(apiUrl, this.getConfig());
-			console.log("Réponse de l'API :", { response: response.data });
+			//console.log("Réponse de l'API :", { response: response.data });
 			return response.data;
 		} catch (error) {
 			console.error("Erreur lors de la requête :", error);
@@ -208,6 +239,47 @@ class AxiosRequester {
 		}
 	};
 
+	checkEmailAvailability = async (email) => {
+		const apiUrl = this.baseUrl + `User/checkEmailAvailability?email=${email}`;
+		try {
+			const response = await axios.get(apiUrl, this.getConfig());
+			return response.data.isAvailable;
+		} catch (error) {
+			console.error("Erreur lors de la requête :", error);
+		}
+	}
+
+	checkUsernameAvailability = async (username) => {
+		const apiUrl = this.baseUrl + `User/checkUsernameAvailability?username=${username}`;
+		try {
+			const response = await axios.get(apiUrl, this.getConfig());
+			return response.data.isAvailable;
+		} catch (error) {
+			console.error("Erreur lors de la requête :", error);
+		}
+	}
+
+	validatePassword = async (password) => {
+		const apiUrl = this.baseUrl + `User/checkPassword`;
+		try {
+			const response = await axios.post(apiUrl, {password},this.getConfig());
+			return response.data.isValid;
+		} catch (error) {
+			console.error("Erreur lors de la requête :", error);
+		}
+	}
+
+	updateProfileInformation = async (data = {}) => {
+		const apiUrl = this.baseUrl + `User/update`;
+		try {
+			const response = await axios.patch(apiUrl, data, this.getConfig());
+			console.log(response);
+			return response.data;
+		} catch (error) {
+			console.error("Erreur lors de la requête :", error);
+		}
+	}
+
 	/* getScriptVersionBlob: Get the script blob from DB
 	 * @param {string} scriptVersionId
 	 * @return {object} response.data
@@ -245,7 +317,6 @@ class AxiosRequester {
 	};
 
 	searchScriptsByKeyWord = async (keyWord, options = {offset:0, records:5,visibility:"Public",language:"all"}) => {
-		console.log({options});
 		const apiUrl = this.baseUrl + `Script/search/${keyWord}?offset=${options.offset}&records=${options.records}&visibility=${options.visibility}&language=${options.language}`;
 
 		try {
@@ -291,7 +362,7 @@ class AxiosRequester {
 		const apiUrl = this.baseUrl + `User/${userId}`;
 		try {
 			const response = await axios.get(apiUrl, this.getConfig());
-			console.log("Réponse de l'API :", { response: response });
+			// console.log("Réponse de l'API :", { response: response });
 			if (response.status === 200) {
 				return response.data;
 			} else {
@@ -546,7 +617,7 @@ class AxiosRequester {
 				this.getConfig()
 			);
 			//console.log("Réponse de l'API :", { response: response });
-			if (response.status === 201) {
+			if (response.status === 200) {
 				return response.data;
 			}
 		} catch (error) {
@@ -741,7 +812,6 @@ class AxiosRequester {
 
 	like = async (scriptId) => {
 		const apiUrl = this.baseUrl + `SocialInteraction/likes/${scriptId}`;
-		console.log(this.getConfig());
 		try {
 			const response = await axios.post(
 				apiUrl,

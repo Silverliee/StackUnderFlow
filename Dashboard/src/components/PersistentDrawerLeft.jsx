@@ -34,6 +34,10 @@ import {useEffect, useState} from "react";
 import {Outlet, useNavigate} from "react-router-dom";
 import {useAuth} from "../hooks/AuthProvider.jsx";
 import {useRelations} from "../hooks/RelationsProvider.jsx";
+import MenuItem from "@mui/material/MenuItem";
+import {Menu} from "@mui/material";
+import {AccountCircle} from "@mui/icons-material";
+import {getRandomInt} from "../utils/utils.js";
 
 const drawerWidth = 240;
 
@@ -92,7 +96,18 @@ export default function PersistentDrawerLeft() {
     const [username, setUsername] = useState("");
     const [friendRequests, setFriendRequests] = useState([]);
     const [groupRequests, setGroupRequests] = useState([]);
+    const [anchorEl, setAnchorEl] = React.useState(null);
 
+    const userId = useAuth().authData?.userId;
+    const randomInt = getRandomInt(userId);
+
+    const handleMenu = (event) => {
+        setAnchorEl(event.currentTarget);
+    };
+
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
     const auth = useAuth();
     const relations = useRelations();
     const navigate = useNavigate();
@@ -125,23 +140,69 @@ export default function PersistentDrawerLeft() {
         auth.logout(() => navigate("/login"));
     };
 
+    const handleNavigateProfile = () => {
+        handleClose();
+        setActiveIcon(null);
+        navigate("/profile");
+    }
+
     return (
         <Box sx={{ display: 'flex' }}>
             <CssBaseline />
             <AppBar position="fixed" open={open}>
-                <Toolbar>
+                <Toolbar style={{display:'flex', justifyContent:'space-between'}}>
                     <IconButton
                         color="inherit"
                         aria-label="open drawer"
                         onClick={handleDrawerOpen}
                         edge="start"
-                        sx={{ mr: 2, ...(open && { display: 'none' }) }}
+                        sx={{mr: 2, ...(open && {display: 'none'})}}
                     >
-                        <MenuIcon />
+                        <MenuIcon/>
                     </IconButton>
                     <Typography variant="h6" noWrap component="div">
                         <h2>StackUnderFlow</h2>
                     </Typography>
+                    <div>
+                        <IconButton
+                            size="large"
+                            aria-label="account of current user"
+                            aria-controls="menu-appbar"
+                            aria-haspopup="true"
+                            onClick={handleMenu}
+                            color="inherit"
+                        >
+                            <img
+                                src={`/assets/Profile${randomInt}.jpg`}
+                                alt="Profile"
+                                style={{
+                                    width: '60px',
+                                    height: '60px',
+                                    borderRadius: '50%',
+                                    objectFit: 'cover',
+                                    border: '2px solid white'
+                                }}
+                            />
+                        </IconButton>
+                        <Menu
+                            id="menu-appbar"
+                            anchorEl={anchorEl}
+                            anchorOrigin={{
+                                vertical: 'center',
+                                horizontal: 'right',
+                            }}
+                            keepMounted
+                            transformOrigin={{
+                                vertical: 'top',
+                                horizontal: 'right',
+                            }}
+                            open={Boolean(anchorEl)}
+                            onClose={handleClose}
+                        >
+                            <MenuItem onClick={handleNavigateProfile}>Profile</MenuItem>
+                            <MenuItem onClick={handleLogout}>Logout</MenuItem>
+                        </Menu>
+                    </div>
                 </Toolbar>
             </AppBar>
             <Drawer
@@ -158,17 +219,17 @@ export default function PersistentDrawerLeft() {
                 open={open}
             >
                 <DrawerHeader>
-                    <img src={'assets/logo.jpg'} alt={"logo"} style={{ width: '100px', height: '100px' }} />
+                    <img src={'assets/logo.jpg'} alt={"logo"} style={{width: '100px', height: '100px'}}/>
                     <IconButton onClick={handleDrawerClose}>
-                        {theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
+                        {theme.direction === 'ltr' ? <ChevronLeftIcon/> : <ChevronRightIcon/>}
                     </IconButton>
                 </DrawerHeader>
-                <Divider />
+                <Divider/>
                 <List>
                     <ListItem key={"home"} disablePadding>
                         <ListItemButton onClick={() => handleNavigate("home")}>
-                            <ListItemIcon>
-                                <HomeIcon />
+                        <ListItemIcon>
+                            <HomeIcon />
                             </ListItemIcon>
                             <ListItemText primary={"Home"} />
                             {activeIcon === "home" && <ArrowLeftIcon />}
@@ -256,8 +317,8 @@ export default function PersistentDrawerLeft() {
                 </List>
             </Drawer>
             <Main open={open}>
-                <DrawerHeader />
-                <Outlet />
+                <DrawerHeader/>
+                    <Outlet/>
             </Main>
         </Box>
     );

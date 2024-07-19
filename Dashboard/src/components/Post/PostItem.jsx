@@ -20,7 +20,7 @@ import Accordion from "@mui/material/Accordion";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore.js";
 import AccordionDetails from "@mui/material/AccordionDetails";
-import UnstyledInputIntroduction from "../Custom/UnstyledInputIntroduction.jsx";
+import {useAuth} from "../../hooks/AuthProvider.jsx";
 
 export default function PostItem({post}) {
     const [comments, setComments] = React.useState([{text:"coucou"},{text:"coucou2"},{text:"coucou3"}]);
@@ -29,13 +29,15 @@ export default function PostItem({post}) {
     const [numberOfLikes, setNumberOfLikes] = React.useState(post?.numberOfLikes);
     const [isLiked, setIsLiked] = React.useState(post?.isLiked);
 
-    const [isFavorite, setIsFavorite] = React.useState(false);
+    const [isFavorite, setIsFavorite] = React.useState(post?.isFavorite);
     const navigate = useNavigate();
     const handleOpenComments = () => {
         setOpen(!open);
     }
 
     const imageId = (post.scriptId % 5) + 1
+    const {authData} = useAuth();
+    const userId = authData.userId;
 
     useEffect(() => {
         fetchComments()
@@ -44,7 +46,6 @@ export default function PostItem({post}) {
     const fetchComments = async () => {
         AxiosRq.getInstance().getComments(post.scriptId).then((res) => {
             if(res) {
-                console.log(res);
                 setComments(res)
             }
         })
@@ -52,7 +53,6 @@ export default function PostItem({post}) {
 
     const handleComment = async (newComment) => {
         //post newComment
-        console.log(newComment);
         await AxiosRq.getInstance().postComment(post.scriptId, newComment);
         //add it to comments List
         fetchComments();
@@ -66,7 +66,6 @@ export default function PostItem({post}) {
     }
 
     const handleEdit = async (commentId, newText) => {
-        console.log("Edit comment " + commentId + " with text " + newText);
         const newComment = await AxiosRq.getInstance().updateComment(commentId,newText);
         fetchComments();
     }
@@ -87,7 +86,6 @@ export default function PostItem({post}) {
     };
 
     const handleUnlike = async (scriptId) => {
-        console.log('unlike')
         const result = await AxiosRq.getInstance().unlike(scriptId);
         if (result === "success") {
             setNumberOfLikes(numberOfLikes-1);
@@ -95,7 +93,6 @@ export default function PostItem({post}) {
         }
     }
     const handleLike = async (scriptId) => {
-        console.log('like')
         const result = await AxiosRq.getInstance().like(scriptId);
         if (result === "success") {
             setNumberOfLikes(numberOfLikes+1);
@@ -104,11 +101,16 @@ export default function PostItem({post}) {
     }
 
     const handleUnfavorite = async (scriptId) => {
+        const result = await AxiosRq.getInstance().removeAsFavoriteScript(scriptId);
         setIsFavorite(false);
     }
 
     const handleFavorite = async (scriptId) => {
-        setIsFavorite(true);
+        const result = await AxiosRq.getInstance().putAsFavoriteScript(scriptId);
+        console.log(result);
+        if(result){
+            setIsFavorite(true);
+        }
     }
 
     return (
@@ -159,12 +161,13 @@ export default function PostItem({post}) {
                         }
                             {numberOfLikes}
                         </div>
-                        <div style={{alignContent: "center"}}>{isFavorite ?
+                        {userId !== post.userId && (<div style={{alignContent: "center"}}>{isFavorite ?
                             <BookmarkIcon style={{cursor: "pointer"}} onClick={() => handleUnfavorite(post.scriptId)}/>
                             :
-                            <BookmarkBorderIcon style={{cursor: "pointer"}} onClick={() => handleFavorite(post.scriptId)}/>
-                        }
+                            <BookmarkBorderIcon style={{cursor: "pointer"}}
+                                                onClick={() => handleFavorite(post.scriptId)}/>}
                         </div>
+                        )}
 
                     </CardActions>
                 </div>

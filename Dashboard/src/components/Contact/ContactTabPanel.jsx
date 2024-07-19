@@ -56,7 +56,7 @@ export default function BasicTabs() {
 					<Tab label="Search" {...a11yProps(0)} />
 					<Tab label="Friends" {...a11yProps(1)} />
 					<Tab label="Groups" {...a11yProps(2)} />
-					<Tab label="Follows" {...a11yProps(3)} />
+					{/*<Tab label="Follows" {...a11yProps(3)} />*/}
 				</Tabs>
 			</Box>
 			<ContactTabPanel value={value} index={0}>
@@ -68,9 +68,9 @@ export default function BasicTabs() {
 			<ContactTabPanel value={value} index={2}>
 				<GroupsPage />
 			</ContactTabPanel>
-			<ContactTabPanel value={value} index={3}>
-				List of Follows
-			</ContactTabPanel>
+			{/*<ContactTabPanel value={value} index={3}>*/}
+			{/*	List of Follows*/}
+			{/*</ContactTabPanel>*/}
 		</Box>
 	);
 }
