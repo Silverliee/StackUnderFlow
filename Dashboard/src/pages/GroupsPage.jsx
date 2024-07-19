@@ -1,21 +1,25 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import AxiosRq from "../Axios/AxiosRequester";
 import GroupList from "../components/Group/GroupList.jsx";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import { Modal, Box, Button } from "@mui/material";
 import UnstyledInputIntroduction from "../components/Custom/UnstyledInputIntroduction.jsx";
 import {useRelations} from "../hooks/RelationsProvider.jsx";
+import AlertDialog from "../components/Custom/AlertDialog.jsx";
 
 function GroupsPage() {
 	const [groups, setGroups] = useState([]);
 	const [groupsPaginated, setGroupsPaginated] = useState([]);
 	const [page, setPage] = useState(0);
 	const [rowsPerPage, setRowsPerPage] = useState(5);
-	const [open, setOpen] = useState(false);
+	const [openModal, setOpenModal] = useState(false);
 	const [groupName, setGroupName] = useState("");
 	const [description, setDescription] = useState("");
+	const [open, setOpen] = useState(false);
+	const [text,setText] = useState("");
+	const [groupIdToDelete, setGroupIdToDelete] = useState("");
 
-	const { myGroups } = useRelations();
+	const { myGroups, fetchGroups } = useRelations();
 
 	useEffect( () => {
 		setGroups(myGroups);
@@ -42,11 +46,17 @@ function GroupsPage() {
 	};
 
 	const handleDeleteGroup = (groupId) => {
-		if (confirm("Are you sure you want to delete this group?")) {
-			AxiosRq.getInstance().deleteGroup(groupId);
-			setGroups(groups.filter((group) => group.groupId !== groupId));
-		}
+		setText("Are you sure you want to delete this group?");
+		setGroupIdToDelete(groupId);
+		setOpen(true);
 	};
+
+	const handleConfirm = () => {
+		AxiosRq.getInstance().deleteGroup(groupIdToDelete);
+		fetchGroups();
+		setOpen(false);
+	}
+
 	const handleItemSelected = (groupId) => {};
 
 	const handleChangeRowsPerPage = (event) => {
@@ -59,11 +69,11 @@ function GroupsPage() {
 	};
 
 	const handleCreateGroup = async (group) => {
-		setOpen(true);
+		setOpenModal(true);
 	};
 
 	const handleClose = () => {
-		setOpen(false);
+		setOpenModal(false);
 		setGroupName("");
 		setDescription("");
 	};
@@ -75,7 +85,7 @@ function GroupsPage() {
 		};
 		const result = await AxiosRq.getInstance().createGroup(group);
 		if (result) {
-			setGroups([...groups, result]);
+			fetchGroups();
 			handleClose();
 		}
 	};
@@ -89,7 +99,7 @@ function GroupsPage() {
 				/>
 				<p>Create a Group</p>
 			</div>
-			<Modal open={open} onClose={handleClose}>
+			<Modal open={openModal} onClose={handleClose}>
 				<Box sx={{ ...style, width: 400 }}>
 					<div>
 						<label>Group name: </label>
@@ -129,6 +139,7 @@ function GroupsPage() {
 				handleChangePage={handleChangePage}
 				handleChangeRowsPerPage={handleChangeRowsPerPage}
 			/>
+			<AlertDialog text={text} open={open} handleClose={() => setOpen(false)} handleConfirm={handleConfirm}/>
 		</>
 	);
 }

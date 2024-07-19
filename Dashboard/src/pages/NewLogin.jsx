@@ -2,7 +2,7 @@ import React, {useEffect} from 'react';
 import { Container, Box, TextField, Button, Typography, Link } from '@mui/material';
 import {useNavigate} from "react-router-dom";
 import { useAuth } from "../hooks/AuthProvider";
-import { isValidEmail } from "../utils/utils";
+import {isEmailAvailable, isUsernameAvailable, isValidEmail} from "../utils/utils";
 import RegisterModal from "../components/RegisterModal";
 import {enqueueSnackbar} from "notistack";
 import NewRegisterModal from "../components/NewRegisterModal.jsx";
@@ -46,12 +46,16 @@ const NewLogin = () => {
     };
     const handleSubmitRegisterEvent = async (e) => {
         e.preventDefault();
+        const emailAvailable = await isEmailAvailable(emailRegister);
+        const usernameAvailable = await isUsernameAvailable(username);
         if (
             username !== "" &&
             passwordRegister !== "" &&
             emailRegister !== "" &&
             passwordRegister === passwordRegister2 &&
-            isValidEmail(emailRegister)
+            isValidEmail(emailRegister) && passwordRegister.length > 5 &&
+            emailAvailable &&
+            usernameAvailable
         ) {
             auth.register(
                 {
@@ -68,8 +72,14 @@ const NewLogin = () => {
         let text = "Please provide a valid input"
         if (!isValidEmail(emailRegister)){
             text = "Provide a valid email"
+        } else if (!emailAvailable) {
+            text = "This email is already used"
+        } else if (!usernameAvailable) {
+            text = "This username is already used"
         } else if (passwordRegister !== passwordRegister2){
             text = "Passwords do not match"
+        } else if (passwordRegister.length < 6){
+            text = "Password is too short, minimum 6 characters"
         }
         enqueueSnackbar(text, {variant, autoHideDuration: 2000});
     };

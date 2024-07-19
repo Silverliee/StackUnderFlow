@@ -47,7 +47,8 @@ public class LoginService(
         {
             UserId = user.UserId,
             Username = user.Username,
-            Email = user.Email
+            Email = user.Email,
+            Description = user.Description ?? ""
         };
     }
     
@@ -62,7 +63,8 @@ public class LoginService(
         {
             UserId = u.UserId,
             Username = u.Username,
-            Email = u.Email
+            Email = u.Email,
+            Description = u.Description ?? ""
         }).ToList();
     }
 
@@ -84,5 +86,15 @@ public class LoginService(
         message.SubjectEncoding = System.Text.Encoding.UTF8;
         client.Send(message);
         return true;
+    }
+    
+    public async Task<bool> CheckPassword(int userId, string password)
+    {
+        var user = await userRepository.GetUserById(userId);
+        if (user == null)
+        {
+            return false;
+        }
+        return user.Password == password;
     }
 }

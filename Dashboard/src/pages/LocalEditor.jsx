@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import Editor from "@monaco-editor/react";
 import { Button, Input } from "@mui/material";
+import AlertDialog from "../components/Custom/AlertDialog.jsx";
+import {enqueueSnackbar} from "notistack";
 
 function LocalEditor() {
 	const [fileName, setFileName] = useState("default.txt");
@@ -9,6 +11,8 @@ function LocalEditor() {
 	const [newFileValue, setNewFileValue] = useState("");
 	const [reset, setReset] = useState(false);
 	const [backup, setBackup] = useState("");
+	const [open, setOpen] = useState(false);
+	const [text,setText] = useState("");
 
 	useEffect(() => {
 		if (reset) {
@@ -21,7 +25,6 @@ function LocalEditor() {
 	async function handleChange(event) {
 		setFile(null);
 		const selectedFile = event.target.files[0];
-		console.log(selectedFile);
 		if (selectedFile && selectedFile.type) {
 			setFile(selectedFile);
 			const reader = new FileReader();
@@ -34,7 +37,9 @@ function LocalEditor() {
 			};
 			reader.readAsText(selectedFile);
 		} else {
-			console.log("No file or invalid file selected");
+			const variant = 'error';
+			let text = "No file or invalid file selected"
+			enqueueSnackbar(text, {variant, autoHideDuration: 2000});
 		}
 	}
 
@@ -43,10 +48,14 @@ function LocalEditor() {
 	}
 
 	function handleReset() {
-		if (confirm("Are you sure you want to discard your changes?")) {
-			setFileValue(newFileValue);
-			setReset(true);
-		}
+		setText("Are you sure you want to discard your changes?");
+		setOpen(true);
+	}
+
+	function handleConfirm() {
+		setFileValue(newFileValue);
+		setReset(true);
+		setOpen(false);
 	}
 
 	function handleSaveAndDownload() {
@@ -86,6 +95,7 @@ function LocalEditor() {
 				value={fileValue}
 				onChange={handleEditorChange}
 			/>
+			<AlertDialog text={text} open={open} handleClose={() => setOpen(false)} handleConfirm={handleConfirm}/>
 		</>
 	);
 }

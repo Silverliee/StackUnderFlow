@@ -5,6 +5,8 @@ import { useState } from "react";
 import AxiosRq from "../Axios/AxiosRequester";
 import UnstyledTextareaIntroduction from "./Custom/UnstyledTextareaIntroduction.jsx";
 import UnstyledInputIntroduction from "./Custom/UnstyledInputIntroduction.jsx";
+import { useAuth } from "../hooks/AuthProvider";
+import AlertDialog from "./Custom/AlertDialog.jsx";
 
 function EditorFrame({
 	scriptVersionIdEdited,
@@ -12,6 +14,7 @@ function EditorFrame({
 	scriptId,
 	setOpenEditor,
 	handleCloseAndSaveAndAddVersionFromEditor,
+	creatorId
 }) {
 	const [fileName, setFileName] = useState("");
 	const [versionNumber, setVersionNumber] = useState("");
@@ -23,6 +26,9 @@ function EditorFrame({
 	const [openVersionNumberInput, setOpenVersionNumberInput] = useState(false);
 	const [backup, setBackup] = useState("");
 	const [reset, setReset] = useState(false);
+	const [open, setOpen] = useState(false);
+	const userId = useAuth().authData?.userId;
+
 	useEffect(() => {
 		handleGetScriptVersionBlob(scriptVersionIdEdited);
 	}, [scriptVersionIdEdited]);
@@ -67,10 +73,13 @@ function EditorFrame({
 	}
 
 	function handleReset() {
-		if (confirm("Are you sure you want to discard your changes?")) {
-			setFileValue(newFileValue);
-			setReset(true);
-		}
+		setOpen(true);
+	}
+
+	const handleConfirm = () => {
+		setFileValue(newFileValue);
+		setReset(true);
+		setOpen(false);
 	}
 
 	function handleCloseAndSave() {
@@ -202,7 +211,7 @@ function EditorFrame({
 			</Modal>
 			<div style={{ display: "flex" }}>
 				<Button onClick={handleSaveAndDownload}>Save & Download</Button>
-				<Button onClick={handleSaveAndAddVersion}>Save & Add Version</Button>
+				{creatorId == userId && (<Button onClick={handleSaveAndAddVersion}>Save & Add Version</Button>)}
 				<Button onClick={handleReset}>Reset</Button>
 				<Button
 					onClick={() => {
@@ -222,6 +231,7 @@ function EditorFrame({
 				onChange={handleEditorChange}
 				onValidate={handleEditorValidation}
 			/>
+			<AlertDialog text={"Are you sure you want to discard your changes?"} open={open} handleClose={() => setOpen(false)} handleConfirm={handleConfirm}/>
 		</div>
 	);
 }

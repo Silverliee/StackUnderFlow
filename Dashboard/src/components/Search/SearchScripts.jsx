@@ -16,7 +16,9 @@ function SearchScripts({
 	selectedScripts,
 	item,
 	numberOfScripts,
-	handleOnClick
+	handleOnClick,
+	handleUnfavorite,
+	handleFavorite
 }) {
 	return (
 		<>
@@ -36,6 +38,8 @@ function SearchScripts({
 									? selectedScripts?.includes(script.scriptId.toString())
 									: false
 							}
+							handleUnfavorite={handleUnfavorite}
+							handleFavorite={handleFavorite}
 						/>
 					))}
 				</div>

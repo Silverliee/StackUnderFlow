@@ -31,7 +31,6 @@ function MyScriptsList({
 	};
 
 	const handleItemSelected = (event) => {
-		console.log({event})
 		if (event.target.checked) {
 			setSelectedScripts([...selectedScripts, event.target.id]);
 		} else {

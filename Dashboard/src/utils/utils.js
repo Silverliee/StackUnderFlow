@@ -1,3 +1,5 @@
+import AxiosRequester from "../Axios/AxiosRequester.js";
+
 export const getBase64 = (file) => {
 	return new Promise((resolve, reject) => {
 		const reader = new FileReader();
@@ -21,4 +23,12 @@ export const isValidEmail = (email) => {
 export const getRandomInt = (number) =>{
 	// min and max are inclusive
 	return (number % 7) +1;
+}
+
+export const isEmailAvailable = async (email) => {
+	return await AxiosRequester.getInstance().checkEmailAvailability(email);
+}
+
+export const isUsernameAvailable = async (username) => {
+	return await AxiosRequester.getInstance().checkUsernameAvailability(username);
 }

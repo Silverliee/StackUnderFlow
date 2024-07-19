@@ -15,6 +15,11 @@ public class UserRepository(MySqlDbContext context) : IUserRepository
     {
         return await context.Users.FirstOrDefaultAsync(u => u.UserId == id);
     }
+    
+    public async Task<User?> GetUserByUsername(string username)
+    {
+        return await context.Users.FirstOrDefaultAsync(u => u != null && u.Username == username);
+    }
 
     public async Task<User?> GetUserByEmail(string email)
     {

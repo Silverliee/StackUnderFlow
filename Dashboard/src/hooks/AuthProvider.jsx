@@ -33,6 +33,8 @@ const AuthProvider = ({ children }) => {
 					token: response.token,
 					username: user.username,
 					userId: user.userId,
+					email: user.email,
+					description: user.description
 				});
 				setIsLoggedIn(true);
 				const variant = 'success';
@@ -48,7 +50,6 @@ const AuthProvider = ({ children }) => {
 	};
 
 	const register = async (data, callback) => {
-		console.log(`register Action ${data}`);
 		try {
 			const response = await AxiosRq.getInstance().registerRequest(data);
 			if (response) {

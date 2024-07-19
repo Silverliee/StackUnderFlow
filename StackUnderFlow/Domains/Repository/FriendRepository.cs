@@ -14,7 +14,7 @@ public class FriendRepository(MySqlDbContext context) : IFriendRepository
     public async Task<List<FriendRequest>> GetFriendsByUserId(int userId)
     {
         return await context
-            .Friends.Where(f => f.UserId1 == userId || f.UserId2 == userId)
+            .Friends.Where(f => (f.UserId1 == userId || f.UserId2 == userId) && f.Status == "Accepted")
             .ToListAsync();
     }
 

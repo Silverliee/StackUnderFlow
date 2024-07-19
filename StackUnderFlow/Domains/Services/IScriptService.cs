@@ -6,6 +6,7 @@ using StackUnderFlow.Application.DataTransferObject.Response;
 public interface IScriptService
 {
     public Task<List<ScriptResponseDto>> GetScripts(int offset, int records, string visibility, int requesterId);
+    public Task<List<ScriptResponseDto>> GetScriptsAndFavoriteScripts(int requesterId);
     public Task<ScriptResponseDto?> GetScriptById(int scriptId, int requesterId);
     public Task<List<ScriptResponseDto>> GetScriptsByUserId(int userId, int requesterId);
     public Task<ScriptResponseDto?> AddScript(ScriptUploadRequestDto? scriptUploadRequestDto);

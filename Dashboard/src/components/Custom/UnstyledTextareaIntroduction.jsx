@@ -6,7 +6,8 @@ export default function UnstyledTextareaIntroduction({
 	handleInput,
 	value,
 	placeholder,
-	disabled
+	disabled,
+	handleKeyDown,
 }) {
 	return (
 		<TextareaAutosize
@@ -15,6 +16,7 @@ export default function UnstyledTextareaIntroduction({
 			placeholder={placeholder ? placeholder : "Empty"}
 			value={value}
 			disabled={disabled}
+			onKeyDown={handleKeyDown}
 		/>
 	);
 }

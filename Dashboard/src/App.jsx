@@ -7,13 +7,10 @@ import {
 	Routes,
 	Navigate,
 } from "react-router-dom";
-import Login from "./pages/Login.jsx";
 import AuthProvider from "./hooks/AuthProvider";
 import PrivateRoute from "./router/PrivateRoute";
-import Profile from "./components/Profile/Profile.jsx";
 import ExecutionPage from "./pages/ExecutionPage.jsx";
 import ContactsPage from "./pages/ContactsPage";
-import ScriptListPage from "./pages/ScriptListPage";
 import ScriptDetails from "./pages/ScriptDetails";
 import ScriptVersionPage from "./pages/ScriptVersionPage";
 import SearchScriptPage from "./pages/SearchScriptPage.jsx";
@@ -52,10 +49,9 @@ const App = () => {
 								<Route path="/home" element={<HomePage />} />
 								<Route path="/exec" element={<ExecutionPage />} />
 								<Route path="/contacts" element={<ContactsPage />} />
-								<Route path="/profile" element={<Profile />} />
+								<Route path="/profile" element={<ProfilePage />} />
 								<Route path="/share" element={<SharingPage />} />
 								<Route exact path="/edit" element={<LocalEditor />} />
-								<Route path="/editProfile" element={<ProfilePage />} />
 								<Route path="/message" element={<MessagePage />} />
 								<Route
 									path="/script/:scriptId/version"

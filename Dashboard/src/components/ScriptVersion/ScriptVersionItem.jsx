@@ -3,6 +3,7 @@ import { ListItem, ListItemIcon, Checkbox, ListItemText } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import DownloadIcon from "@mui/icons-material/Download";
 import { Button } from "@mui/material";
+import {useAuth} from "../../hooks/AuthProvider.jsx";
 
 const ScriptVersionItem = ({
 	sv,
@@ -10,6 +11,7 @@ const ScriptVersionItem = ({
 	handleEditOnline,
 	handleDownload,
 }) => {
+	const userId = useAuth().authData.userId;
 	return (
 		<ListItem role={undefined} dense button>
 			<ListItemIcon>
@@ -29,7 +31,7 @@ const ScriptVersionItem = ({
 				Edit online
 			</Button>
 			<DownloadIcon onClick={() => handleDownload(sv)}></DownloadIcon>
-			<DeleteIcon onClick={() => handleDelete(sv.scriptVersionId)}></DeleteIcon>
+			{userId === sv.creatorUserId &&(<DeleteIcon onClick={() => handleDelete(sv.scriptVersionId)}></DeleteIcon>)}
 		</ListItem>
 	);
 };

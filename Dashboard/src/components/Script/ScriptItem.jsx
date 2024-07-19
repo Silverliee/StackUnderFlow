@@ -11,6 +11,8 @@ import DownloadIcon from "@mui/icons-material/Download";
 import { Link, useLocation } from "react-router-dom";
 import AxiosRq from "../../Axios/AxiosRequester.js";
 import {HtmlTooltip} from "../Custom/HtmlTooltip.jsx";
+import BookmarkIcon from "@mui/icons-material/Bookmark.js";
+import BookmarkBorderIcon from "@mui/icons-material/BookmarkBorder.js";
 
 export const ScriptItem = ({
 							   script,
@@ -19,6 +21,8 @@ export const ScriptItem = ({
 							   handleItemSelected,
 							   check,
 							   handleOnClick,
+	handleFavorite,
+	handleUnfavorite
 						   }) => {
 	const location = useLocation();
 	const pathSegments = location.pathname.split("/");
@@ -116,6 +120,13 @@ export const ScriptItem = ({
 								onClick={handleDeleteClick}
 								style={{ marginLeft: "10px", cursor: "pointer" }}
 							/>
+						)}
+						{lastSegment === "script" && script.userId !== userId && (
+							script.isFavorite ?
+									<BookmarkIcon style={{marginLeft: "10px", cursor: "pointer"}} onClick={() => handleUnfavorite(script.scriptId)}/>
+									:
+									<BookmarkBorderIcon style={{marginLeft: "10px", cursor: "pointer"}}
+														onClick={() => handleFavorite(script.scriptId)}/>
 						)}
 					</div>
 				</div>

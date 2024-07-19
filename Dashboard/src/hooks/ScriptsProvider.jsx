@@ -76,7 +76,7 @@ const ScriptsProvider = ({ children }) => {
         const fetchGroups = async () => {
             if (!authData?.userId) return;
 
-            const groupMembersByGroupId = await fetchGroupsAndMembers(groups);
+            //const groupMembersByGroupId = await fetchGroupsAndMembers(groups);
             // const groupsScripts = await Promise.all(groups?.map(async (group) => {
             //     const groupMembers = groupMembersByGroupId.find(gp => gp.groupId === group.groupId)?.members || [];
             //     const scripts = await Promise.all(groupMembers?.map(async (member) => {
@@ -93,38 +93,38 @@ const ScriptsProvider = ({ children }) => {
         fetchGroups();
     }, [authData?.userId, groups]);
 
-    useEffect(() => {
-        const fetchFollows = async () => {
-            if (!authData?.userId) return;
-            //
-            // const followingScripts = await Promise.all(follows?.map(async (follow) => {
-            //     return await AxiosRq.getInstance().getScriptByUserIdAndVisiblity(
-            //         follow.userId, "Follow"
-            //     );
-            // }));
-            // dispatch({ type: 'SET_MY_FOLLOWING_SCRIPTS', payload: followingScripts.flat() });
-            dispatch({ type: 'SET_MY_FOLLOWING_SCRIPTS', payload: [] });
+    // useEffect(() => {
+    //     const fetchFollows = async () => {
+    //         if (!authData?.userId) return;
+    //         //
+    //         // const followingScripts = await Promise.all(follows?.map(async (follow) => {
+    //         //     return await AxiosRq.getInstance().getScriptByUserIdAndVisiblity(
+    //         //         follow.userId, "Follow"
+    //         //     );
+    //         // }));
+    //         // dispatch({ type: 'SET_MY_FOLLOWING_SCRIPTS', payload: followingScripts.flat() });
+    //         dispatch({ type: 'SET_MY_FOLLOWING_SCRIPTS', payload: [] });
+    //
+    //     };
+    //     fetchFollows();
+    // }, [authData?.userId, follows]);
 
-        };
-        fetchFollows();
-    }, [authData?.userId, follows]);
-
-    const fetchGroupsAndMembers = async (groups) => {
-        try {
-            const memberPromises = groups.map(async (group) => {
-                const members = await AxiosRq.getInstance().getGroupMembers(group.groupId);
-                return {
-                    groupId: group.groupId,
-                    members: members.map(m => ({ userId: m.userId, username: m.username }))
-                };
-            });
-            const membersResults = await Promise.all(memberPromises);
-            dispatch({ type: 'SET_GROUP_MEMBERS', payload: membersResults });
-            return membersResults;
-        } catch (error) {
-            console.error("Failed to fetch groups or group members", error);
-        }
-    };
+    // const fetchGroupsAndMembers = async (groups) => {
+    //     try {
+    //         const memberPromises = groups.map(async (group) => {
+    //             const members = await AxiosRq.getInstance().getGroupMembers(group.groupId);
+    //             return {
+    //                 groupId: group.groupId,
+    //                 members: members.map(m => ({ userId: m.userId, username: m.username }))
+    //             };
+    //         });
+    //         const membersResults = await Promise.all(memberPromises);
+    //         dispatch({ type: 'SET_GROUP_MEMBERS', payload: membersResults });
+    //         return membersResults;
+    //     } catch (error) {
+    //         console.error("Failed to fetch groups or group members", error);
+    //     }
+    // };
 
     return (
         <ScriptsContext.Provider value={{ state, dispatch }}>

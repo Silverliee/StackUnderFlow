@@ -145,8 +145,8 @@ public class GroupRepository(MySqlDbContext context) : IGroupRepository
         var groupRequests = await context
             .GroupRequests.Where(gr => gr.GroupId == group.GroupId)
             .ToListAsync();
-        context.Groups.Remove(group);
         context.GroupRequests.RemoveRange(groupRequests);
+        context.Groups.Remove(group);
         await context.SaveChangesAsync();
     }
 }

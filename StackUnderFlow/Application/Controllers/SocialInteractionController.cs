@@ -11,7 +11,7 @@ namespace StackUnderFlow.Application.Controllers;
 [ApiController]
 [Route("[controller]")]
 [EnableCors("AllowAll")]
-public class SocialInteractionController(ISocialInteractionService socialInteractionService,
+public class SocialInteractionController(ISocialInteractionService socialInteractionService, IFavoriteService favoriteService, IScriptService scriptService,
     Bugsnag.IClient bugsnag)
     : ControllerBase
 {
@@ -624,6 +624,81 @@ public class SocialInteractionController(ISocialInteractionService socialInterac
                 return NoContent();
             }
             await socialInteractionService.DeleteComment(commentId);
+            return NoContent();
+        }
+        catch(Exception e)
+        {
+            bugsnag.Notify(e);
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
+    }
+    #endregion
+    #region Favorites
+
+    [HttpGet("favorites")]
+    [Authorize]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> GetFavorites()
+    {
+        BackgroundJob.Enqueue(() => Console.WriteLine("Getting favorites"));
+        var userId = Convert.ToInt32(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+        try
+        {
+            var favorites = await favoriteService.GetFavorites(userId);
+            return Ok(favorites);
+        }
+        catch(Exception e)
+        {
+            bugsnag.Notify(e);
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
+    }
+    
+    [HttpPost("favorites/{scriptId:int}")]
+    [Authorize]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> CreateFavorite(int scriptId)
+    {
+        BackgroundJob.Enqueue(() => Console.WriteLine("Creating favorite"));
+        var userId = Convert.ToInt32(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+        try
+        {
+            var script = await scriptService.GetScriptById(scriptId, userId);
+            if (script == null)
+            {
+                return NotFound();
+            }
+            var favorite = await favoriteService.CreateFavorite(scriptId, userId);
+            if (favorite == null)
+            {
+                return BadRequest("Favorite already exists");
+            }
+            return Created("",favorite);
+        }
+        catch(Exception e)
+        {
+            bugsnag.Notify(e);
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
+    }
+    
+    [HttpDelete("favorites/{scriptId:int}")]
+    [Authorize]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> DeleteFavorite(int scriptId)
+    {
+        BackgroundJob.Enqueue(() => Console.WriteLine("Deleting favorite"));
+        var userId = Convert.ToInt32(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+        try
+        {
+            await favoriteService.DeleteFavorite(scriptId,userId);
             return NoContent();
         }
         catch(Exception e)
