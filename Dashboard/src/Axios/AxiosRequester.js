@@ -682,7 +682,7 @@ class AxiosRequester {
 	};
 
 	executeScript = async (formData) => {
-		const apiUrl = this.baseUrl + `Runner`;
+		const apiUrl = this.baseUrl + `Runner/script/file`;
 		try {
 			//console.log({ formData });
 			const response = await axios.post(apiUrl, formData, {
@@ -694,7 +694,8 @@ class AxiosRequester {
 			});
 			//console.log("Réponse de l'API :", { response: response });
 			if (response.status === 200) {
-				//console.log(response);
+				console.log(response);
+				console.log(typeof response);
 				return response.data;
 			}
 		} catch (error) {
@@ -843,12 +844,12 @@ class AxiosRequester {
 		}
 	}
 
-	executePipeline = async(scripts) => {
-		const apiUrl = this.baseUrl + `Runner/execute-pipeline`;
+	executePipeline = async(data) => {
+		const apiUrl = this.baseUrl + `Runner/pipeline`;
 		try {
 			const response = await axios.post(
 				apiUrl,
-				scripts,
+				data,
 				this.getConfig()
 			)
 			if (response.status === 200) {

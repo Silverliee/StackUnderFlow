@@ -102,7 +102,8 @@ const PipelineDetails = () => {
 
     useEffect(() => {
         //TODO checker si la connexion fonctionne
-        //SocketManager.connectWebSocketPipeline(pipelineId, handleWebSocketMessage);
+        const pipelineId = crypto.randomUUID();
+        SocketManager.connectWebSocketPipeline(pipelineId, handleWebSocketMessage);
     }, []);
 
     useEffect(() => {

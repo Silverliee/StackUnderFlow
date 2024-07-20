@@ -15,12 +15,13 @@ import Stack from '@mui/material/Stack';
 import MultipleSelectCheckmarks from "../components/Custom/MultipleSelectCheckmarks.jsx";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
-import {useSnackbar} from "notistack";
+import {enqueueSnackbar, useSnackbar} from "notistack";
 import {HtmlTooltip} from "../components/Custom/HtmlTooltip.jsx";
 import AlertDialog from "../components/Custom/AlertDialog.jsx";
 import PipelineDetails from "../components/Pipeline/PipelineDetails.jsx";
 import {useScripts} from "../hooks/ScriptsProvider.jsx";
 import {useNavigate} from "react-router-dom";
+import {styled} from "@mui/material/styles";
 
 function ScriptListPage() {
     const [search, setSearch] = useState("");
@@ -41,11 +42,13 @@ function ScriptListPage() {
     const [openPipelinePage, setOpenPipelinePage] = useState(false);
     const [pipelineId, setPipelineId] = useState(18);
     const [pipelineIdlist, setPipelineIdlist] = useState([]);
+    const [buttonType, setButtonType] = useState('info');
 
     const [open, setOpen] = useState(false);
     const [text,setText] = useState("");
     const [scriptIdToDelete, setScriptIdToDelete] = useState("");
     const [deleteCase, setDeleteCase] = useState(1);
+    const [input,setInput] = useState(null);
 
     const userId = useAuth().authData?.userId;
     const {state, dispatch} = useScripts()
@@ -63,6 +66,9 @@ function ScriptListPage() {
 
     useEffect(() => {
         checkScripts();
+        if (selectedScriptsTag.length === 0) {
+            setInput(null);
+        }
     }, [selectedScriptsTag]);
 
     useEffect(() => {
@@ -99,6 +105,18 @@ function ScriptListPage() {
         handleSearch();
     }, [search, selectedLanguage]);
 
+    const VisuallyHiddenInput = styled("input")({
+        clip: "rect(0 0 0 0)",
+        clipPath: "inset(50%)",
+        height: 1,
+        overflow: "hidden",
+        position: "absolute",
+        bottom: 0,
+        left: 0,
+        whiteSpace: "nowrap",
+        width: 1,
+    });
+
     const fetchScripts = async () => {
         //const scriptsLoaded = await AxiosRq.getInstance().getScripts();
         const scriptsLoaded = await AxiosRq.getInstance().getMyScriptsAndFavoriteScript();
@@ -117,6 +135,17 @@ function ScriptListPage() {
         return script;
     }
 
+    const handleChangeInput = (event) => {
+        setInput(null);
+        const selectedFile = event.target.files[0];
+        if (selectedFile && selectedFile.type) {
+            setInput(selectedFile);
+        } else {
+            const variant = 'error';
+            enqueueSnackbar("Invalid file type",{variant, autoHideDuration: 2000})
+        }
+    }
+
     const checkTypes = (string, types) => {
         // Sépare la chaîne en mots en utilisant la virgule comme délimiteur
         const words = string.split(',');
@@ -132,8 +161,24 @@ function ScriptListPage() {
         return false; // Retourne false si aucun mot n'est trouvé dans le tableau
     }
 
+    const getInputFileType = () => {
+        if (input) {
+            const tab = input.name.split(".");
+            return "." + tab[tab.length-1];
+        }
+        return "";
+    }
+
     const checkScripts = () => {
         const mismatchedIds = [];
+        if(input) {
+            const type = getInputFileType();
+            if (selectedScriptsTag.length > 0) {
+                console.log(selectedScriptsTag[0].inputType);
+                console.log(type);
+                setButtonType(selectedScriptsTag[0].inputType !== type ? 'error':'info');
+            }
+        }
 
         for (let i = 0; i < selectedScriptsTag.length - 1; i++) {
             const currentScript = selectedScriptsTag[i];
@@ -277,7 +322,7 @@ function ScriptListPage() {
         setDisplay("block");
     };
 
-    const handleChangeInput = (event) => {
+    const handleChangeInputType = (event) => {
         const {
             target: { value },
         } = event;
@@ -287,7 +332,7 @@ function ScriptListPage() {
         );
     };
 
-    const handleChangeOutput = (event) => {
+    const handleChangeOutputType = (event) => {
         const {
             target: { value },
         } = event;
@@ -298,7 +343,7 @@ function ScriptListPage() {
     };
     const launchPipeline = () => {
         //it will launch the pipeline request and also subscribe to the websocket associated to the pipeline
-        // const scriptsIdToExecute = selectedScriptsTag.map((script) => script.scriptId);
+        //const scriptsIdToExecute = selectedScriptsTag.map((script) => script.scriptId);
         // const pipelineId = AxiosRq.getInstance().executePipeline(scriptsIdToExecute);
         // if(pipelineId) {
         //  setPipelineId(pipelineId)}
@@ -375,10 +420,10 @@ function ScriptListPage() {
                         label="Programming Language"
                         defaultValue="Any language"
                     />
-                    <MultipleSelectCheckmarks formats={acceptedFormat} handleChange={handleChangeInput}
+                    <MultipleSelectCheckmarks formats={acceptedFormat} handleChange={handleChangeInputType}
                                               value={inputType} tag={'Input'}
                     />
-                    <MultipleSelectCheckmarks formats={acceptedFormat} handleChange={handleChangeOutput}
+                    <MultipleSelectCheckmarks formats={acceptedFormat} handleChange={handleChangeOutputType}
                                               value={outputType} tag={'Output'}
                     />
                 </div>
@@ -410,6 +455,22 @@ function ScriptListPage() {
                                 <RocketLaunchIcon/>
                             </Button>
                         </Stack>
+                        <div style={{
+                            display: "flex", alignItems: "center"
+                        }}>
+                            <Button component="label"
+                                    role={undefined}
+                                    variant="contained"
+                                    color={buttonType}
+                                    tabIndex={-1}
+                            >Input
+                                <VisuallyHiddenInput
+                                    type="file"
+                                    onChange={handleChangeInput}
+                                />
+                            </Button>
+                            <p style={{marginLeft: "10px"}}>{input?.name}</p>
+                        </div>
                     </>
                 )}
                 <Accordion defaultExpanded>
