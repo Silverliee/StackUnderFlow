@@ -11,6 +11,7 @@ function NotificationsList({ messageList, handleAccept, handleDecline, group }) 
 						key={index}
 						title={request.friendName ? request.friendName : request.groupName}
 						message={request.message}
+						type={group ? "groupInvitation" : "userInvitation"}
 						id={group ? request.groupId : request.userId}
 						handleDecline={() => handleDecline(group ? request.groupId : request.userId)}
 						handleAccept={() => handleAccept(group ? request.groupId : request.userId)}

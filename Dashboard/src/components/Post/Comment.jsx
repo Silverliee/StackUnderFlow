@@ -5,6 +5,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import ClearIcon from '@mui/icons-material/Clear';
 import CommentEdit from "./CommentEdit.jsx";
 import {ListItemText} from "@mui/material";
+import {formatDateString} from "../../utils/utils.js";
 
 function Comment({comment, handleEdit, handleDelete, setEditMode, editMode}) {
     const [open, setOpen] = React.useState(false);
@@ -41,7 +42,7 @@ function Comment({comment, handleEdit, handleDelete, setEditMode, editMode}) {
                         <ListItemText
                             id={comment.commentId}
                             primary={comment?.description}
-                            secondary={`by ${comment?.userName}`}
+                            secondary={`by ${comment?.userName} on ${formatDateString(comment?.creationDate)}`}
                         />
                 </Card>
                 {comment?.userId == authData.userId && !editMode && (

@@ -21,8 +21,8 @@ const SharingPage = ({ script }) => {
 	const [outputType, setOutputType] = useState(["None"]);
 	const [visibility, setVisibility] = useState("Public");
 
-	const acceptedFiles = [".py", ".cs"];
-	const acceptedFormat = ["None",".png",".jpg",".jpeg",".txt","csv","xlsx","json"];
+	const acceptedFiles = [".py", ".csx"];
+	const acceptedFormat = ["None",".png",".jpeg",".txt",".pdf",".xlsx"];
 	const { dispatch } = useScripts();
 
 	const style = {
@@ -131,7 +131,7 @@ const SharingPage = ({ script }) => {
 			const fileExtension = selectedFile.name.split(".").pop();
 			if (fileExtension === "py") {
 				setLanguage("Python");
-			} else if (fileExtension === "cs") {
+			} else if (fileExtension === "csx") {
 				setLanguage("Csharp");
 			}
 			setFile(selectedFile);

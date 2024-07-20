@@ -26,7 +26,6 @@ export default function MultipleSelectCheckmarks({formats, handleChange, value, 
                 <Select
                     labelId="demo-multiple-checkbox-label"
                     id="demo-multiple-checkbox"
-                    multiple
                     value={value}
                     onChange={handleChange}
                     input={<OutlinedInput label="Tag" />}

@@ -50,7 +50,7 @@ function ScriptListPage() {
     const userId = useAuth().authData?.userId;
     const {state, dispatch} = useScripts()
 
-    const acceptedFormat = ["None","png","jpg","jpeg","txt","csv","xlsx","json"];
+    const acceptedFormat = ["None",".png",".jpeg",".txt",".pdf",".xlsx"];
 
     const { enqueueSnackbar } = useSnackbar();
 

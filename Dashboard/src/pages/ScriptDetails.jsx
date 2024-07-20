@@ -54,7 +54,7 @@ const ScriptDetails = () => {
 
 	const userId = useAuth().authData?.userId;
 
-	const acceptedFormat = ["None","png","jpg","jpeg","txt","csv","xlsx","json"];
+	const acceptedFormat = ["None",".png",".jpeg",".txt",".pdf",".xlsx"];
 
 
 	useEffect(() => {
@@ -205,7 +205,7 @@ const ScriptDetails = () => {
 			script.scriptName +
 			`_v${scriptVersion.versionNumber}_` +
 			scriptVersion.creationDate.split("T")[0] +
-			(script.programmingLanguage == "Python" ? ".py" : ".cs");
+			(script.programmingLanguage == "Python" ? ".py" : ".csx");
 		document.body.appendChild(element); // Required for this to work in FireFox
 		element.click();
 		document.body.removeChild(element);

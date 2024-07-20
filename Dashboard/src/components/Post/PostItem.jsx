@@ -21,6 +21,7 @@ import AccordionSummary from "@mui/material/AccordionSummary";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore.js";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import {useAuth} from "../../hooks/AuthProvider.jsx";
+import {formatDateTimeString} from "../../utils/utils.js";
 
 export default function PostItem({post}) {
     const [comments, setComments] = React.useState([{text:"coucou"},{text:"coucou2"},{text:"coucou3"}]);
@@ -40,6 +41,7 @@ export default function PostItem({post}) {
     const userId = authData.userId;
 
     useEffect(() => {
+        console.log(post);
         fetchComments()
     },[post.scriptId]);
 
@@ -79,7 +81,7 @@ export default function PostItem({post}) {
         element.href = URL.createObjectURL(file);
         element.download =
             post.scriptName +
-            (post.programmingLanguage == "Python" ? ".py" : ".cs");
+            (post.programmingLanguage == "Python" ? ".py" : ".csx");
         document.body.appendChild(element); // Required for this to work in FireFox
         element.click();
         document.body.removeChild(element);
@@ -141,6 +143,9 @@ export default function PostItem({post}) {
                     </Typography>
                     <Typography variant="body2" color="blue" style={{textAlign:"end"}}>
                         <Button onClick={() => navigate(`/user/${post.userId}`)}>By {post.creatorName}</Button>
+                    </Typography>
+                    <Typography variant={"caption"} color={"black"} style={{textAlign:"end"}}>
+                        <div>{formatDateTimeString(post.creationDate)}</div>
                     </Typography>
                     <br/>
                     <Button onClick={handleDownload}>

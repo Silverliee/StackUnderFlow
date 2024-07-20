@@ -12,7 +12,7 @@ function ExecutionPage() {
 	const [file, setFile] = useState(null);
 	const [input,setInput] = useState(null);
 
-	const acceptedFiles = [".py", ".cs"];
+	const acceptedFiles = [".py", ".csx"];
 
 	const VisuallyHiddenInput = styled("input")({
 		clip: "rect(0 0 0 0)",

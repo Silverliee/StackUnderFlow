@@ -7,4 +7,6 @@ public class CommentResponseDto
     public string userName { get; set; }
     public int scriptId { get; set; }
     public string description { get; set; }
+    
+    public DateTime creationDate { get; set; }
 }

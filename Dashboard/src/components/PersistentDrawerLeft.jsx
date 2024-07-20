@@ -85,7 +85,7 @@ const DrawerHeader = styled('div')(({ theme }) => ({
     // necessary for content to be below app bar
     ...theme.mixins.toolbar,
     justifyContent: 'flex-end',
-    height:'100px'
+    height:'50px',
 }));
 
 export default function PersistentDrawerLeft() {
@@ -219,9 +219,9 @@ export default function PersistentDrawerLeft() {
                 anchor="left"
                 open={open}
             >
-                <DrawerHeader>
-                    <img src={'assets/logo.jpg'} alt={"logo"} style={{width: '100px', height: '100px'}}/>
-                    <IconButton onClick={handleDrawerClose}>
+                <DrawerHeader className={"ToChange"}>
+                    <img src={'assets/logo.jpg'} alt={"logo"} style={{width: '80px', height: '74px', marginRight:'20px'}}/>
+                    <IconButton onClick={handleDrawerClose} >
                         {theme.direction === 'ltr' ? <ChevronLeftIcon/> : <ChevronRightIcon/>}
                     </IconButton>
                 </DrawerHeader>

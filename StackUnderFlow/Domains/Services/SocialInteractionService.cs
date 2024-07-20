@@ -442,6 +442,7 @@ public class SocialInteractionService(
                     userName = user.Username,
                     scriptId = comment.ScriptId,
                     description = comment.Description,
+                    creationDate = comment.CreationDate
                 };
                 commentListResponse.Add(commentRequestToAdd);
             }
@@ -461,7 +462,8 @@ public class SocialInteractionService(
         {
             UserId = userId,
             ScriptId = scriptId,
-            Description = commentRequestDto.Description
+            Description = commentRequestDto.Description,
+            CreationDate = DateTime.Now
         };
         var response = await commentRepository.CreateComment(comment);
         if (response == null)
@@ -475,7 +477,8 @@ public class SocialInteractionService(
             userId = response.UserId,
             userName = user.Username,
             scriptId = response.ScriptId,
-            description = response.Description
+            description = response.Description,
+            creationDate = comment.CreationDate
         };
         
     }
@@ -494,7 +497,8 @@ public class SocialInteractionService(
             userId = comment.UserId,
             userName = user.Username,
             scriptId = comment.ScriptId,
-            description = comment.Description
+            description = comment.Description,
+            creationDate = comment.CreationDate
         };
     }
 
@@ -521,7 +525,8 @@ public class SocialInteractionService(
                     userId = response.UserId,
                     userName = user.Username,
                     scriptId = response.ScriptId,
-                    description = response.Description
+                    description = response.Description,
+                    creationDate = response.CreationDate
                 };
     }
     

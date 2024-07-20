@@ -29,6 +29,31 @@ export const isEmailAvailable = async (email) => {
 	return await AxiosRequester.getInstance().checkEmailAvailability(email);
 }
 
+export const formatDateString = (dateString) => {
+	const date = new Date(dateString);
+
+	// Extract day, month, year, hours, and minutes
+	const day = date.getDate().toString().padStart(2, '0');
+	const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Months are zero-indexed
+	const year = date.getFullYear();
+	const hours = date.getHours().toString().padStart(2, '0');
+	const minutes = date.getMinutes().toString().padStart(2, '0');
+
+	// Format the date and time
+	return `${day}/${month}/${year} ${hours}:${minutes}`;
+}
+
+export const formatDateTimeString = (dateTimeString) => {
+	// Split the date and time parts
+	const [datePart, timePart] = dateTimeString.split(' ');
+
+	// Extract the hour and minute parts
+	const [hour, minute] = timePart.split(':');
+
+	// Combine the date part with the hour and minute parts
+	return `${datePart} ${hour}:${minute}`;
+}
+
 export const isUsernameAvailable = async (username) => {
 	return await AxiosRequester.getInstance().checkUsernameAvailability(username);
 }
