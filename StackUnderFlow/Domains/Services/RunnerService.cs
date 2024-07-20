@@ -7,6 +7,7 @@ namespace StackUnderFlow.Domains.Services
     public class RunnerService(
         IScriptRepository scriptRepository,
         IScriptVersionRepository scriptVersionRepository,
+        INotificationService notificationService,
         KubernetesService kubernetesService)
         : IRunnerService
     {
@@ -62,7 +63,8 @@ namespace StackUnderFlow.Domains.Services
             return output;
         }
 
-        private async Task<string> ExecuteScriptWithInput(Script script, string inputFileBinary)
+        private async Task<string> ExecuteScriptWithInput(Script script, string inputFileBinary,
+            string pipelineRequestPipelineId)
         {
             var scriptBinary = (await scriptVersionRepository.GetLatestScriptVersionByScriptId(script.ScriptId))?.SourceScriptBinary ?? throw new InvalidOperationException($"Script binary for script ID {script.ScriptId} not found.");
 
@@ -72,21 +74,24 @@ namespace StackUnderFlow.Domains.Services
             try
             {
                 output = script.ProgrammingLanguage.Equals("Python", StringComparison.OrdinalIgnoreCase)
-                    ? await kubernetesService.ExecutePythonScriptWithInput("default", scriptContent, inputFileBinary, script.InputScriptType, script.OutputScriptType)
+                    ? await kubernetesService.ExecutePythonScriptWithInput("default", scriptContent, inputFileBinary, script.InputScriptType, script.OutputScriptType, pipelineRequestPipelineId)
                     : script.ProgrammingLanguage.Equals("Csharp", StringComparison.OrdinalIgnoreCase)
-                    ? await kubernetesService.ExecuteCsharpScriptWithInput("default", scriptContent, inputFileBinary, script.InputScriptType, script.OutputScriptType)
+                    ? await kubernetesService.ExecuteCsharpScriptWithInput("default", scriptContent, inputFileBinary, script.InputScriptType, script.OutputScriptType, pipelineRequestPipelineId)
                     : throw new NotSupportedException($"Script file extension for script ID {script.ScriptId} is not supported.");
             }
             catch (Exception ex)
             {
+                await notificationService.SendMessageAsync(pipelineRequestPipelineId, $"Failed to execute script ID {script.ScriptId}: {ex.Message}");
                 throw new InvalidOperationException($"Failed to execute script ID {script.ScriptId}: {ex.Message}", ex);
             }
 
             return output;
         }
         
-        public async Task<List<IFormFile>> ExecutePipelineWithIds(List<int> scriptIds, IFormFile input)
+        public async Task<List<IFormFile>> ExecutePipelineWithIds(List<int> scriptIds, IFormFile input,
+            string pipelineRequestPipelineId)
         {
+            await notificationService.SendMessageAsync(pipelineRequestPipelineId, "Making sure scripts are compatible...");
             if (GetFileType(Path.GetExtension(input.FileName).ToLowerInvariant()) == SupportedType.Unsupported)
                 throw new InvalidOperationException($"Unsupported input file type: {Path.GetExtension(input.FileName).ToLowerInvariant()}");
             
@@ -110,7 +115,9 @@ namespace StackUnderFlow.Domains.Services
             var output = new List<string>();
             foreach (var script in scripts)
             {
-                var result = await ExecuteScriptWithInput(script, inputFileBase64);
+                await notificationService.SendMessageAsync(pipelineRequestPipelineId, $"Executing script ID {script.ScriptId}...");
+                var result = await ExecuteScriptWithInput(script, inputFileBase64, pipelineRequestPipelineId);
+                await notificationService.SendMessageAsync(pipelineRequestPipelineId, $"Script ID {script.ScriptId} executed successfully.");
                 output.Add(result);
                 inputFileBase64 = result;
             }

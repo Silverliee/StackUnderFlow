@@ -58,6 +58,7 @@ public abstract partial class Program
         // Configuration de singleton
         builder.Services.AddSingleton<AuthenticationMiddleware>();
         builder.Services.AddSingleton<KubernetesService>();
+        builder.Services.AddSingleton<NotificationService>();
         builder.Services.AddSingleton(new ConcurrentDictionary<string, WebSocket>());
         // Configuration des controllers/endpoints
         builder.Services.AddEndpointsApiExplorer();

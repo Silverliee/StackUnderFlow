@@ -1,11 +1,12 @@
 using k8s;
 using k8s.Models;
+using StackUnderFlow.Domains.Services;
 using StackUnderFlow.Infrastructure.Kubernetes.Config;
 using StackUnderFlow.Infrastructure.Kubernetes.Factory;
 
 namespace StackUnderFlow.Infrastructure.Kubernetes;
 
-public class KubernetesService
+public class KubernetesService(INotificationService notificationService)
 {
     private readonly IKubernetes _client = KubernetesConfig.Client;
 
@@ -50,15 +51,20 @@ public class KubernetesService
         return logs;
     }
 
-    public async Task<string> ExecutePythonScriptWithInput(string namespaceName, string script, string inputFileBinary, string inputType, string outputType)
+    public async Task<string> ExecutePythonScriptWithInput(string namespaceName, string script, string inputFileBinary,
+        string inputType, string outputType, string pipelineRequestPipelineId)
     {
+        await notificationService.SendMessageAsync(pipelineRequestPipelineId, "Python script detected...");
         var pod = PipelinePythonSlimPodFactory.CreatePod(script, inputFileBinary, inputType, outputType);
+        await notificationService.SendMessageAsync(pipelineRequestPipelineId, "Finding a available worker...");
         await _client.CoreV1.CreateNamespacedPodAsync(pod, namespaceName);
+        await notificationService.SendMessageAsync(pipelineRequestPipelineId, $"Worker {pod.Metadata.Name} ready, executing script...");
         await Task.Delay(3000);
         await WatchPodCompletionAsync(namespaceName, pod.Metadata.Name);
         var logs = await GetPodLogsAsync(namespaceName, pod.Metadata.Name);
         if (logs == null)
         {
+            await notificationService.SendMessageAsync(pipelineRequestPipelineId, "Failed to get logs from worker.");
             throw new Exception(
                 $"Failed to get logs for pod {pod.Metadata.Name} in namespace {namespaceName}"
             );
@@ -67,7 +73,8 @@ public class KubernetesService
         return logs;
     }
 
-    public async Task<string> ExecuteCsharpScriptWithInput(string namespaceName, string script, string inputFilePath, string inputType, string outputType)
+    public async Task<string> ExecuteCsharpScriptWithInput(string namespaceName, string script, string inputFilePath,
+        string inputType, string outputType, string pipelineRequestPipelineId)
     {
         var pod = PipelineCsharpPodFactory.CreatePod(script, inputFilePath, inputType, outputType);
         await _client.CoreV1.CreateNamespacedPodAsync(pod, namespaceName);
