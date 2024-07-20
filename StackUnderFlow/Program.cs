@@ -36,7 +36,6 @@ public abstract partial class Program
         var builder = WebApplication.CreateBuilder(args);
         // Configuration de scope
         builder.Services.AddScoped<ILoginService, LoginService>();
-        builder.Services.AddScoped<INotificationService, NotificationService>();
         builder.Services.AddScoped<IProfileService, ProfileService>();
         builder.Services.AddScoped<IReactionService, ReactionService>();
         builder.Services.AddScoped<IRunnerService, RunnerService>();
@@ -201,7 +200,27 @@ public abstract partial class Program
         // configure metrics
         app.MapPrometheusScrapingEndpoint();
         // configure websocket
-        app.UseWebSockets();
+        app.Use(async (context, next) =>
+        {
+            if (context.Request.Path.StartsWithSegments("/notifications"))
+            {
+                // Assurez-vous que la connexion est bien une WebSocket
+                if (context.WebSockets.IsWebSocketRequest)
+                {
+                    var id = context.Request.RouteValues["id"]?.ToString();
+                    var notificationService = context.RequestServices.GetRequiredService<INotificationService>();
+                    await notificationService.HandleAsync(context, id);
+                }
+                else
+                {
+                    context.Response.StatusCode = StatusCodes.Status400BadRequest;
+                }
+            }
+            else
+            {
+                await next();
+            }
+        });
         // configure hangfire
         app.UseHangfireDashboard(
             options: new DashboardOptions

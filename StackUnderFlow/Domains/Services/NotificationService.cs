@@ -14,7 +14,7 @@ public class NotificationService : INotificationService
         {
             var webSocket = await context.WebSockets.AcceptWebSocketAsync();
             _sockets[id] = webSocket;
-            await KeepConnectionOpenAsync(id, webSocket);
+            await KeepConnectionOpenAsync(id, webSocket, context.RequestAborted);
         }
         else
         {
@@ -23,14 +23,14 @@ public class NotificationService : INotificationService
         }
     }
 
-    private async Task KeepConnectionOpenAsync(string id, WebSocket webSocket)
+    private async Task KeepConnectionOpenAsync(string id, WebSocket webSocket, CancellationToken cancellationToken)
     {
         var buffer = new byte[1024 * 4];
         try
         {
             while (webSocket.State == WebSocketState.Open)
             {
-                var result = await webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
+                var result = await webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), cancellationToken);
                 if (result.MessageType == WebSocketMessageType.Close)
                 {
                     await CloseConnectionAsync(id);
@@ -39,6 +39,7 @@ public class NotificationService : INotificationService
         }
         catch (Exception ex)
         {
+            Console.WriteLine($"Exception occurred: {ex.Message}");
             await CloseConnectionAsync(id);
         }
     }

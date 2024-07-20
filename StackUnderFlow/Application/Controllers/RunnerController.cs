@@ -11,7 +11,7 @@ namespace StackUnderFlow.Application.Controllers
     [EnableCors("AllowAll")]
     public class RunnerController(
         IRunnerService runnerService,
-        INotificationService notificationService,
+        NotificationService notificationService,
         Bugsnag.IClient bugsnag
     ) : ControllerBase
     {

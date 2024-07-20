@@ -7,7 +7,7 @@ namespace StackUnderFlow.Domains.Services
     public class RunnerService(
         IScriptRepository scriptRepository,
         IScriptVersionRepository scriptVersionRepository,
-        INotificationService notificationService,
+        NotificationService notificationService,
         KubernetesService kubernetesService)
         : IRunnerService
     {

@@ -6,7 +6,7 @@ using StackUnderFlow.Infrastructure.Kubernetes.Factory;
 
 namespace StackUnderFlow.Infrastructure.Kubernetes;
 
-public class KubernetesService(INotificationService notificationService)
+public class KubernetesService(NotificationService notificationService)
 {
     private readonly IKubernetes _client = KubernetesConfig.Client;
 
