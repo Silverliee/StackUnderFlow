@@ -1,16 +1,18 @@
 class SocketManager {
-    _instance = null;
+    static _instance = null;
     constructor() {}
     socket = null;
+    messageCallback = null;
 
-    get instance() {
+    static get instance() {
         if (!this._instance) {
             this._instance = new SocketManager();
         }
         return this._instance;
     }
 
-    connectWebSocketPipeline(pipelineId) {
+    connectWebSocketPipeline(pipelineId, messageCallback) {
+        this.messageCallback = messageCallback;
         const url = `ws://localhost:5008/subscribe/${pipelineId}`;
         this.socket = new WebSocket(url);
 
@@ -20,7 +22,9 @@ class SocketManager {
 
         this.socket.onmessage = (event) => {
             console.log('Message from server:', event.data);
-            // Traitez ici les messages reçus du serveur
+            if (this.messageCallback) {
+                this.messageCallback(event.data);
+            }
         };
 
         this.socket.onclose = (event) => {
@@ -31,5 +35,6 @@ class SocketManager {
             console.error('WebSocket error:', error);
         };
     }
-
 }
+
+export default SocketManager.instance;

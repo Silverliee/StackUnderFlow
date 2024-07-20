@@ -853,7 +853,7 @@ class AxiosRequester {
 			)
 			if (response.status === 200) {
 				const pipelineId = response.data;
-				SocketManager.getInstance().connectWebSocketPipeline(pipelineId);
+				return pipelineId;
 			}
 		} catch (error) {
 			console.error("Erreur lors de la requete \"execute pipeline\":",error);

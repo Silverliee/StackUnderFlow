@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../hooks/AuthProvider";
-import MessagesList from "../components/Message/MessagesList.jsx";
+import NotificationsList from "../components/Message/NotificationsList.jsx";
 import {
 	Accordion,
 	AccordionDetails,
@@ -83,7 +83,7 @@ function MessagePage() {
 							<Typography>Friend Requests</Typography>
 						</AccordionSummary>
 						<AccordionDetails>
-							<MessagesList
+							<NotificationsList
 								group={false}
 								handleAccept={handleAcceptFriendRequest}
 								handleDecline={handleDeclineFriendRequest}
@@ -102,7 +102,7 @@ function MessagePage() {
 							<Typography>Group Requests</Typography>
 						</AccordionSummary>
 						<AccordionDetails>
-							<MessagesList
+							<NotificationsList
 								group={true}
 								handleAccept={handleAcceptGroupRequest}
 								handleDecline={handleDeclineGroupRequest}

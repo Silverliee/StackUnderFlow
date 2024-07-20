@@ -10,8 +10,9 @@ import {enqueueSnackbar} from "notistack";
 
 function ExecutionPage() {
 	const [file, setFile] = useState(null);
+	const [input,setInput] = useState(null);
 
-	const acceptedFiles = [".py", ".cs"];
+	const acceptedFiles = [".py", ".csx"];
 
 	const VisuallyHiddenInput = styled("input")({
 		clip: "rect(0 0 0 0)",
@@ -25,6 +26,8 @@ function ExecutionPage() {
 		width: 1,
 	});
 	const navigate = useNavigate();
+
+	//TODO Verifier le tag pour l'input dans executeSingleScript côté Back
 	const handleExecute = async () => {
 		if (file === null) {
 			const variant = 'error';
@@ -33,6 +36,9 @@ function ExecutionPage() {
 		}
 		const formData = new FormData();
 		formData.append("script", file);
+		if(input) {
+			formData.append("input", input);
+		}
 		const result = await AxiosRq.getInstance().executeScript(formData);
 	};
 	function handleChange(event) {
@@ -45,6 +51,17 @@ function ExecutionPage() {
 			enqueueSnackbar("Invalid file type",{variant, autoHideDuration: 2000})
 		}
 	}
+	function handleChangeInput(event) {
+		setInput(null);
+		const selectedFile = event.target.files[0];
+		if (selectedFile && selectedFile.type) {
+			setInput(selectedFile);
+		} else {
+			const variant = 'error';
+			enqueueSnackbar("Invalid file type",{variant, autoHideDuration: 2000})
+		}
+	}
+
 	return (
 		<>
 			<div className="script--header">
@@ -56,25 +73,43 @@ function ExecutionPage() {
 				<div
 					style={{
 						display: "flex",
-						alignItems: "flex-end",
+						flexDirection: "column",
+						alignItems: "flex-start",
 					}}
 				>
-					<Button
-						component="label"
-						role={undefined}
-						variant="contained"
-						tabIndex={-1}
-						startIcon={<CloudUploadIcon />}
-					>
-						Upload file
-						<VisuallyHiddenInput
-							type="file"
-							accept={acceptedFiles}
-							onChange={handleChange}
-						/>
-					</Button>
-					<p style={{ marginLeft: "10px" }}>{file?.name}</p>
-					<Button>Input</Button>
+					<div style={{
+							display: "flex", alignItems:"center"}}>
+						<Button
+							style={{marginBottom:"10px"}}
+							component="label"
+							role={undefined}
+							variant="contained"
+							tabIndex={-1}
+							startIcon={<CloudUploadIcon/>}
+						>
+							Upload file
+							<VisuallyHiddenInput
+								type="file"
+								accept={acceptedFiles}
+								onChange={handleChange}
+							/>
+						</Button>
+						<p style={{marginLeft: "10px"}}>{file?.name}</p>
+					</div>
+					<div style={{
+						display: "flex", alignItems:"center"}}>
+						<Button component="label"
+								role={undefined}
+								variant="contained"
+								tabIndex={-1}
+						>Input
+							<VisuallyHiddenInput
+								type="file"
+								onChange={handleChangeInput}
+							/>
+						</Button>
+						<p style={{marginLeft: "10px"}}>{input?.name}</p>
+					</div>
 				</div>
 				<Button
 					component="label"

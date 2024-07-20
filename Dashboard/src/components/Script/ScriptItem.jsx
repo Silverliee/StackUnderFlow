@@ -36,7 +36,7 @@ export const ScriptItem = ({
 		element.href = URL.createObjectURL(file);
 		element.download =
 			script.scriptName +
-			(script.programmingLanguage == "Python" ? ".py" : ".cs");
+			(script.programmingLanguage == "Python" ? ".py" : ".csx");
 		document.body.appendChild(element); // Nécessaire pour que cela fonctionne dans Firefox
 		element.click();
 		document.body.removeChild(element);

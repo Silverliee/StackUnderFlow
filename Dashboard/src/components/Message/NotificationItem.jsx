@@ -3,10 +3,10 @@ import DoneIcon from "@mui/icons-material/Done";
 import CloseIcon from "@mui/icons-material/Close";
 import React, { useEffect } from "react";
 
-function MessageItem({ title, message, id, handleAccept, handleDecline }) {
+function NotificationItem({ title, message, id, handleAccept, handleDecline, type }) {
 	useEffect(() => {});
 	return (
-		<ListItem
+		<ListItem style ={{maxWidth:'50wh'}}
 			secondaryAction={
 				<div style={{ marginRight: "50px" }}>
 					<DoneIcon
@@ -25,8 +25,8 @@ function MessageItem({ title, message, id, handleAccept, handleDecline }) {
 			<ListItemText
 				primary={
 					<Paper>
-						<Typography variant="h7" component="h3">
-							{title}
+						<Typography variant="h8" component="h3">
+							{type === "userInvitation" ? ("Invitation by : " + title) : ("Invitation to join the group : " + title)}
 						</Typography>
 						<Typography component="p">{message}</Typography>
 					</Paper>
@@ -37,4 +37,4 @@ function MessageItem({ title, message, id, handleAccept, handleDecline }) {
 	);
 }
 
-export default MessageItem;
+export default NotificationItem;

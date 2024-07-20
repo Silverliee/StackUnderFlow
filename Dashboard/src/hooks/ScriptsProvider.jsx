@@ -7,6 +7,15 @@ const ScriptsContext = createContext();
 
 const scriptsReducer = (state, action) => {
     switch (action.type) {
+        case 'SET_PIPELINES':
+            console.log("SET_PIPELINES");
+            return {
+                ...state,
+                pipelines: {
+                    ...state.pipelines,
+                    [action.payload.pipelineId]: action.payload.scriptsId
+                }
+            };
         case 'SET_SCRIPTS_FOUND':
             return { ...state, scriptsFound: action.payload };
         case 'ADD_SCRIPTS':
@@ -33,6 +42,7 @@ const initialState = {
     myGroupsScripts: [],
     myFollowingScripts: [],
     groupMembers: [],
+    pipelines:{},
     filteredScripts: {
         scriptsFoundFiltered: [],
         friendsScriptsFiltered: [],
