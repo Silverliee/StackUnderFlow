@@ -27,7 +27,8 @@ import NewScriptListPage from "./pages/NewScriptListPage.jsx";
 import ContactDetails from "./pages/ContactDetails.jsx";
 import {SnackbarProvider} from "notistack";
 import NewLogin from "./pages/NewLogin.jsx";
-import PipelinePage from "./components/Pipeline/PipelinePage.jsx";
+import PipelineDetails from "./components/Pipeline/PipelineDetails.jsx";
+import PipelinesPage from "./pages/PipelinesPage.jsx";
 
 const App = () => {
 	return (
@@ -57,11 +58,13 @@ const App = () => {
 									path="/script/:scriptId/version"
 									element={<ScriptVersionPage />}
 								/>
-								<Route path="/pipeline" element={<PipelinePage />} />
+								<Route path="/pipeline" element={<PipelineDetails />} />
 								<Route path="/friend/:userId" element={<ContactDetails />} />
 								<Route path="/group/:groupId/member/:userId" element={<ContactDetails />} />
 								<Route path="/user/:userId" element={<ContactDetails />} />
 								<Route path="/script/:scriptId" element={<ScriptDetails />} />
+								<Route path="/pipelines/:pipelineId" element={<PipelineDetails />} />
+								<Route path="/pipelines" element={<PipelinesPage />} />
 								<Route path="/script" element={<NewScriptListPage />} />
 								<Route path="/group/:groupId" element={<GroupDetails />} />
 							</Route>

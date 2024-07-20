@@ -3,7 +3,7 @@ import DoneIcon from "@mui/icons-material/Done";
 import CloseIcon from "@mui/icons-material/Close";
 import React, { useEffect } from "react";
 
-function MessageItem({ title, message, id, handleAccept, handleDecline }) {
+function NotificationItem({ title, message, id, handleAccept, handleDecline }) {
 	useEffect(() => {});
 	return (
 		<ListItem
@@ -37,4 +37,4 @@ function MessageItem({ title, message, id, handleAccept, handleDecline }) {
 	);
 }
 
-export default MessageItem;
+export default NotificationItem;

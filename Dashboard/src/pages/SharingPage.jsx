@@ -22,7 +22,7 @@ const SharingPage = ({ script }) => {
 	const [visibility, setVisibility] = useState("Public");
 
 	const acceptedFiles = [".py", ".cs"];
-	const acceptedFormat = ["None","png","jpg","jpeg","txt","csv","xlsx","json"];
+	const acceptedFormat = ["None",".png",".jpg",".jpeg",".txt","csv","xlsx","json"];
 	const { dispatch } = useScripts();
 
 	const style = {

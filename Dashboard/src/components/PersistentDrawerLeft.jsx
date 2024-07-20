@@ -25,6 +25,7 @@ import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import AutoFixHighIcon from '@mui/icons-material/AutoFixHigh';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
+import CommitIcon from '@mui/icons-material/Commit';
 import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
 import Badge from '@mui/material/Badge';
 import MailIcon from '@mui/icons-material/Mail';
@@ -301,6 +302,15 @@ export default function PersistentDrawerLeft() {
                             </ListItemIcon>
                             <ListItemText primary={"Execute script"} />
                             {activeIcon === "exec" && <ArrowLeftIcon />}
+                        </ListItemButton>
+                    </ListItem>
+                    <ListItem key={"pipelines"} disablePadding>
+                        <ListItemButton onClick={() => handleNavigate("pipelines")}>
+                            <ListItemIcon>
+                                <CommitIcon />
+                            </ListItemIcon>
+                            <ListItemText primary={"Pipelines"} />
+                            {activeIcon === "pipelines" && <ArrowLeftIcon />}
                         </ListItemButton>
                     </ListItem>
                 </List>
