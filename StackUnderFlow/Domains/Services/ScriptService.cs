@@ -335,7 +335,7 @@ public class ScriptService(
         }
 
         var scriptNameWithExtension =
-            script.ScriptName + (script.ProgrammingLanguage == "Python" ? ".py" : ".cs");
+            script.ScriptName + (script.ProgrammingLanguage == "Python" ? ".py" : ".csx");
 
         return new ScriptFileResponseDto
         {
@@ -394,7 +394,7 @@ public class ScriptService(
                 script.ScriptName
                 + $"_v{scriptVersion.VersionNumber}_"
                 + (scriptVersion.CreationDate.ToString("yyyyMMddHHmmss"))
-                + (script.ProgrammingLanguage == "Python" ? ".py" : ".cs")
+                + (script.ProgrammingLanguage == "Python" ? ".py" : ".csx")
         };
     }
 
