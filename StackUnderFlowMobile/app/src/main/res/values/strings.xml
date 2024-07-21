@@ -26,4 +26,10 @@
     <string name="ProfileEmailText">Email@gmail.com</string>
     <string name="emailTopProfile">Email@gmail.com</string>
     <string name="UsernameTopProfile">Profile Name</string>
+    <string name="comment">Comment</string>
+    <string name="CreateComment">Comment</string>
+    <string name="Notifications">Notifications</string>
+    <string name="Message">Message</string>
+    <string name="FriendRequestMessage">Friend Request Message</string>
+    <string name="userInfo">UserInfo</string>
 </resources>

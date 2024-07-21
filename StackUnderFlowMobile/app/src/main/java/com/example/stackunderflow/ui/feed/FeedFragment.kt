@@ -27,8 +27,8 @@ class FeedFragment : Fragment() {
         _binding = FragmentFeedBinding.inflate(inflater, container, false)
         val view = binding.root
 
-        scriptViewModel.GetMyScript()
-        scriptViewModel.myScripts.observe(viewLifecycleOwner) { scripts ->
+        scriptViewModel.GetScriptsForFeed()
+        scriptViewModel.scriptsForFeed.observe(viewLifecycleOwner) { scripts ->
             Log.d("ScriptFragment", "Received script: ${scripts.size}")
             val feedAdapter = FeedAdapter(scriptViewModel, context, scripts)
             binding.feedRecyclerView.adapter = feedAdapter

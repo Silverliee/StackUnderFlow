@@ -10,9 +10,11 @@ import io.reactivex.rxjava3.kotlin.addTo
 
 class ScriptViewModel(private val scriptRepository: ScriptRepository): ViewModel() {
 
-    val script = MutableLiveData<ScriptModelDto>()
+    private val script = MutableLiveData<ScriptModelDto>()
 
     val myScripts = MutableLiveData<List<ScriptModelDto>>()
+
+    val scriptsForFeed = MutableLiveData<List<ScriptModelDto>>()
     private val disposeBag = CompositeDisposable()
 
 
@@ -22,7 +24,17 @@ class ScriptViewModel(private val scriptRepository: ScriptRepository): ViewModel
             this.script.postValue(post)
         }, { error ->
             Log.d("Test error in GetScriptById",
-                error.message?:"erroer")
+                error.message?:"error")
+        }).addTo(disposeBag)
+    }
+
+    fun GetScriptsForFeed(){
+        scriptRepository.getScriptsForFeed().subscribe({ post ->
+            Log.d("GetScriptsForFeed", "Received all scripts: $post")
+            this.scriptsForFeed.postValue(post)
+        }, { error ->
+            Log.d("Test error in GetScriptsForFeed",
+                error.message?:"error")
         }).addTo(disposeBag)
     }
 

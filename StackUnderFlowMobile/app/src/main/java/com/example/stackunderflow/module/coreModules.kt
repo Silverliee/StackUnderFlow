@@ -4,6 +4,8 @@ import com.example.stackunderflow.repository.ScriptRepository
 import com.example.stackunderflow.repository.UsersRepository
 import com.example.stackunderflow.service.StackUnderFlowApiService
 import com.example.stackunderflow.ui.Scripts.ScriptViewModel
+import com.example.stackunderflow.ui.comment.CommentViewModel
+import com.example.stackunderflow.ui.notifications.NotificationsViewModel
 import com.example.stackunderflow.utils.AuthInterceptor
 import com.example.stackunderflow.utils.Constants
 import com.example.stackunderflow.utils.SessionManager
@@ -22,10 +24,15 @@ internal val coreModules = module {
 
     single { AuthInterceptor(get()) }
 
-    viewModel { UserViewModel(get(),get()) }
     single { ScriptRepository(get(named("apiStackUnderFlow"))) }  // Correction ici
 
+    viewModel { CommentViewModel(get(), get()) }
+
+    viewModel { UserViewModel(get(),get()) }
+
     viewModel { ScriptViewModel(get()) }
+
+    viewModel { NotificationsViewModel(get()) }
 
     single(named("apiStackUnderFlow")) {
         createWebService<StackUnderFlowApiService>(get(named(Constants.apiStackUnderFlow)))

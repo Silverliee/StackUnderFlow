@@ -2,6 +2,7 @@ package com.example.stackunderflow
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.widget.Button
 import android.widget.TextView
@@ -27,8 +28,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private val userViewModel : UserViewModel by viewModel()
     private val scriptViewModel : ScriptViewModel by viewModel()
-    private var islogin = false
-    private var isBooleanTrue = false
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,6 +45,15 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
             finish()
             return
+        }
+
+        userViewModel.user.observe(this) { user ->
+            if (user != null) {
+                // User data is loaded, you can use it here or notify other components
+                Log.d("MainActivity", "User data loaded: $user")
+            } else {
+                Log.d("MainActivity", "User data is null")
+            }
         }
 
         binding = ActivityMainBinding.inflate(layoutInflater)

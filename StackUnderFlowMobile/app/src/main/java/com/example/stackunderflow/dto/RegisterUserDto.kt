@@ -26,7 +26,7 @@ data class RegisterUserDto(
         require(userName.isNotBlank()) { "UserName is required" }
         require(email.isNotBlank()) { "Email is required" }
         require(isValidEmail(email)) { "Invalid email address" }
-        require(password.isNotBlank()) { "Password is required" }
+        //require(password.isNotBlank()) { "Password is required" }
     }
 
     private fun isValidEmail(email: String): Boolean {

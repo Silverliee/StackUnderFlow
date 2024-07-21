@@ -10,12 +10,14 @@
         android:id="@+id/cardView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        app:cardBackgroundColor="@color/purple_500"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        app:cardCornerRadius="10dp"
+        app:cardElevation="8dp"
+        app:cardMaxElevation="5dp"
+        android:layout_margin="10dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -29,12 +31,12 @@
                 android:orientation="horizontal">
 
                 <ImageView
-                    android:id="@+id/item_image"
+                    android:id="@+id/script_ImageFeed"
                     android:layout_width="80dp"
                     android:layout_height="80dp"
                     android:layout_marginEnd="8dp"
                     android:scaleType="centerCrop"
-                    android:src="@drawable/file_script" />
+                    />
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="0dp"
@@ -46,8 +48,8 @@
                         android:id="@+id/script_userIdFeed"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Script User"
-                        android:textColor="@color/white"
+                        android:text="Script Creator"
+                        android:textColor="@color/black"
                         android:textSize="14sp"
                         android:textStyle="bold"
                         app:layout_constraintTop_toTopOf="parent"
@@ -60,7 +62,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Script Name"
-                        android:textColor="@color/white"
+                        android:textColor="@color/black"
                         android:textSize="16sp"
                         android:textStyle="bold"
                         app:layout_constraintTop_toBottomOf="@+id/script_userIdFeed"
@@ -72,7 +74,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Script Description"
-                        android:textColor="@color/white"
+                        android:textColor="@color/black"
                         android:textSize="14sp"
                         app:layout_constraintTop_toBottomOf="@+id/script_nameFeed"
                         app:layout_constraintRight_toRightOf="parent"
@@ -93,7 +95,7 @@
                     android:layout_height="wrap_content"
                     android:text="123"
                     android:layout_marginRight="8dp"
-                    android:textColor="@color/white"
+                    android:textColor="@color/black"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintRight_toLeftOf="@+id/likeButtonFeed"
@@ -105,7 +107,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     app:srcCompat="@drawable/baseline_favorite_24"
-                    android:backgroundTint="@color/purple_700"
+                    android:backgroundTint="@color/blue"
                     app:layout_constraintRight_toLeftOf="@+id/favoriteButtonFeed"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -116,7 +118,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     app:srcCompat="@drawable/baseline_bookmark_add_24"
-                    android:backgroundTint="@color/purple_700"
+                    android:backgroundTint="@color/blue"
                     app:layout_constraintRight_toLeftOf="@+id/CommentButtonFeed"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -128,7 +130,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     app:srcCompat="@drawable/baseline_message_24"
-                    android:backgroundTint="@color/purple_700"
+                    android:backgroundTint="@color/blue"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintRight_toRightOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"

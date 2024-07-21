@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/purple_200"
     tools:context="com.example.stackunderflow.ui.Scripts.ScriptFragment" >
 
     <RelativeLayout
@@ -26,7 +25,7 @@
             android:elevation="4dp"
             android:hint="Script Name"
             android:padding="10dp"
-            android:textColorHint="@color/white" />
+            android:textColorHint="@color/black" />
 
         <ImageButton
             android:id="@+id/search_user_btn"

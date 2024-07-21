@@ -9,11 +9,13 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.stackunderflow.R;
 import com.example.stackunderflow.dto.ScriptModelDto;
 import com.example.stackunderflow.ui.Scripts.ScriptViewModel;
+import com.example.stackunderflow.ui.comment.CommentFragment;
 
 import java.util.List;
 
@@ -66,9 +68,22 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
                 holder.scriptLikeButton.setImageResource(R.drawable.baseline_favorite_24_red);
 
             }
-
             holder.scriptNumberOfLikes.setText(String.valueOf(currentScript.getNumberOfLikes()));
         });
+
+        holder.scriptCommentButton.setOnClickListener(view -> {
+            if (context instanceof FragmentActivity) {
+                FragmentActivity fragmentActivity = (FragmentActivity) context;
+                CommentFragment commentFragment = CommentFragment.newInstance(currentScript.getScriptId());
+                fragmentActivity.getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.fragment_container, commentFragment) // Remplace le fragment actuel
+                        .addToBackStack(null) // Permet de revenir en arrière pour fermer ce fragment
+                        .commit();
+            }
+        });
+
+
+
     }
 
     @Override

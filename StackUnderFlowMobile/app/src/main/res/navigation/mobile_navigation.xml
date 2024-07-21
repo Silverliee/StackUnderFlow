@@ -27,4 +27,11 @@
         android:name="com.example.stackunderflow.ui.slideshow.FriendsFragment"
         android:label="@string/menu_friends"
         tools:layout="@layout/fragment_friend" />
+
+    <fragment
+        android:id="@+id/nav_notifications"
+        android:name="com.example.stackunderflow.ui.notifications.NotificationsFragment"
+        android:label="@string/Notifications"
+        tools:layout="@layout/fragment_notifications" />
+
 </navigation>
