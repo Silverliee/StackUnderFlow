@@ -20,7 +20,7 @@ public static class SimpleScriptExecPythonSlimPodFactory
                         {
                             "bash",
                             "-c",
-                            $"echo '{script}' | python"
+                            $"echo \"{script}\" | python"
                             
                         }
                     }

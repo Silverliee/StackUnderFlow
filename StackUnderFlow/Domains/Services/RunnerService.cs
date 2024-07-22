@@ -19,6 +19,7 @@ namespace StackUnderFlow.Domains.Services
 
             using var reader = new StreamReader(new MemoryStream(scriptBinary));
             var scriptContent = await reader.ReadToEndAsync();
+            scriptContent = EscapeForEcho(scriptContent);
             string output;
 
             try
@@ -48,6 +49,7 @@ namespace StackUnderFlow.Domains.Services
                 var fileExtension = Path.GetExtension(script.FileName).ToLowerInvariant();
                 using var reader = new StreamReader(script.OpenReadStream());
                 var scriptContent = await reader.ReadToEndAsync();
+                scriptContent = EscapeForEcho(scriptContent);
 
                 output = fileExtension switch
                 {

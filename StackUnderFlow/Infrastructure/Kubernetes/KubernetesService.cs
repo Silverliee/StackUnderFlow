@@ -76,13 +76,17 @@ public class KubernetesService(NotificationService notificationService)
     public async Task<string> ExecuteCsharpScriptWithInput(string namespaceName, string script, string inputFilePath,
         string inputType, string outputType, string pipelineRequestPipelineId)
     {
+        await notificationService.SendMessageAsync(pipelineRequestPipelineId, "C# script detected...");
         var pod = PipelineCsharpPodFactory.CreatePod(script, inputFilePath, inputType, outputType);
+        await notificationService.SendMessageAsync(pipelineRequestPipelineId, "Finding a available worker...");
         await _client.CoreV1.CreateNamespacedPodAsync(pod, namespaceName);
+        await notificationService.SendMessageAsync(pipelineRequestPipelineId, $"Worker {pod.Metadata.Name} ready, executing script...");
         await Task.Delay(3000);
         await WatchPodCompletionAsync(namespaceName, pod.Metadata.Name);
         var logs = await GetPodLogsAsync(namespaceName, pod.Metadata.Name);
         if (logs == null)
         {
+            await notificationService.SendMessageAsync(pipelineRequestPipelineId, "Failed to get logs from worker.");
             throw new Exception(
                 $"Failed to get logs for pod {pod.Metadata.Name} in namespace {namespaceName}"
             );

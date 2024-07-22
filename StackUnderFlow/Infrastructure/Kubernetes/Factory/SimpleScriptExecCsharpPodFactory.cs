@@ -20,7 +20,7 @@ public static class SimpleScriptExecCsharpPodFactory
                         {
                             "bash",
                             "-c",
-                            $"echo '{script}' > script.csx && dotnet tool install -g dotnet-script && dotnet script script.csx"
+                            $"echo \"{script}\" > script.csx && dotnet tool install -g dotnet-script > install.txt && export PATH=\"$PATH:/root/.dotnet/tools\" && dotnet script script.csx"
                         }
                     }
                 },
