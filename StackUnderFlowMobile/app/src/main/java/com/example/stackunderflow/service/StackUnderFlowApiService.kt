@@ -5,6 +5,7 @@ import com.example.stackunderflow.dto.CheckPasswordResponseDto
 import com.example.stackunderflow.dto.CommentDto
 import com.example.stackunderflow.dto.CommentRequestDto
 import com.example.stackunderflow.dto.EmailAvailabilityResponse
+import com.example.stackunderflow.dto.FavoriteResponseDto
 import com.example.stackunderflow.dto.FriendRequestCreationRequestDto
 import com.example.stackunderflow.dto.FriendRequestDto
 import com.example.stackunderflow.dto.LoginUserDto
@@ -43,7 +44,7 @@ interface StackUnderFlowApiService {
     @GET("Script?offset=0&records=40")
     fun getScriptsForFeed(): Flowable<List<ScriptModelDto>>
 
-    @GET("Script/user")
+    @GET("Script/favorites")
     fun getMyScripts(): Flowable<List<ScriptModelDto>>
 
 
@@ -80,6 +81,9 @@ interface StackUnderFlowApiService {
     @DELETE("SocialInteraction/friends/{id}")
     fun declineFriendRequest(@Path("id") id: Int) : Flowable<Void>
 
+    @POST("SocialInteraction/favorites/{id}")
+    fun createFavorite(@Path("id") id: Int) : Flowable<FavoriteResponseDto>
+
     @PATCH("User/update")
     fun updateUser(@Body registerUserDto: RegisterUserDto) : Flowable<User>
 
@@ -91,4 +95,5 @@ interface StackUnderFlowApiService {
 
     @POST("User/checkPassword")
     fun checkPasswordValidity(@Body password: PasswordDto): Flowable<CheckPasswordResponseDto>
+
 }

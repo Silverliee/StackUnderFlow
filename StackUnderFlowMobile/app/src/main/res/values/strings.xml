@@ -32,4 +32,5 @@
     <string name="Message">Message</string>
     <string name="FriendRequestMessage">Friend Request Message</string>
     <string name="userInfo">UserInfo</string>
+    <string name="description">Descrition</string>
 </resources>

@@ -13,7 +13,9 @@ data class ScriptModelDto(
     @SerializedName("userId") val userId: Int,
     @SerializedName("creatorName") val creatorName: String?,
     @SerializedName("numberOfLikes") var numberOfLikes: Int,
-    @SerializedName("isLiked") var isLiked: Boolean
+    @SerializedName("isLiked") var isLiked: Boolean,
+    @SerializedName("isFavorite") var isFavorite : Boolean,
+    @SerializedName("creationDate") val creationDate: String,
 ) {
 }
 

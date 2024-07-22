@@ -65,4 +65,13 @@ class ScriptViewModel(private val scriptRepository: ScriptRepository): ViewModel
                 error.message?:"error")
         }).addTo(disposeBag)
     }
+
+    fun CreateFavorite(scriptId: Int){
+        scriptRepository.createFavorite(scriptId).subscribe({ post ->
+            Log.d("Favorite A Script", "Favorite: $post")
+        }, { error ->
+            Log.d("Test error in CreateFavorite",
+                error.message?:"error")
+        }).addTo(disposeBag)
+    }
 }

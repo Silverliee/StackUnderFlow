@@ -45,6 +45,7 @@ private var _binding: FragmentProfileBinding? = null
       val emailTopTextView: TextView = root.findViewById(R.id.textViewEmailTop)
       val usernameTextView: TextView = root.findViewById(R.id.textViewUsernameChange)
       val emailTextView: TextView = root.findViewById(R.id.textViewEmailChange)
+      val descriptionTextView: TextView = root.findViewById(R.id.descriptionTextView)
       //val passwordTextView: TextView = root.findViewById(R.id.textViewPasswordChange)
 
       // Observe the user LiveData
@@ -53,6 +54,8 @@ private var _binding: FragmentProfileBinding? = null
           usernameTextView.text = user.username
           emailTextView.text = user.email
           emailTopTextView.text = user.email
+          descriptionTextView.text = user.description
+
       })
 
       binding.textViewEmailChange.setOnClickListener {

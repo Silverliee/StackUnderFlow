@@ -2,6 +2,7 @@ package com.example.stackunderflow.repository
 
 import com.example.stackunderflow.dto.CommentDto
 import com.example.stackunderflow.dto.CommentRequestDto
+import com.example.stackunderflow.dto.FavoriteResponseDto
 import com.example.stackunderflow.dto.ScriptModelDto
 import com.example.stackunderflow.service.StackUnderFlowApiService
 import io.reactivex.rxjava3.core.Flowable
@@ -51,5 +52,10 @@ class ScriptRepository( private val stackUnderFlowApiService: StackUnderFlowApiS
     fun updateComment(commentId : Int, commentRequestDto: CommentRequestDto) : Flowable<CommentDto>
     {
         return stackUnderFlowApiService.updateComment(commentId, commentRequestDto)
+    }
+
+    fun createFavorite(scriptId : Int) : Flowable<FavoriteResponseDto>
+    {
+        return stackUnderFlowApiService.createFavorite(scriptId)
     }
 }

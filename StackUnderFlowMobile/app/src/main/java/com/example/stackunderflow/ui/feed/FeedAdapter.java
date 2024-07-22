@@ -54,6 +54,12 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
             holder.scriptLikeButton.setImageResource(R.drawable.baseline_favorite_24); // Utilisez l'icône par défaut ou une autre si nécessaire
         }
 
+        if (currentScript.isFavorite()) {
+            holder.scriptFavoriteButton.setImageResource(R.drawable.baseline_bookmark_added_24);
+        } else {
+            holder.scriptFavoriteButton.setImageResource(R.drawable.baseline_bookmark_add_24);
+        }
+
         holder.scriptLikeButton.setOnClickListener(view -> {
             if (currentScript.isLiked()) {
                 scriptViewModel.DeleteLike(currentScript.getScriptId());
@@ -69,6 +75,19 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
 
             }
             holder.scriptNumberOfLikes.setText(String.valueOf(currentScript.getNumberOfLikes()));
+        });
+
+        holder.scriptFavoriteButton.setOnClickListener(view -> {
+            if (currentScript.isFavorite()) {
+                //scriptViewModel.DeleteFavorite(currentScript.getScriptId());
+                currentScript.setFavorite(false);
+                holder.scriptFavoriteButton.setImageResource(R.drawable.baseline_bookmark_add_24);
+            } else {
+                scriptViewModel.CreateFavorite(currentScript.getScriptId());
+                currentScript.setFavorite(true);
+                holder.scriptFavoriteButton.setImageResource(R.drawable.baseline_bookmark_added_24);
+
+            }
         });
 
         holder.scriptCommentButton.setOnClickListener(view -> {
@@ -98,6 +117,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
         TextView scriptNumberOfLikes;
         ImageButton scriptCommentButton;
         ImageButton scriptLikeButton;
+        ImageButton scriptFavoriteButton;
 
         boolean isLiked;
 
@@ -109,6 +129,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
             scriptNumberOfLikes = itemView.findViewById(R.id.number_of_likesFeed);
             scriptCommentButton = itemView.findViewById(R.id.CommentButtonFeed);
             scriptLikeButton = itemView.findViewById(R.id.likeButtonFeed);
+            scriptFavoriteButton = itemView.findViewById(R.id.favoriteButtonFeed);
             isLiked = false;
         }
     }
