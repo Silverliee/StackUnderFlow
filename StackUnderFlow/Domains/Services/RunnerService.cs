@@ -1,3 +1,4 @@
+using System.Text;
 using StackUnderFlow.Domains.Model;
 using StackUnderFlow.Domains.Repository;
 using StackUnderFlow.Infrastructure.Kubernetes;
@@ -70,6 +71,7 @@ namespace StackUnderFlow.Domains.Services
 
             using var reader = new StreamReader(new MemoryStream(scriptBinary));
             var scriptContent = await reader.ReadToEndAsync();
+            scriptContent = EscapeForEcho(scriptContent);
             string output;
             try
             {
@@ -153,5 +155,35 @@ namespace StackUnderFlow.Domains.Services
             ".xlsx" => SupportedType.XLSX,
             _ => SupportedType.Unsupported
         };
+        
+        public static string EscapeForEcho(string pythonScript)
+        {
+            var escapedScript = new StringBuilder();
+
+            foreach (char c in pythonScript)
+            {
+                switch (c)
+                {
+                    case '"':
+                        escapedScript.Append("\\\"");
+                        break;
+                    case '\\':
+                        escapedScript.Append("\\\\");
+                        break;
+                    case '\n':
+                        escapedScript.Append("\\n");
+                        break;
+                    case '\r':
+                        escapedScript.Append("\\r");
+                        break;
+                    default:
+                        escapedScript.Append(c);
+                        break;
+                }
+            }
+
+            return escapedScript.ToString();
+        }
     }
+    
 }

@@ -24,7 +24,7 @@ public static class PipelinePythonSlimPodFactory
                         Command = new List<string>
                         {
                             "sh", "-c",
-                            $"echo '{script}' > script.py && echo '{inputFileBinary}' > input-file{inputType} && python script.py input-file{inputType} > output-file{outputType} && base64 output-file{outputType}"
+                            $"echo \"{script}\" > script.py && echo \"{inputFileBinary}\" | base64 --decode > input-file{inputType} && python script.py input-file{inputType} > output-file{outputType} && base64 output-file{outputType}"
                         }
                     }
                 },

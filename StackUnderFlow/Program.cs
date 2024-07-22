@@ -206,7 +206,6 @@ public abstract partial class Program
         {
             if (context.Request.Path.StartsWithSegments("/notifications"))
             {
-                // Assurez-vous que la connexion est bien une WebSocket
                 if (context.WebSockets.IsWebSocketRequest)
                 {
                     var id = context.Request.Query["id"].ToString();
