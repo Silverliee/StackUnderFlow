@@ -846,15 +846,18 @@ class AxiosRequester {
 
 	executePipeline = async(data) => {
 		const apiUrl = this.baseUrl + `Runner/pipeline`;
+		console.log('Axios Exec Pipeline');
 		try {
-			const response = await axios.post(
-				apiUrl,
-				data,
-				this.getConfig()
-			)
+			const response = await axios.post(apiUrl, data, {
+				headers: {
+					'Content-Type': 'multipart/form-data',
+					'accept': '*/*',
+					'Authorization': `Bearer ${this.token}`
+				},
+				responseType: 'blob'
+			});
 			if (response.status === 200) {
-				const pipelineId = response.data;
-				return pipelineId;
+				return response.data;
 			}
 		} catch (error) {
 			console.error("Erreur lors de la requete \"execute pipeline\":",error);

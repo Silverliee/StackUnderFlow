@@ -72,7 +72,6 @@ function SearchContactPage() {
 	const handleSearch = async () => {
 		const result = await AxiosRq.getInstance().searchUsersByKeyword(search);
 		setUsersFound(result);
-		console.log({ result });
 		setDisplay("block");
 	};
 
@@ -86,7 +85,6 @@ function SearchContactPage() {
 			userToSendFriendRequestTo.userId,
 			friendRequestMessage
 		);
-		console.log({ result });
 		setOpen(false);
 		setFriendRequestMessage("Let's be friends!");
 	};

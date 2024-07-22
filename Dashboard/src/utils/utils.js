@@ -57,3 +57,60 @@ export const formatDateTimeString = (dateTimeString) => {
 export const isUsernameAvailable = async (username) => {
 	return await AxiosRequester.getInstance().checkUsernameAvailability(username);
 }
+
+export const formatDateStringForLogs = (dateString) => {
+	const date = new Date(dateString);
+
+	const pad = (num) => num.toString().padStart(2, '0');
+
+	const day = pad(date.getDate());
+	const month = pad(date.getMonth() + 1); // Les mois sont basés sur 0
+	const year = date.getFullYear();
+
+	const hours = pad(date.getHours());
+	const minutes = pad(date.getMinutes());
+	const seconds = pad(date.getSeconds());
+
+	return `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
+}
+
+export const handleFile = (blob, contentType) => {
+	// Créer un objet URL pour le blob
+	if(blob){
+		const url = window.URL.createObjectURL(blob);
+
+		// Déterminer le type de fichier
+		const filename = getFilenameFromContentType(contentType);
+
+		// Télécharger le fichier
+		downloadFile(url, filename);
+
+		// Libérer l'URL de l'objet lorsque vous avez terminé
+		window.URL.revokeObjectURL(url);
+	}
+};
+
+// Fonction pour obtenir un nom de fichier basé sur le type MIME
+export const getFilenameFromContentType = (contentType) => {
+	switch (contentType) {
+		case 'application/pdf':
+			return 'document.pdf';
+		case 'image/png':
+			return 'image.png';
+		case 'text/plain':
+			return 'file.txt';
+		// Ajouter d'autres types MIME si nécessaire
+		default:
+			return 'file.zip';
+	}
+};
+
+// Fonction pour télécharger le fichier
+export const downloadFile = (url, filename) => {
+	const a = document.createElement('a');
+	a.href = url;
+	a.download = filename;
+	document.body.appendChild(a);
+	a.click();
+	document.body.removeChild(a);
+};

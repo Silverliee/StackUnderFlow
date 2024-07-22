@@ -199,6 +199,8 @@ public abstract partial class Program
         app.UseAuthorization();
         // configure metrics
         app.MapPrometheusScrapingEndpoint();
+        app.UseWebSockets();
+
         // configure websocket
         app.Use(async (context, next) =>
         {
@@ -207,8 +209,8 @@ public abstract partial class Program
                 // Assurez-vous que la connexion est bien une WebSocket
                 if (context.WebSockets.IsWebSocketRequest)
                 {
-                    var id = context.Request.RouteValues["id"]?.ToString();
-                    var notificationService = context.RequestServices.GetRequiredService<INotificationService>();
+                    var id = context.Request.Query["id"].ToString();
+                    var notificationService = context.RequestServices.GetRequiredService<NotificationService>();
                     await notificationService.HandleAsync(context, id);
                 }
                 else

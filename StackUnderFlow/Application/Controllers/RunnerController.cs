@@ -62,7 +62,7 @@ namespace StackUnderFlow.Application.Controllers
 
         [HttpPost("pipeline")]
         //[Authorize]
-        public async Task<IActionResult> RunPipeline(PipelineRequestDto pipelineRequest)
+        public async Task<IActionResult> RunPipeline([FromForm]PipelineRequestDto pipelineRequest)
         {
             if (pipelineRequest.ScriptIds.Any(scriptId => scriptId <= 0))
             {

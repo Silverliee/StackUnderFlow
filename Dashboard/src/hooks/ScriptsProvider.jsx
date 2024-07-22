@@ -9,11 +9,18 @@ const scriptsReducer = (state, action) => {
     switch (action.type) {
         case 'SET_PIPELINES':
             console.log("SET_PIPELINES");
+            console.log(action.payload);
             return {
                 ...state,
                 pipelines: {
                     ...state.pipelines,
-                    [action.payload.pipelineId]: action.payload.scriptsId
+                    [action.payload.pipelineId]: {
+                        scriptsId: action.payload.scriptsId,
+                        index: action.payload.index,
+                        messages: action.payload.messages,
+                        input: action.payload.input,
+                        result: action.payload.result
+                    }
                 }
             };
         case 'SET_SCRIPTS_FOUND':

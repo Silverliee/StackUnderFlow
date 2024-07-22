@@ -402,7 +402,7 @@ public class SocialInteractionService(
         };
     }
 
-    public async Task RejectGroupRequest(int userId, int groupId)
+    public async Task RejectGroupRequest(int groupId, int userId)
     {
         var groupRequest = await groupRepository.GetGroupRequest(userId, groupId);
         if (groupRequest == null)

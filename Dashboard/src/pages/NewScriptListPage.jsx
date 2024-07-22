@@ -22,6 +22,7 @@ import PipelineDetails from "../components/Pipeline/PipelineDetails.jsx";
 import {useScripts} from "../hooks/ScriptsProvider.jsx";
 import {useNavigate} from "react-router-dom";
 import {styled} from "@mui/material/styles";
+import InfoIcon from "@mui/icons-material/Info.js";
 
 function ScriptListPage() {
     const [search, setSearch] = useState("");
@@ -42,7 +43,7 @@ function ScriptListPage() {
     const [openPipelinePage, setOpenPipelinePage] = useState(false);
     const [pipelineId, setPipelineId] = useState(18);
     const [pipelineIdlist, setPipelineIdlist] = useState([]);
-    const [buttonType, setButtonType] = useState('info');
+    const [buttonType, setButtonType] = useState('error');
 
     const [open, setOpen] = useState(false);
     const [text,setText] = useState("");
@@ -127,11 +128,6 @@ function ScriptListPage() {
 
     const findScriptById = (id) => {
         const script = scriptsFound.find(script => script.scriptId === id);
-        console.log({
-            script,
-            id,
-            scriptsFound
-        })
         return script;
     }
 
@@ -140,6 +136,13 @@ function ScriptListPage() {
         const selectedFile = event.target.files[0];
         if (selectedFile && selectedFile.type) {
             setInput(selectedFile);
+            const type = getInputFileType(selectedFile);
+            if (selectedScriptsTag.length > 0) {
+                console.log(selectedScriptsTag[0].inputScriptType);
+                console.log(type);
+                console.log(selectedScriptsTag[0].inputScriptType !== type ? 'error':'info');
+                setButtonType(selectedScriptsTag[0].inputScriptType !== type ? 'error':'info');
+            }
         } else {
             const variant = 'error';
             enqueueSnackbar("Invalid file type",{variant, autoHideDuration: 2000})
@@ -161,9 +164,13 @@ function ScriptListPage() {
         return false; // Retourne false si aucun mot n'est trouvé dans le tableau
     }
 
-    const getInputFileType = () => {
+    const getInputFileType = (selectedFile) => {
         if (input) {
             const tab = input.name.split(".");
+            return "." + tab[tab.length-1];
+        }
+        if (selectedFile){
+            const tab = selectedFile.name.split(".");
             return "." + tab[tab.length-1];
         }
         return "";
@@ -174,9 +181,7 @@ function ScriptListPage() {
         if(input) {
             const type = getInputFileType();
             if (selectedScriptsTag.length > 0) {
-                console.log(selectedScriptsTag[0].inputType);
-                console.log(type);
-                setButtonType(selectedScriptsTag[0].inputType !== type ? 'error':'info');
+                setButtonType(selectedScriptsTag[0].inputScriptType !== type ? 'error':'info');
             }
         }
 
@@ -222,10 +227,6 @@ function ScriptListPage() {
 
     const handleOnClick = (id) => {
         const item = findScriptById(id);
-        console.log({
-            id,
-            item
-        })
         setSelectedScriptsTag([...selectedScriptsTag, item]);
     }
 
@@ -343,13 +344,18 @@ function ScriptListPage() {
     };
     const launchPipeline = () => {
         //it will launch the pipeline request and also subscribe to the websocket associated to the pipeline
-        //const scriptsIdToExecute = selectedScriptsTag.map((script) => script.scriptId);
+        const scriptsIdToExecute = selectedScriptsTag.map((script) => script.scriptId);
         // const pipelineId = AxiosRq.getInstance().executePipeline(scriptsIdToExecute);
-        // if(pipelineId) {
-        //  setPipelineId(pipelineId)}
+        const pipelineId = crypto.randomUUID();
+        const scriptListFormatted = selectedScriptsTag.map((item,index) => {
+            if (index === 0) {
+                return {...item,status:"Pending",result:"info",backgroundColor:"#c5e2ee"}
+            }
+            return {...item,status:"Waiting",result:"info",backgroundColor:"#c5e2ee"}
+        });
         dispatch({
             type:"SET_PIPELINES",
-            payload: {pipelineId: pipelineId,scriptsId: selectedScriptsTag}
+            payload: {pipelineId: pipelineId,scriptsId: scriptListFormatted, index:0, messages:[], input:input}
         });
         navigate(`/pipelines/${pipelineId}`);
     }
@@ -390,6 +396,10 @@ function ScriptListPage() {
         <>
             <div>
                 <div>ScriptListPage</div>
+                {selectedScriptsTag.length === 0 &&(<div style={{display: 'flex', alignItems: 'center'}}><InfoIcon
+                    style={{marginRight: '5px', color: '#1976d2'}}/>To Launch your own scripts execution pipelines,
+                    click on scripts !</div>)}
+
                 <div className="container--search-bar" style={{display: "flex"}}>
                     <UnstyledInputIntroduction
                         value={search}
@@ -450,7 +460,8 @@ function ScriptListPage() {
                                     />
                                 </HtmlTooltip>
                             ))}
-                            <Button onClick={launchPipeline} disabled={invalidScriptIds.length > 0}>
+                            <Button onClick={launchPipeline}
+                                    disabled={invalidScriptIds.length > 0 || buttonType === 'error'}>
                                 Pipeline
                                 <RocketLaunchIcon/>
                             </Button>

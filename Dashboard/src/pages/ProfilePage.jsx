@@ -111,10 +111,7 @@ function ProfilePage() {
 			setConfirmedPassword("");
 		}
 		const emailAvailable = email !== temporaryEmail ? await isEmailAvailable(temporaryEmail) : true;
-		const usernameAvailable = username !== temporaryUsername ? await isUsernameAvailable(temporaryEmail) : true;
-		console.log({
-			hasChangedOccurred:hasChangedOccurred()
-		});
+		const usernameAvailable = username !== temporaryUsername ? await isUsernameAvailable(temporaryUsername) : true;
 		if (
 			temporaryUsername !== "" &&
 			temporaryEmail !== "" &&

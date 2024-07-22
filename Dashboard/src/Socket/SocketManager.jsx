@@ -1,3 +1,6 @@
+import AxiosRequester from "../Axios/AxiosRequester.js";
+import {useScripts} from "../hooks/ScriptsProvider.jsx";
+
 class SocketManager {
     static _instance = null;
     constructor() {}
@@ -11,13 +14,15 @@ class SocketManager {
         return this._instance;
     }
 
-    connectWebSocketPipeline(pipelineId, messageCallback) {
+    connectWebSocketPipeline(pipelineId, messageCallback, launchPipelineMethod) {
+
         this.messageCallback = messageCallback;
-        const url = `ws://localhost:5008/subscribe/${pipelineId}`;
+        const url = `ws://localhost:5008/notifications?id=${pipelineId}`;
         this.socket = new WebSocket(url);
 
-        this.socket.onopen = () => {
+        this.socket.onopen = async () => {
             console.log('WebSocket connected');
+            launchPipelineMethod();
         };
 
         this.socket.onmessage = (event) => {

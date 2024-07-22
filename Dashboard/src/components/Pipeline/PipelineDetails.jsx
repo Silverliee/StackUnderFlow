@@ -1,152 +1,173 @@
-import {useEffect, useState} from 'react';
+import {useEffect, useRef, useState} from 'react';
 import PipelineItem from "./PipelineItem.jsx";
 import SocketManager from "../../Socket/SocketManager";
 import LogDisplayer from "./LogDisplayer.jsx";
 import {useParams} from "react-router-dom";
 import {useScripts} from "../../hooks/ScriptsProvider.jsx";
+import {formatDateStringForLogs, handleFile} from "../../utils/utils.js";
+import AxiosRequester from "../../Axios/AxiosRequester.js";
+import CloudDownloadIcon from "@mui/icons-material/CloudDownload.js";
+import * as React from "react";
+import Button from "@mui/material/Button";
 
 const PipelineDetails = () => {
-    const [scriptListLoaded, setScriptListLoaded] = useState([]);
+    const indexRef = useRef(0);
+    const messagesRef = useRef([]);
+    const scriptsRef = useRef([]);
     const [messages, setMessages] = useState([]);
-    const [scriptList, setScriptList] = useState([]);
-
+    const inputRef = useRef(null);
     const {pipelineId} = useParams();
-    const {state} = useScripts();
+    const {state, dispatch} = useScripts();
+    const [pipelineFinished, setPipelineFinished] = useState(false);
 
-    const fakeData = [
-        {
-            "scriptId": 7,
-            "scriptName": "test",
-            "description": "ezaeaze",
-            "inputScriptType": "None",
-            "outputScriptType": "None",
-            "programmingLanguage": "Csharp",
-            "visibility": "Public",
-            "userId": 4,
-            "creatorName": "User2",
-            "numberOfLikes": 1,
-            "isLiked": false,
-            "isFavorite": true,
-            "creationDate": "17/07/2024 17:16:30",
-            "status": "Pending",
-            "result": "Info"
-        },
-        {
-            "scriptId": 7,
-            "scriptName": "test",
-            "description": "ezaeaze",
-            "inputScriptType": "None",
-            "outputScriptType": "None",
-            "programmingLanguage": "Csharp",
-            "visibility": "Public",
-            "userId": 4,
-            "creatorName": "User2",
-            "numberOfLikes": 1,
-            "isLiked": false,
-            "isFavorite": true,
-            "creationDate": "17/07/2024 17:16:30",
-            "status": "Waiting",
-            "result": "success"
-        },
-        {
-            "scriptId": 5,
-            "scriptName": "HelloScript2",
-            "description": "A better script than HelloScript",
-            "inputScriptType": "None",
-            "outputScriptType": "None",
-            "programmingLanguage": "Csharp",
-            "visibility": "Public",
-            "userId": 2,
-            "creatorName": "Damien",
-            "numberOfLikes": 1,
-            "isLiked": true,
-            "isFavorite": false,
-            "creationDate": "15/07/2024 18:31:35",
-            "status": "Done",
-            "result": "error"
+    useEffect(() => {
+        if (state.pipelines[pipelineId]) {
+            if(state.pipelines[pipelineId].result !== null && state.pipelines[pipelineId].result !== undefined) {
+                console.log("Consult details mode");
+                console.log(state.pipelines[pipelineId]);
+                setPipelineFinished(true);
+            } else {
+                console.log('HI');
+                console.log(state.pipelines[pipelineId]);
+                scriptsRef.current = state.pipelines[pipelineId].scriptsId;
+                indexRef.current = state.pipelines[pipelineId].index;
+                inputRef.current = state.pipelines[pipelineId].input;
+                setMessages(state.pipelines[pipelineId].messages);
+                SocketManager.connectWebSocketPipeline(pipelineId, handleWebSocketMessage,launchPipelineMethod);
+            }
         }
-    ]
-    const fakeMessages = [
-        {text:"a lot of text to see how the next line looks like",date:"19/07/2024 17:31:30",},
-        {text:"fake",date:"19/07/2024 17:31:31",},
-        {text:"fake",date:"19/07/2024 17:31:32",},
-        {text:"fake",date:"19/07/2024 17:31:33",},
-        {text:"fake",date:"19/07/2024 17:31:33",},
-        {text:"fake",date:"19/07/2024 17:31:33",},
-        {text:"fake",date:"19/07/2024 17:31:33",},
-        {text:"fake",date:"19/07/2024 17:31:33",},
-        {text:"fake",date:"19/07/2024 17:31:33",},
-        {text:"fake",date:"19/07/2024 17:31:33",},
-        {text:"fake",date:"19/07/2024 17:31:33",},
-        {text:"fake",date:"19/07/2024 17:31:33",},
-    ];
+    }, [pipelineId]);
 
     useEffect(() => {
-    //TODO checker que le formattage des scripts fonctionne
-
-    // const scriptListFormatted = scriptList.map((item,index) => {
-    //     if (index === 0) {
-    //         return {...item,status:"Pending",result:"info"}
-    //     }
-    //     return {...item,status:"Waiting",result:"info"}
-    // });
-    // setScriptListLoaded(scriptListFormatted);
-        setScriptListLoaded(fakeData);
-        setMessages(fakeMessages);
-    }, []);
-
-    useEffect(() => {
-        setScriptList(state.pipelines[pipelineId]);
-    },[state.pipelines[pipelineId]]);
-
-
-    useEffect(() => {
-        //TODO checker si la connexion fonctionne
-        const pipelineId = crypto.randomUUID();
-        SocketManager.connectWebSocketPipeline(pipelineId, handleWebSocketMessage);
-    }, []);
-
-    useEffect(() => {
-        console.log(scriptListLoaded);
-    }, [scriptListLoaded]);
+        if (state.pipelines[pipelineId]) {
+            scriptsRef.current = state.pipelines[pipelineId].scriptsId;
+            indexRef.current = state.pipelines[pipelineId].index;
+            setMessages(state.pipelines[pipelineId].messages);
+        }
+    }, [state.pipelines[pipelineId]]);
 
     const handleWebSocketMessage = (message) => {
-        //TODO :
-        // analyser le contenu du message pour updater les scripts (status/result) et la couleur du message (pour l'affichage dans LogDisplayer
-        // récuperer le lien ou le binary pour permettre le download du fichier intermédiaire et/ou final
-        setMessages(prevMessages => [...prevMessages, message]);
+        // Initialisation de la couleur par défaut
+        let color = 'black';
+        let messageWithWordsOnly = message.replace(/[^a-zA-Z0-9 ]/g, '');
+        const messageAsArray = messageWithWordsOnly.split(' ');
+        let newScriptList = scriptsRef.current;
+        let index = indexRef.current;
+        // Mise à jour de l'état des scripts en fonction du message reçu
+        if (messageAsArray.includes("successfully")) {
+            newScriptList[index].status = "Done";
+            newScriptList[index].result = "success";
+            color = 'green';
+            index++;
+
+            if (index < newScriptList.length) {
+                newScriptList[index].status = "Pending";
+            }
+            dispatch({
+                type: "SET_PIPELINES",
+                payload: { pipelineId: pipelineId, scriptsId: newScriptList, index: index }
+            });
+            indexRef.current = index;
+            scriptsRef.current = newScriptList;
+        } else if (messageAsArray.includes("failed")) {
+            if(index < newScriptList.length) {
+                newScriptList[index].status = "Done";
+                newScriptList[index].result = "error";
+            }
+            color = 'red';
+
+            while (index + 1 < newScriptList.length) {
+                index++;
+                newScriptList[index].status = "Done";
+                newScriptList[index].result = "error";
+            }
+
+            indexRef.current = index;
+            scriptsRef.current = newScriptList;
+        }
+
+        // Formattage du message pour l'affichage
+        const messageFormatted = {
+            text: message,
+            date: formatDateStringForLogs(new Date()),
+            color: color
+        };
+
+        // Mise à jour de l'état des messages
+        const currentMessages = messagesRef.current;
+        messagesRef.current = [...currentMessages, messageFormatted];
+        dispatch({
+            type: "SET_PIPELINES",
+            payload: { pipelineId: pipelineId, scriptsId: newScriptList, index: index, messages:[...currentMessages, messageFormatted], input: inputRef.current }
+        });
     };
+
+    const launchPipelineMethod = async () => {
+        console.log('launch');
+        const formData = new FormData();
+        formData.append("PipelineId", pipelineId);
+
+        if (state.pipelines[pipelineId].input) {
+            formData.append("Input", state.pipelines[pipelineId].input);
+        }
+
+        const scriptIds = state.pipelines[pipelineId].scriptsId.map(script => script.scriptId);
+        scriptIds.forEach(id => formData.append("ScriptIds", id));
+
+        const blob = await AxiosRequester.getInstance().executePipeline(formData);
+        //handleFile(blob);
+        if(blob !== null) {
+            setPipelineFinished(true);
+        }
+
+        dispatch({
+            type: "SET_PIPELINES",
+            payload: {
+                pipelineId: pipelineId,
+                scriptsId: state.pipelines[pipelineId].scriptsId,
+                index: state.pipelines[pipelineId].index,
+                messages:messagesRef.current,
+                input: state.pipelines[pipelineId].input,
+                result: blob
+            }
+        });
+    }
 
     //TODO:
     // Peut-être lié l'index ici avec un tableau setté dans handleWebSocketMessage lorsque l'on reçoit le lien ou le binary
     const handleDownload = (index) => {
         console.log(index);
-    }
+    };
 
     return (
         <>
             <div>Pipeline n°{pipelineId}</div>
             <br/>
-            <div className={"mainContainer"} style={{display:"flex", justifyContent:"space-between"}}>
+            <div className={"mainContainer"} style={{display: "flex", justifyContent: "space-between"}}>
                 <div className={"leftContainer"} style={{
-                    // border: "1px solid black",
-                    height:"80vh", width:"49%",
-                    display:'flex',
-                    flexDirection:'column',
+                    height: "80vh", width: "39%",
+                    display: 'flex',
+                    flexDirection: 'column',
                     borderRadius: '10px',
-                    overflow: 'auto'}}>
-                    {scriptListLoaded.map((item, index) => (
+                    overflow: 'auto'
+                }}>
+                    {scriptsRef.current.map((item, index) => (
                         <PipelineItem key={index} script={item} index={index} handleDownload={handleDownload}/>
                     ))}
+                    {pipelineFinished && (
+                        <Button style={{cursor:"pointer"}} onClick={() => handleFile(state.pipelines[pipelineId].result)}>
+                            <CloudDownloadIcon style={{marginRight:'5px'}}/> DOWNLOAD RESULT
+                        </Button>
+                        )}
                 </div>
                 <div className={"rightContainer"} style={{
-                    height:"60vh",
-                    width:"49%"
-                   }}>
+                    height: "60vh",
+                    width: "59%"
+                }}>
                     <LogDisplayer messages={messages}/>
                 </div>
             </div>
-        </>
+                    </>
     );
 }
 
