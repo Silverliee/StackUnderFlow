@@ -682,7 +682,7 @@ class AxiosRequester {
 	};
 
 	executeScript = async (formData) => {
-		const apiUrl = this.baseUrl + `Runner`;
+		const apiUrl = this.baseUrl + `Runner/script/file`;
 		try {
 			//console.log({ formData });
 			const response = await axios.post(apiUrl, formData, {
@@ -694,7 +694,8 @@ class AxiosRequester {
 			});
 			//console.log("Réponse de l'API :", { response: response });
 			if (response.status === 200) {
-				//console.log(response);
+				console.log(response);
+				console.log(typeof response);
 				return response.data;
 			}
 		} catch (error) {
@@ -843,17 +844,20 @@ class AxiosRequester {
 		}
 	}
 
-	executePipeline = async(scripts) => {
-		const apiUrl = this.baseUrl + `Runner/execute-pipeline`;
+	executePipeline = async(data) => {
+		const apiUrl = this.baseUrl + `Runner/pipeline`;
+		console.log('Axios Exec Pipeline');
 		try {
-			const response = await axios.post(
-				apiUrl,
-				scripts,
-				this.getConfig()
-			)
+			const response = await axios.post(apiUrl, data, {
+				headers: {
+					'Content-Type': 'multipart/form-data',
+					'accept': '*/*',
+					'Authorization': `Bearer ${this.token}`
+				},
+				responseType: 'blob'
+			});
 			if (response.status === 200) {
-				const pipelineId = response.data;
-				return pipelineId;
+				return response.data;
 			}
 		} catch (error) {
 			console.error("Erreur lors de la requete \"execute pipeline\":",error);

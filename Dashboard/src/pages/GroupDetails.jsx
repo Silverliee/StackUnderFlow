@@ -9,6 +9,7 @@ import Button from "@mui/material/Button";
 import ModalAddGroupMember from "../components/Group/ModalAddGroupMember.jsx";
 import { useAuth} from "../hooks/AuthProvider.jsx";
 import {enqueueSnackbar} from "notistack";
+import AlertDialog from "../components/Custom/AlertDialog.jsx";
 
 function GroupDetails() {
 	const [group, setGroup] = useState({});
@@ -18,7 +19,10 @@ function GroupDetails() {
 	const [page, setPage] = useState(0);
 	const [rowsPerPage, setRowsPerPage] = useState(5);
 	const [open, setOpen] = useState(false);
+	const [openAlert, setOpenAlert] = useState(false);
+	const [text,setText] = useState("");
 	const [selectedUser, setSelectedUser] = useState(null);
+	const [userIdToRemove, setUserIdToRemove] = useState(null);
 
 	const { groupId } = useParams();
 	const { authData } = useAuth();
@@ -47,8 +51,48 @@ function GroupDetails() {
 	}, [groupId]);
 
 	const handleRemoveMember = (userId) => {
-		console.log(userId);
+		if(authData.userId === userId){
+			const variant = 'error';
+			let text = `Cannot remove yourself from the group as your are its creator. Consider deleting the group directly`;
+			enqueueSnackbar(text, {variant, autoHideDuration: 2000});
+		} else {
+			setText("Are you sure about removing this user from the group ?")
+			setOpenAlert(true);
+			setUserIdToRemove(userId);
+		}
 	};
+
+	useEffect(() => {
+		console.log({
+			page,
+			rowsPerPage,
+			members,
+			length: members.length,
+		});
+		if((page) * rowsPerPage > members.length) {
+			console.log('here');
+			setPage(page-1);
+		} else {
+			console.log('there');
+			setMembersPaginated(
+				members.slice(page * rowsPerPage, (page + 1) * rowsPerPage)
+			)
+		}},[members, page, rowsPerPage]);
+
+	const handleConfirmRemoveMember = async () => {
+		setOpenAlert(false);
+		await AxiosRq.getInstance().cancelGroupInvitation(group.groupId,userIdToRemove);
+		const variant = 'success';
+		console.log({
+			userIdToRemove,
+			membersFiltered: members.filter((member) => member.userId !== userIdToRemove),
+				members
+		});
+		setMembers(members.filter((member) => member.userId !== userIdToRemove));
+		setUserIdToRemove(null);
+		let text = `User removed successfully from group.`;
+		enqueueSnackbar(text, {variant, autoHideDuration: 2000});
+	}
 
 	const handleItemSelected = (userId) => {};
 
@@ -149,6 +193,7 @@ function GroupDetails() {
 									 selectedUser={selectedUser}
 									 handleSubmitRegisterEvent={handleSubmitRegisterEvent}/>
 			</Grid>
+			<AlertDialog text={text} open={openAlert} handleClose={() => setOpenAlert(false)} handleConfirm={handleConfirmRemoveMember}/>
 		</>
 	);
 }

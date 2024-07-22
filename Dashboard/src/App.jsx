@@ -40,8 +40,6 @@ const App = () => {
 					<RelationsProvider>
 						<ScriptsProvider>
 						<Routes>
-							{/*<Route exact path="/" element={<Login />} />*/}
-							<Route exact path="/" element={<PersistentDrawerLeft />} />
 						<Route exact path="/login" element={<NewLogin />} />
 							<Route element={<PersistentDrawerLeft />}>
 

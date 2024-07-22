@@ -18,7 +18,7 @@ public class ProfileService(IUserRepository userRepository) : IProfileService
         return result == null;
     }
     
-    public async Task<UserResponseDto> UpdateUser(UpdateUserDto userDto)
+    public async Task<UserResponseDto?> UpdateUser(UpdateUserDto userDto)
     {
         var userFromDb = await userRepository.GetUserById(userDto.UserId);
         if (userFromDb == null)

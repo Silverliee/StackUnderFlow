@@ -46,7 +46,8 @@ function SearchScriptPage() {
 	}
 
 	const handleSelectChangeLanguage = (event) => {
-		const value = event?.target?.innerHTML; // Get the selected value
+		const value = event?.target?.innerHTML;
+		setPage(0);// Get the selected value
 		setSelectedLanguage(value);
 	};
 
