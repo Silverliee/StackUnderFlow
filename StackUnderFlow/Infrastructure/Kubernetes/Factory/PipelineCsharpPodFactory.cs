@@ -24,8 +24,7 @@ public static class PipelineCsharpPodFactory
                         Command = new List<string>
                         {
                             "sh", "-c",
-                            $"echo \"{scriptContent}\" > script.csx && echo \"{inputFileBinary}\" > input-file{inputType} " + 
-                            $"dotnet tool install -g dotnet-script > install.txt && export PATH=\"$PATH:/root/.dotnet/tools\" && dotnet script script.csx input-file{inputType} > output-file{outputType} && base64 output-file{outputType}"
+                            $"echo \"{scriptContent}\" > script.csx && echo \"{inputFileBinary}\" | base64 --decode > input-file{inputType} && dotnet tool install -g dotnet-script > install.txt && export PATH=\"$PATH:/root/.dotnet/tools\" && dotnet script script.csx input-file{inputType} > output-file{outputType} && base64 output-file{outputType}"
                         }
                     }
                 },

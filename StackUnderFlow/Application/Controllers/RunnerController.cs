@@ -75,15 +75,6 @@ namespace StackUnderFlow.Application.Controllers
                 await notificationService.SendMessageAsync(pipelineRequest.PipelineId, "Pipeline started.");
                 await notificationService.SendMessageAsync(pipelineRequest.PipelineId, $"Executing pipeline with scripts: {string.Join(", ", pipelineRequest.ScriptIds)}");
                 var files = await runnerService.ExecutePipelineWithIds(pipelineRequest.ScriptIds, pipelineRequest.Input,pipelineRequest.PipelineId);
-                if (files.Count == 1)
-                {
-                    var file = files.First();
-                    const string contentType = "APPLICATION/octet-stream";
-                    HttpContext.Response.ContentType = contentType;
-                    HttpContext.Response.Headers.Append("Content-Disposition", $"attachment; filename={file.FileName}");
-                    await file.CopyToAsync(HttpContext.Response.Body);
-                    return new EmptyResult();
-                }
                 using var memoryStream = new MemoryStream();
                 using (var archive = new System.IO.Compression.ZipArchive(memoryStream, System.IO.Compression.ZipArchiveMode.Create, true))
                 {
