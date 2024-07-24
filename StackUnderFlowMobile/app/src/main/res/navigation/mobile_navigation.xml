@@ -34,4 +34,10 @@
         android:label="@string/Notifications"
         tools:layout="@layout/fragment_notifications" />
 
+    <fragment
+        android:id="@+id/nav_group"
+        android:name="com.example.stackunderflow.ui.group.MyGroupFragment"
+        android:label="@string/MyGroup"
+        tools:layout="@layout/fragment_my_group" />
+
 </navigation>

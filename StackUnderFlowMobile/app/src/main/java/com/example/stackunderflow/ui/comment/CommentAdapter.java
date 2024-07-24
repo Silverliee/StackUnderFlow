@@ -53,10 +53,13 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
             popupMenus(v, holder.getAdapterPosition());
         });
 
-
-        if(commentViewModel.getUser().getValue().getUserId() != currentComment.getUserId()){
-            holder.commentSettings.setVisibility(View.GONE);
-        }
+        commentViewModel.getUser().observeForever(user -> {
+            if(user.getUserId() == currentComment.getUserId()){
+                holder.commentSettings.setVisibility(View.VISIBLE);
+            }else {
+                holder.commentSettings.setVisibility(View.GONE);
+            }
+        });
     }
 
     private void popupMenus(View v, int adapterPosition) {

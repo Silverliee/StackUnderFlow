@@ -1,6 +1,5 @@
 package com.example.stackunderflow.service
 
-import androidx.compose.ui.geometry.Offset
 import com.example.stackunderflow.dto.CheckPasswordResponseDto
 import com.example.stackunderflow.dto.CommentDto
 import com.example.stackunderflow.dto.CommentRequestDto
@@ -8,6 +7,9 @@ import com.example.stackunderflow.dto.EmailAvailabilityResponse
 import com.example.stackunderflow.dto.FavoriteResponseDto
 import com.example.stackunderflow.dto.FriendRequestCreationRequestDto
 import com.example.stackunderflow.dto.FriendRequestDto
+import com.example.stackunderflow.dto.GroupRequestDto
+import com.example.stackunderflow.dto.GroupRequestResponseDto
+import com.example.stackunderflow.dto.GroupResponseDto
 import com.example.stackunderflow.dto.LoginUserDto
 import com.example.stackunderflow.dto.PasswordDto
 import com.example.stackunderflow.dto.RegisterUserDto
@@ -38,6 +40,9 @@ interface StackUnderFlowApiService {
     @GET("User/")
     fun getUserInfo(): Flowable<User>
 
+    @GET("User/{id}")
+    fun getUserById(@Path("id") userId: Int): Flowable<User>
+
     @GET("Script/{id}")
     fun getScriptById(@Path("id") id: Int): Flowable<ScriptModelDto>
 
@@ -46,7 +51,6 @@ interface StackUnderFlowApiService {
 
     @GET("Script/favorites")
     fun getMyScripts(): Flowable<List<ScriptModelDto>>
-
 
     @POST("SocialInteraction/likes/{id}")
     fun createLike(@Path("id") id: Int) : Flowable<Int>
@@ -96,4 +100,33 @@ interface StackUnderFlowApiService {
     @POST("User/checkPassword")
     fun checkPasswordValidity(@Body password: PasswordDto): Flowable<CheckPasswordResponseDto>
 
+    @GET("SocialInteraction/groups")
+    fun getGroupByUserId(): Flowable<List<GroupResponseDto>>
+
+    @GET("SocialInteraction/groups/{groupId}/members")
+    fun getGroupMembers(@Path("groupId") groupId: Int): Flowable<List<User>>
+
+    @GET("SocialInteraction/groups/requests")
+    fun getGroupRequests(): Flowable<List<GroupRequestResponseDto>>
+
+    @DELETE("SocialInteraction/groups/{groupId}/{userId}")
+    fun deleteGroupMember(@Path("groupId") groupId: Int, @Path("userId") userId: Int): Flowable<Void>
+
+    @POST("SocialInteraction/groups/{groupId}/{userId}")
+    fun createGroupMember(@Path("groupId") groupId: Int, @Path("userId") userId: Int): Flowable<Void>
+
+    @PATCH("SocialInteraction/groups/requests/{groupId}")
+    fun acceptGroupRequest(@Path("groupId") groupId: Int): Flowable<Void>
+
+    @DELETE("SocialInteraction/groups/requests/{groupId}")
+    fun declineGroupRequest(@Path("groupId") groupId: Int): Flowable<Void>
+
+    @POST("SocialInteraction/groups")
+    fun createGroup(@Body groupRequestDto: GroupRequestDto): Flowable<GroupResponseDto>
+
+    @DELETE("SocialInteraction/friends/{id}")
+    fun deleteFriend(@Path("id") id: Int): Flowable<Void>
+
+    @DELETE("SocialInteraction/favorites/{id}")
+    fun deleteFavorite(@Path("id") id: Int): Flowable<Void>
 }

@@ -55,7 +55,7 @@ class CommentFragment : Fragment() {
         injectModuleDependencies(this@CommentFragment.requireContext())
         _binding = FragmentCommentBinding.inflate(inflater, container, false)
         val view = binding.root
-
+        scriptViewModel.GetMyScript()
         scriptId = arguments?.getInt(SCRIPT_ID, -1) ?: 0
         viewModel.getComments(scriptId)
 
@@ -67,7 +67,6 @@ class CommentFragment : Fragment() {
                 binding.scriptNameComment.text = script?.scriptName
                 binding.scriptDescriptionComment.text = script?.description
                 binding.scriptUserIdComment.text = script?.creatorName
-                binding.numberOfLikesComment.text = script?.numberOfLikes.toString()
             }
         }
 

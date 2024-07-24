@@ -10,7 +10,7 @@ import io.reactivex.rxjava3.kotlin.addTo
 
 class ScriptViewModel(private val scriptRepository: ScriptRepository): ViewModel() {
 
-    private val script = MutableLiveData<ScriptModelDto>()
+    val script = MutableLiveData<ScriptModelDto>()
 
     val myScripts = MutableLiveData<List<ScriptModelDto>>()
 
@@ -71,6 +71,15 @@ class ScriptViewModel(private val scriptRepository: ScriptRepository): ViewModel
             Log.d("Favorite A Script", "Favorite: $post")
         }, { error ->
             Log.d("Test error in CreateFavorite",
+                error.message?:"error")
+        }).addTo(disposeBag)
+    }
+
+    fun deleteFavorite(scriptId: Int){
+        scriptRepository.deleteFavorite(scriptId).subscribe({ post ->
+            Log.d("UnFavorite A Script", "UnFavorite: $post")
+        }, { error ->
+            Log.d("Test error in deleteFavorite",
                 error.message?:"error")
         }).addTo(disposeBag)
     }

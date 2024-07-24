@@ -46,9 +46,7 @@ class LoginActivity : AppCompatActivity() {
 
             val loginUserDto = LoginUserDto(email,password)
             userViewModel.getLogin(loginUserDto)
-            if(userViewModel.isLogged.value == false){
-                Toast.makeText(this, "Invalid email or password", Toast.LENGTH_SHORT).show()
-            }
+
         }
 
         registerButton.setOnClickListener {

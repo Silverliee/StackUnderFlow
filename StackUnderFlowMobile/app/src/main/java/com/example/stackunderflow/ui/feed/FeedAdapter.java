@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -18,6 +19,7 @@ import com.example.stackunderflow.ui.Scripts.ScriptViewModel;
 import com.example.stackunderflow.ui.comment.CommentFragment;
 
 import java.util.List;
+import java.util.Objects;
 
 public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
 
@@ -79,7 +81,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
 
         holder.scriptFavoriteButton.setOnClickListener(view -> {
             if (currentScript.isFavorite()) {
-                //scriptViewModel.DeleteFavorite(currentScript.getScriptId());
+                scriptViewModel.deleteFavorite(currentScript.getScriptId());
                 currentScript.setFavorite(false);
                 holder.scriptFavoriteButton.setImageResource(R.drawable.baseline_bookmark_add_24);
             } else {
@@ -101,6 +103,13 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
             }
         });
 
+        if(Objects.equals(scripts.get(position).getProgrammingLanguage(), "Csharp")){
+            holder.scriptImage.setImageResource(R.drawable.doc_c_black);
+        } else if (Objects.equals(scripts.get(position).getProgrammingLanguage(), "Python")) {
+            holder.scriptImage.setImageResource(R.drawable.doc_python_black);
+        }else {
+            holder.scriptImage.setImageResource(R.drawable.file_script);
+        }
 
 
     }
@@ -118,11 +127,13 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
         ImageButton scriptCommentButton;
         ImageButton scriptLikeButton;
         ImageButton scriptFavoriteButton;
+        ImageView scriptImage;
 
         boolean isLiked;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
+            scriptImage = itemView.findViewById(R.id.script_ImageFeed);
             scriptUsername = itemView.findViewById(R.id.script_userIdFeed);
             scriptName = itemView.findViewById(R.id.script_nameFeed);
             scriptDescription = itemView.findViewById(R.id.script_descriptionFeed);

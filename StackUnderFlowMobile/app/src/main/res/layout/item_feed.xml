@@ -21,7 +21,8 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="148dp"
+            android:layout_height="wrap_content"
+            android:minHeight="148dp"
             android:orientation="vertical"
             android:padding="8dp">
 
@@ -36,6 +37,8 @@
                     android:layout_height="80dp"
                     android:layout_marginEnd="8dp"
                     android:scaleType="centerCrop"
+                    android:src="@drawable/baseline_person_search_24"
+                    android:tint="@color/black"
                     />
 
                 <androidx.constraintlayout.widget.ConstraintLayout

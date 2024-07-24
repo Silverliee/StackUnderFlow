@@ -5,6 +5,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.stackunderflow.dto.FriendRequestCreationRequestDto
 import com.example.stackunderflow.dto.FriendRequestDto
+import com.example.stackunderflow.dto.GroupRequestDto
+import com.example.stackunderflow.dto.GroupRequestResponseDto
+import com.example.stackunderflow.dto.GroupResponseDto
 import com.example.stackunderflow.dto.LoginUserDto
 import com.example.stackunderflow.dto.PasswordDto
 import com.example.stackunderflow.dto.RegisterUserDto
@@ -27,6 +30,11 @@ class UserViewModel
     val user: MutableLiveData<User> = MutableLiveData<User>()
     val friendRequest = MutableLiveData<List<FriendRequestDto>>()
 
+    val groupCreatorUser = MutableLiveData<User>()
+    val myGroup = MutableLiveData<List<GroupResponseDto>>()
+    val groupRequests = MutableLiveData<List<GroupRequestResponseDto>>()
+
+    val groupMember = MutableLiveData<List<User>>()
     val users = MutableLiveData<List<User>>()
     val friend = MutableLiveData<MutableList<User>>()
     val isAvailable: MutableLiveData<Boolean> = MutableLiveData<Boolean>(false)
@@ -145,6 +153,91 @@ class UserViewModel
             this.isCorrect.postValue(data.isValid)
         }, { error ->
             Log.d("Error in checkPasswordValidity", error.message ?: "error")
+        }).addTo(disposeBag)
+    }
+
+    fun getGroupByUserId(): Disposable {
+        return this.usersRepository.getGroupByUserId().subscribe({ data ->
+            Log.d("Group", data.toString())
+            myGroup.postValue(data)
+        }, { error ->
+            Log.d("Error in getGroupByUserId", error.message ?: "error")
+        }).addTo(disposeBag)
+    }
+
+    fun getUserById(userId: Int): Disposable {
+        return this.usersRepository.getUserById(userId).subscribe({ data ->
+            Log.d("User", data.toString())
+            groupCreatorUser.postValue(data)
+        }, { error ->
+            Log.d("Error in getUserById", error.message ?: "error")
+        }).addTo(disposeBag)
+    }
+
+    fun getGroupMembers(groupId: Int): Disposable {
+        return this.usersRepository.getGroupMembers(groupId).subscribe({ data ->
+            Log.d("Group Members", data.toString())
+            groupMember.postValue(data)
+        }, { error ->
+            Log.d("Error in getGroupMembers", error.message ?: "error")
+        }).addTo(disposeBag)
+    }
+
+    fun deleteGroupMember(groupId: Int, userId: Int): Disposable {
+        return this.usersRepository.deleteGroupMember(groupId, userId).subscribe({
+            Log.d("Group Member Deleted", "Group Member Deleted")
+        }, { error ->
+            Log.d("Error in deleteGroupMember", error.message ?: "error")
+        }).addTo(disposeBag)
+    }
+
+    fun createGroupMember(groupId: Int, userId: Int): Disposable {
+        return this.usersRepository.createGroupMember(groupId, userId).subscribe({
+            Log.d("Group Member Created", "Group Member Created")
+        }, { error ->
+            Log.d("Error in createGroupMember", error.message ?: "error")
+        }).addTo(disposeBag)
+    }
+
+    fun getGroupRequests(): Disposable {
+        return this.usersRepository.getGroupRequests().subscribe({ data ->
+            Log.d("Group Requests", data.toString())
+            groupRequests.postValue(data)
+        }, { error ->
+            Log.d("Error in getGroupRequests", error.message ?: "error")
+        }).addTo(disposeBag)
+    }
+
+    fun acceptGroupRequest(groupId: Int): Disposable {
+        return this.usersRepository.acceptGroupRequest(groupId).subscribe({
+            Log.d("Group Request Accepted", "Group Request Accepted")
+        }, { error ->
+            Log.d("Error in acceptGroupRequest", error.message ?: "error")
+        }).addTo(disposeBag)
+    }
+
+    fun declineGroupRequest(groupId: Int): Disposable {
+        return this.usersRepository.declineGroupRequest(groupId).subscribe({
+            Log.d("Group Request Declined", "Group Request Declined")
+        }, { error ->
+            Log.d("Error in declineGroupRequest", error.message ?: "error")
+        }).addTo(disposeBag)
+    }
+
+    fun createGroup(groupRequestDto: GroupRequestDto): Disposable {
+        return this.usersRepository.createGroup(groupRequestDto).subscribe({ data ->
+            Log.d("Group Created", data.toString())
+            myGroup.postValue(myGroup.value?.plus(data))
+        }, { error ->
+            Log.d("Error in createGroup", error.message ?: "error")
+        }).addTo(disposeBag)
+    }
+
+    fun deleteFriend(friendId: Int): Disposable {
+        return this.usersRepository.deleteFriend(friendId).subscribe({
+            Log.d("Friend Deleted", "Friend Deleted")
+        }, { error ->
+            Log.d("Error in deleteFriend", error.message ?: "error")
         }).addTo(disposeBag)
     }
 }

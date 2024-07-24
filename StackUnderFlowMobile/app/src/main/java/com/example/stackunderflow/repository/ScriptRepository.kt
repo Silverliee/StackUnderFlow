@@ -58,4 +58,9 @@ class ScriptRepository( private val stackUnderFlowApiService: StackUnderFlowApiS
     {
         return stackUnderFlowApiService.createFavorite(scriptId)
     }
+
+    fun deleteFavorite(scriptId : Int) : Flowable<Void>
+    {
+        return stackUnderFlowApiService.deleteFavorite(scriptId)
+    }
 }

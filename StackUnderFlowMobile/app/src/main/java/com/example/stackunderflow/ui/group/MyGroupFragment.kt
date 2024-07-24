@@ -1,60 +1,91 @@
 package com.example.stackunderflow.ui.group
 
+import android.app.AlertDialog
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
+import android.widget.Toast
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.stackunderflow.R
+import com.example.stackunderflow.databinding.FragmentFeedBinding
+import com.example.stackunderflow.databinding.FragmentMyGroupBinding
+import com.example.stackunderflow.dto.CommentRequestDto
+import com.example.stackunderflow.dto.GroupRequestDto
+import com.example.stackunderflow.dto.GroupResponseDto
+import com.example.stackunderflow.ui.Scripts.ScriptViewModel
+import com.example.stackunderflow.ui.feed.FeedAdapter
+import com.example.stackunderflow.ui.feed.FeedViewModel
+import com.example.stackunderflow.viewModels.UserViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [MyGroupFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class MyGroupFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
+    private val userViewModel: UserViewModel by viewModel()
+    private var _binding: FragmentMyGroupBinding? = null
+
+    // This property is only valid between onCreateView and onDestroyView.
+    private val binding get() = _binding!!
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_my_group, container, false)
+    ): View {
+        _binding = FragmentMyGroupBinding.inflate(inflater, container, false)
+        val view = binding.root
+
+
+        userViewModel.getGroupByUserId()
+        userViewModel.myGroup.observe(viewLifecycleOwner) { groups ->
+            Log.d("ScriptFragment", "Received script: ${groups.size}")
+            val feedAdapter = MyGroupAdapter(userViewModel, context, groups)
+            binding.searchGroupRecyclerView.adapter = feedAdapter
+            binding.searchGroupRecyclerView.layoutManager = LinearLayoutManager(context)
+        }
+
+
+        binding.addingBtn.setOnClickListener {
+            addInfo()
+        }
+        return view
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment MyGroupFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            MyGroupFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
+    private fun addInfo() {
+        val inflater = LayoutInflater.from(this.context)
+        val v = inflater.inflate(R.layout.create_group,null)
+
+        val groupName = v.findViewById<EditText>(R.id.newGroupName)
+        val groupDescription = v.findViewById<EditText>(R.id.newDescriptionGroup)
+
+        val addDialog = AlertDialog.Builder(this.context)
+
+        addDialog.setView(v)
+        addDialog.setPositiveButton("Ok"){
+                dialog,_->
+              val newGroupName = groupName.text.toString()
+              val newGroupDescription = groupDescription.text.toString()
+              Log.d("GroupFragment", "GroupName: $newGroupName")
+              val newGroup = GroupRequestDto(newGroupName,newGroupDescription)
+             userViewModel.createGroup(newGroup)
+
+            Toast.makeText(this.context,"Creation of the new Group Success", Toast.LENGTH_SHORT).show()
+            dialog.dismiss()
+        }
+        addDialog.setNegativeButton("Cancel"){
+                dialog,_->
+            dialog.dismiss()
+            Toast.makeText(this.context,"Cancel", Toast.LENGTH_SHORT).show()
+
+        }
+        addDialog.create()
+        addDialog.show()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

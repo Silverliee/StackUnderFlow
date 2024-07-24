@@ -47,15 +47,26 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.ViewHolder
         User user = users.get(position);
         holder.friendName.setText(user.getUsername());
 
+
         if(userViewModel.getFriend().getValue().contains(user)){
             holder.addFriend.setVisibility(View.GONE);
+            holder.removeFriend.setVisibility(View.VISIBLE);
+        } else {
+            holder.addFriend.setVisibility(View.VISIBLE);
+            holder.removeFriend.setVisibility(View.GONE);
         }
 
         holder.addFriend.setOnClickListener(v -> {
             addInfo(holder,user);
+            holder.addFriend.setVisibility(View.GONE);
         });
 
-
+        holder.removeFriend.setOnClickListener(v -> {
+            userViewModel.deleteFriend(user.getUserId());
+            holder.addFriend.setVisibility(View.VISIBLE);
+            holder.removeFriend.setVisibility(View.GONE);
+            userViewModel.getFriend().getValue().remove(user);
+        });
     }
 
 
@@ -99,11 +110,13 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.ViewHolder
     public static class ViewHolder extends RecyclerView.ViewHolder {
         TextView friendName;
         Button addFriend;
+        Button removeFriend;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             friendName = itemView.findViewById(R.id.UsernameFriendResult);
             addFriend = itemView.findViewById(R.id.addFriendRequest);
+            removeFriend = itemView.findViewById(R.id.removeFriend);
         }
     }
 

@@ -13,23 +13,28 @@
 
         <item
             android:id="@+id/nav_feed"
-            android:icon="@drawable/ic_menu_camera"
+            android:icon="@drawable/baseline_dynamic_feed_24"
             android:title="@string/menu_feed" />
         <item
             android:id="@+id/nav_profile"
-            android:icon="@drawable/ic_menu_camera"
-            android:iconTint="@color/black"
+            android:icon="@drawable/baseline_account_circle_24"
             android:title="@string/menu_home" />
         <item
             android:id="@+id/nav_friends"
-            android:icon="@drawable/ic_menu_gallery"
+            android:icon="@drawable/baseline_person_search_24"
             android:iconTint="@color/black"
             android:title="@string/menu_friends" />
         <item
             android:id="@+id/nav_scripts"
             android:iconTint="@color/black"
-            android:icon="@drawable/ic_menu_slideshow"
+            android:icon="@drawable/file_script"
             android:title="@string/menu_scripts" />
+
+        <item
+            android:id="@+id/nav_group"
+            android:iconTint="@color/black"
+            android:icon="@drawable/baseline_group_24"
+            android:title="@string/MyGroup" />
 
     </group>
 </menu>

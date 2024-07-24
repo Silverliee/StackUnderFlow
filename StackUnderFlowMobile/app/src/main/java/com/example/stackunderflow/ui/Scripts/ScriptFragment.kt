@@ -27,9 +27,10 @@ class ScriptFragment : Fragment() {
         val view = binding.root
 
         scriptViewModel.GetMyScript()
+
         scriptViewModel.myScripts.observe(viewLifecycleOwner) { scripts ->
             Log.d("ScriptFragment", "Received script: ${scripts.size}")
-            val adapterScripts = RecyclerViewAdapterScripts(context, scripts)
+            val adapterScripts = RecyclerViewAdapterScripts(context, scripts, scriptViewModel)
             binding.searchScriptRecyclerView.adapter = adapterScripts
             binding.searchScriptRecyclerView.layoutManager = LinearLayoutManager(context)
         }

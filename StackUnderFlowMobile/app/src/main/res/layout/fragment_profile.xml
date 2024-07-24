@@ -178,7 +178,7 @@
                             android:layout_margin="10dp"
                             android:background="#D9D9D9" />
 
-                        <androidx.constraintlayout.widget.ConstraintLayout
+                        <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_margin="10dp"
@@ -186,22 +186,18 @@
 
 
                             <TextView
-                                android:layout_margin="10dp"
                                 android:id="@+id/descriptionTextView"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:layout_margin="10dp"
                                 android:layout_marginStart="10dp"
                                 android:layout_marginEnd="10dp"
                                 android:text="@string/description"
-                                android:textAlignment="viewEnd"
                                 android:textColor="@color/black"
-                                android:textSize="16sp"
-                                app:layout_constraintBottom_toBottomOf="parent"
-                                app:layout_constraintTop_toTopOf="parent"
-                                app:layout_constraintEnd_toEndOf="parent"
-                                app:layout_constraintStart_toStartOf="parent"/>
+                                android:textSize="16sp" />
 
-                        </androidx.constraintlayout.widget.ConstraintLayout>
+                        </LinearLayout>
 
 
 

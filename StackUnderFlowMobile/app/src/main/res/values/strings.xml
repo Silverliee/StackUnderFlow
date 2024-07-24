@@ -32,7 +32,11 @@
     <string name="Message">Message</string>
     <string name="FriendRequestMessage">Friend Request Message</string>
     <string name="userInfo">UserInfo</string>
-    <string name="description">Descrition</string>
+    <string name="description">Description</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="MyGroup">My group</string>
+    <string name="Creategroup">Create group</string>
+    <string name="DescriptionOfTheGroup">Description Of The Group</string>
+    <string name="GroupeName">Group Name</string>
 </resources>

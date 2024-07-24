@@ -2,7 +2,6 @@ package com.example.stackunderflow.ui.home
 
 import android.app.AlertDialog
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,13 +9,10 @@ import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.stackunderflow.R
 import com.example.stackunderflow.databinding.FragmentProfileBinding
-import com.example.stackunderflow.dto.CommentRequestDto
 import com.example.stackunderflow.dto.PasswordDto
 import com.example.stackunderflow.dto.RegisterUserDto
 import com.example.stackunderflow.viewModels.UserViewModel
@@ -35,8 +31,7 @@ private var _binding: FragmentProfileBinding? = null
     container: ViewGroup?,
     savedInstanceState: Bundle?
   ): View {
-    val profileViewModel =
-            ViewModelProvider(this).get(ProfileViewModel::class.java)
+      ViewModelProvider(this).get(ProfileViewModel::class.java)
 
     _binding = FragmentProfileBinding.inflate(inflater, container, false)
     val root: View = binding.root
@@ -181,19 +176,6 @@ private var _binding: FragmentProfileBinding? = null
             isChecking = false
         })
     }
-
-
-    fun <T> LiveData<T>.observeOnce(lifecycleOwner: LifecycleOwner, observer: (T) -> Unit) {
-        val wrappedObserver = object : Observer<T> {
-            override fun onChanged(t: T) {
-                observer(t)
-                removeObserver(this)
-            }
-        }
-        observe(lifecycleOwner, wrappedObserver)
-    }
-
-
 
 
     override fun onDestroyView() {

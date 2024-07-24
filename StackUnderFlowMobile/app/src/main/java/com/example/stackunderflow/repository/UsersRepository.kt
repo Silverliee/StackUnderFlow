@@ -4,6 +4,9 @@ import com.example.stackunderflow.dto.CheckPasswordResponseDto
 import com.example.stackunderflow.dto.EmailAvailabilityResponse
 import com.example.stackunderflow.dto.FriendRequestCreationRequestDto
 import com.example.stackunderflow.dto.FriendRequestDto
+import com.example.stackunderflow.dto.GroupRequestDto
+import com.example.stackunderflow.dto.GroupRequestResponseDto
+import com.example.stackunderflow.dto.GroupResponseDto
 import com.example.stackunderflow.dto.LoginUserDto
 import com.example.stackunderflow.dto.PasswordDto
 import com.example.stackunderflow.dto.RegisterUserDto
@@ -66,5 +69,45 @@ class UsersRepository( private val stackUnderFlowApiService: StackUnderFlowApiSe
 
     fun checkPasswordValidity(password: PasswordDto): Flowable<CheckPasswordResponseDto> {
         return stackUnderFlowApiService.checkPasswordValidity(password)
+    }
+
+    fun getGroupByUserId(): Flowable<List<GroupResponseDto>> {
+        return stackUnderFlowApiService.getGroupByUserId()
+    }
+
+    fun getUserById(userId: Int): Flowable<User> {
+        return stackUnderFlowApiService.getUserById(userId)
+    }
+
+    fun getGroupMembers(groupId: Int): Flowable<List<User>> {
+        return stackUnderFlowApiService.getGroupMembers(groupId)
+    }
+
+    fun deleteGroupMember(groupId: Int, userId: Int): Flowable<Void> {
+        return stackUnderFlowApiService.deleteGroupMember(groupId, userId)
+    }
+
+    fun createGroupMember(groupId: Int, userId: Int): Flowable<Void> {
+        return stackUnderFlowApiService.createGroupMember(groupId, userId)
+    }
+
+    fun getGroupRequests(): Flowable<List<GroupRequestResponseDto>> {
+        return stackUnderFlowApiService.getGroupRequests()
+    }
+
+    fun acceptGroupRequest(groupId: Int): Flowable<Void> {
+        return stackUnderFlowApiService.acceptGroupRequest(groupId)
+    }
+
+    fun declineGroupRequest(groupId: Int): Flowable<Void> {
+        return stackUnderFlowApiService.declineGroupRequest(groupId)
+    }
+
+    fun createGroup(groupRequestDto: GroupRequestDto): Flowable<GroupResponseDto> {
+        return stackUnderFlowApiService.createGroup(groupRequestDto)
+    }
+
+    fun deleteFriend(friendId: Int): Flowable<Void> {
+        return stackUnderFlowApiService.deleteFriend(friendId)
     }
 }

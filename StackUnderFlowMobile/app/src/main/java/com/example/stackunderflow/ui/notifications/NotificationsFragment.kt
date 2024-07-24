@@ -17,6 +17,7 @@ import com.example.stackunderflow.ui.Scripts.ScriptViewModel
 import com.example.stackunderflow.ui.feed.FeedAdapter
 import com.example.stackunderflow.viewModels.UserViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import java.util.Objects
 
 class NotificationsFragment : Fragment() {
 
@@ -39,12 +40,26 @@ class NotificationsFragment : Fragment() {
         val view = binding.root
 
         userViewModel.getFriendRequests()
-        userViewModel.friendRequest.observe(viewLifecycleOwner) { friendRequest ->
-            Log.d("ScriptFragment", "Received script: ${friendRequest.size}")
-            val feedAdapter = NotificationsAdapter(userViewModel, context, friendRequest)
-            binding.NotificationsRecyclerView.adapter = feedAdapter
-            binding.NotificationsRecyclerView.layoutManager = LinearLayoutManager(context)
+        userViewModel.getGroupRequests()
+
+        userViewModel.friendRequest.observe(viewLifecycleOwner) { friendRequests ->
+            Log.d("ScriptFragment", "Received friend requests: ${friendRequests.size}")
+
+            userViewModel.groupRequests.observe(viewLifecycleOwner) { groupRequests ->
+                Log.d("ScriptFragment", "Received group requests: ${groupRequests.size}")
+
+                val list = mutableListOf<Any>()
+                list.addAll(friendRequests) // Ajoutez tous les éléments de friendRequests
+                list.addAll(groupRequests) // Ajoutez tous les éléments de groupRequests
+
+                val feedAdapter = NotificationsAdapter(userViewModel, requireContext(), list)
+                binding.NotificationsRecyclerView.adapter = feedAdapter
+                binding.NotificationsRecyclerView.layoutManager = LinearLayoutManager(requireContext())
+            }
         }
+
+
+
 
         return view
     }
