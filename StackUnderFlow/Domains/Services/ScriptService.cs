@@ -471,6 +471,7 @@ public class ScriptService(
                             ProgrammingLanguage = script.ProgrammingLanguage,
                             Visibility = script.Visibility,
                             CreatorName = script.CreatorName,
+                            CreationDate = script.CreationDate.ToString(),
                             NumberOfLikes = numberOfLikes.Count,
                             IsLiked = numberOfLikes.Any(x => x.UserId == userId),
                             IsFavorite = isFavorite
@@ -503,6 +504,7 @@ public class ScriptService(
                                 ProgrammingLanguage = script.ProgrammingLanguage,
                                 Visibility = script.Visibility,
                                 CreatorName = script.CreatorName,
+                                CreationDate = script.CreationDate.ToString(),
                                 NumberOfLikes = numberOfLikes.Count,
                                 IsLiked = numberOfLikes.Any(x => x.UserId == userId),
                                 IsFavorite = isFavorite
@@ -539,6 +541,7 @@ public class ScriptService(
                                 ProgrammingLanguage = script.ProgrammingLanguage,
                                 Visibility = script.Visibility,
                                 CreatorName = script.CreatorName,
+                                CreationDate = script.CreationDate.ToString(),
                                 NumberOfLikes = numberOfLikes.Count,
                                 IsLiked = numberOfLikes.Any(x => x.UserId == userId),
                                 IsFavorite = isFavorite
