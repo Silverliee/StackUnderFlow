@@ -56,7 +56,7 @@ public class ScriptVersionRepository(MySqlDbContext context) : IScriptVersionRep
     {
         return await context
             .ScriptVersions.Where(x => x.ScriptId == scriptId)
-            .OrderByDescending(x => x.CreationDate)
+            .OrderByDescending(x => x.ScriptVersionId)
             .FirstOrDefaultAsync();
     }
 

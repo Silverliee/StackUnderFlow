@@ -23,7 +23,7 @@ public class GroupRepository(MySqlDbContext context) : IGroupRepository
 
     public async Task<List<Group>> GetGroupsByUserId(int userId)
     {
-        var groupRequests = await context.GroupRequests.Where(g => g.UserId == userId).ToListAsync();
+        var groupRequests = await context.GroupRequests.Where(g => g.UserId == userId && g.Status == "Accepted").ToListAsync();
         var groups = new List<Group>();
         foreach (var groupRequest in groupRequests)
         {
