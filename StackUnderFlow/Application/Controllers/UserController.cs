@@ -119,12 +119,12 @@ public class UserController(ILoginService loginService, IProfileService profileS
     
     // password reset
     [HttpPost("forgot-password")]
-    public async Task<IActionResult> ForgotPassword(string email)
+    public async Task<IActionResult> ForgotPassword(ForgottenPasswordRequestDto forgottenPasswordRequestDto)
     {
         try
         {
             BackgroundJob.Enqueue(() => Console.WriteLine("Forgot password"));
-            var result = await loginService.ForgotPassword(email);
+            var result = await loginService.ForgotPassword(forgottenPasswordRequestDto.email);
             if (result)
             {
                 return Ok("Password sent to email.");

@@ -1,11 +1,12 @@
 using StackUnderFlow.Application.DataTransferObject.Request;
 using StackUnderFlow.Application.DataTransferObject.Response;
+using StackUnderFlow.Application.Security;
 using StackUnderFlow.Domains.Model;
 using StackUnderFlow.Domains.Repository;
 
 namespace StackUnderFlow.Domains.Services;
 
-public class ProfileService(IUserRepository userRepository) : IProfileService
+public class ProfileService(IUserRepository userRepository, ICryptographer cryptographer) : IProfileService
 {
     public async Task<bool> CheckEmailAvailability(string email)
     {
@@ -37,7 +38,7 @@ public class ProfileService(IUserRepository userRepository) : IProfileService
 
         if (!string.IsNullOrEmpty(userDto.Password))
         {
-            userFromDb.Password = userDto.Password;
+            userFromDb.Password = cryptographer.Encrypt(userDto.Password);
         }
 
         if (!string.IsNullOrEmpty(userDto.Description))

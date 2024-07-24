@@ -2,6 +2,7 @@ using System.Net.Mail;
 using StackUnderFlow.Application.DataTransferObject.Request;
 using StackUnderFlow.Application.DataTransferObject.Response;
 using StackUnderFlow.Application.Middleware;
+using StackUnderFlow.Application.Security;
 using StackUnderFlow.Domains.Model;
 using StackUnderFlow.Domains.Repository;
 
@@ -9,7 +10,8 @@ namespace StackUnderFlow.Domains.Services;
 
 public class LoginService(
     IUserRepository userRepository,
-    AuthenticationMiddleware authenticationMiddleware
+    AuthenticationMiddleware authenticationMiddleware,
+    ICryptographer cryptographer
 ) : ILoginService
 {
     public async Task<RegisterUserDto?> Register(RegisterUserDto? user)
@@ -18,7 +20,7 @@ public class LoginService(
         {
             Username = user.UserName,
             Email = user.Email,
-            Password = user.Password
+            Password = cryptographer.Encrypt(user.Password)
         };
         var result = await userRepository.CreateUser(myUser);
         return result == null ? null : user;
@@ -27,7 +29,7 @@ public class LoginService(
     public async Task<LoginUserResponseDto?> Login(LoginUserDto loginUserDto)
     {
         var user = await userRepository.GetUserByEmail(loginUserDto.Email);
-        if (user == null || user.Password != loginUserDto.Password)
+        if (user == null || user.Password != cryptographer.Encrypt(loginUserDto.Password))
         {
             return null;
         }
@@ -80,7 +82,7 @@ public class LoginService(
         var from = new MailAddress("emailservice@stackunderflow.software", "StackUnderFlow", System.Text.Encoding.UTF8);
         var to = new MailAddress(user.Email);
         var message = new MailMessage(from, to);
-        message.Body = "You forgot your password. Here is your password: " + user.Password;
+        message.Body = "You forgot your password. Here is your password: " + cryptographer.Decrypt(user.Password);
         message.BodyEncoding = System.Text.Encoding.UTF8;
         message.Subject = "Password Reset";
         message.SubjectEncoding = System.Text.Encoding.UTF8;
@@ -95,6 +97,6 @@ public class LoginService(
         {
             return false;
         }
-        return user.Password == password;
+        return user.Password == cryptographer.Encrypt(password);
     }
 }
